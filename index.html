@@ -1,0 +1,822 @@
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Automanize - Agencia de Automatización con IA</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#FFAB00", "primary-hover": "#E69900",
+                        "background-light": "#fcfcfb",
+                        "background-dark": "#0a0a0a", "surface-light": "#ffffff",
+                        "surface-dark": "#141414", "text-main": "#181811",
+                        "text-muted": "#6b6b5f",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "1.5rem",
+                        "xl": "2rem",
+                        "2xl": "3rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: "Spline Sans", sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #d4d4d4;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .scroll-reveal {
+            animation-duration: 0.8s;
+            animation-fill-mode: both;
+            animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 0;
+            animation-name: fadeInUp;
+        }
+
+        .reveal-left {
+            animation-name: fadeInLeft;
+        }
+
+        .reveal-right {
+            animation-name: fadeInRight;
+        }
+
+        .reveal-up {
+            animation-name: fadeInUp;
+        }
+
+        @supports (animation-timeline: view()) {
+            .scroll-reveal {
+                opacity: 1;
+                animation-timeline: view();
+                animation-range: entry 5% entry 35%;
+            }
+        }
+
+        /* ===== NUEVOS EFECTOS VISUALES ===== */
+
+        /* Efecto de brillo en hover para tarjetas */
+        .card-shine {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-shine::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 171, 0, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .card-shine:hover::before {
+            left: 100%;
+        }
+
+        /* Animación de pulso para botones */
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .btn-pulse:hover {
+            animation: pulse 1s infinite;
+        }
+
+        /* Efecto de elevación en hover */
+        .hover-lift {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Animación de gradiente */
+        @keyframes gradient-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .gradient-animate {
+            background-size: 200% 200%;
+            animation: gradient-shift 8s ease infinite;
+        }
+
+        /* Efecto de brillo en texto */
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        .text-shimmer {
+            background: linear-gradient(90deg, #181811 0%, #FFAB00 50%, #181811 100%);
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+        }
+
+        /* Efecto de escala suave */
+        .scale-hover {
+            transition: transform 0.3s ease;
+        }
+
+        .scale-hover:hover {
+            transform: scale(1.1);
+        }
+
+        /* Animación de entrada desde abajo con rebote */
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: translateY(60px) scale(0.9);
+            }
+
+            60% {
+                opacity: 1;
+                transform: translateY(-10px) scale(1.05);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* Efecto de rotación suave en hover */
+        .rotate-hover {
+            transition: transform 0.4s ease;
+        }
+
+        .rotate-hover:hover {
+            transform: rotate(5deg) scale(1.05);
+        }
+
+        /* Glow effect para elementos importantes */
+        .glow {
+            box-shadow: 0 0 20px rgba(255, 171, 0, 0.3);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .glow:hover {
+            box-shadow: 0 0 40px rgba(255, 171, 0, 0.6);
+        }
+
+        /* Fade in con delay escalonado */
+        @keyframes fadeInStagger {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stagger-1 {
+            animation: fadeInStagger 0.6s ease forwards;
+            animation-delay: 0.1s;
+            opacity: 0;
+        }
+
+        .stagger-2 {
+            animation: fadeInStagger 0.6s ease forwards;
+            animation-delay: 0.2s;
+            opacity: 0;
+        }
+
+        .stagger-3 {
+            animation: fadeInStagger 0.6s ease forwards;
+            animation-delay: 0.3s;
+            opacity: 0;
+        }
+
+        /* Efecto de borde brillante */
+        .border-glow {
+            position: relative;
+        }
+
+        .border-glow::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            background: linear-gradient(45deg, #FFAB00, #E69900, #FFAB00);
+            background-size: 200% 200%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        .border-glow:hover::after {
+            opacity: 1;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Floating animation */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Success Case Section - Professional & Clean Design */
+        .success-case-section {
+            background: linear-gradient(to bottom, transparent 0%, #fafafa 50%, transparent 100%);
+            padding: 6rem 2rem;
+            margin: 5rem 0;
+        }
+
+        .success-case-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .success-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .success-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #FFAB00 0%, #E69900 100%);
+            color: #181811;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(255, 171, 0, 0.4);
+            animation: pulse-badge 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-badge {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .success-case-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #181811;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .success-case-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            font-style: italic;
+        }
+
+        .success-showcase {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .success-content-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: min(100%, 360px);
+            min-height: 150px;
+            padding: 1.25rem 1.5rem;
+            border-radius: 22px;
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.95) 0%, rgba(247, 247, 244, 0.9) 100%);
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        .success-content-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.12);
+        }
+
+        .client-logo-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            text-align: center;
+            padding: 0;
+        }
+
+        .client-logo-img {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            object-fit: contain;
+            display: inline-block;
+            opacity: 0.98;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            image-rendering: auto;
+            filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.08));
+        }
+
+        .logo-biscotto {
+            max-height: 88px;
+        }
+
+        .logo-tmm {
+            max-height: 62px;
+        }
+
+        .client-logo-img:hover {
+            opacity: 1;
+        }
+
+        .success-quote {
+            text-align: center;
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: #4a4a4a;
+            margin: 0 auto 3rem auto;
+            max-width: 650px;
+            font-weight: 400;
+        }
+
+        .success-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .metric-item {
+            text-align: center;
+        }
+
+        .metric-value {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #FFAB00;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            display: block;
+            font-size: 0.875rem;
+            color: #6b6b6b;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        @media (max-width: 768px) {
+            .success-case-section {
+                padding: 4rem 1rem;
+                margin: 3rem 0;
+            }
+
+            .success-header {
+                margin-bottom: 2.5rem;
+            }
+
+            .success-case-title {
+                font-size: 1.75rem;
+            }
+
+            .client-logo-img {
+                max-width: 220px;
+            }
+
+            .logo-biscotto {
+                max-height: 76px;
+            }
+
+            .logo-tmm {
+                max-height: 56px;
+            }
+
+            .success-quote {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .success-metrics {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .metric-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-text-main dark:text-white overflow-x-hidden font-display">
+    <div class="relative flex flex-col min-h-screen w-full">
+        <header
+            class="sticky top-0 z-50 w-full border-b border-[#e6e6db] dark:border-[#262626] bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md">
+            <div class="px-4 md:px-10 py-4 flex items-center justify-between max-w-[1200px] mx-auto w-full">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="size-10 rounded-lg flex items-center justify-center shadow-md overflow-hidden scale-hover">
+                        <img src="assets/images/favicon.ico" alt="Automanize Logo" class="w-full h-full object-cover"
+                            loading="lazy" />
+                    </div>
+                    <h2 class="text-text-main dark:text-white text-2xl font-bold tracking-tight">Automanize</h2>
+                </div>
+                <div class="hidden md:flex items-center gap-8">
+                    <a class="text-text-main dark:text-white text-sm font-medium hover:text-primary-hover transition-colors"
+                        href="index.html">Inicio</a>
+                    <a class="text-text-main dark:text-white text-sm font-medium hover:text-primary-hover transition-colors"
+                        href="our-services.html">Servicios</a>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a class="hidden lg:flex items-center justify-center h-10 px-4 text-sm font-bold text-text-main dark:text-white bg-transparent hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors"
+                        href="tel:+34617153252">
+                        +34 617 15 32 52
+                    </a>
+                    <a href="contactus.html"
+                        class="flex items-center justify-center h-10 px-6 bg-primary hover:bg-primary-hover text-black text-sm font-bold rounded-full transition-transform hover:scale-105 shadow-sm shadow-orange-500/20 glow btn-pulse">
+                        Contáctanos
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-10 flex flex-col gap-16 pb-20">
+            <section class="pt-14 md:pt-24">
+                <div class="@container">
+                    <div class="flex justify-center items-center">
+                        <div
+                            class="flex flex-col gap-6 max-w-[860px] text-center items-center scroll-reveal reveal-up">
+                            <h1
+                                class="text-text-main dark:text-white text-4xl md:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
+                                Estas <span
+                                    class="relative inline-block z-10 before:absolute before:-inset-1 before:block before:-skew-y-3 before:bg-primary before:z-[-1]">perdiendo
+                                    tiempo y dinero</span> y no lo sabes
+                            </h1>
+                            <h2
+                                class="text-text-muted dark:text-gray-300 text-lg md:text-xl font-normal leading-relaxed max-w-[600px]">
+                                La mayoría de empresas pierden una gran cantidad de tiempo en hacer tareas que podrían
+                                estar delegadas en sistemas que las hagan por ellas
+                            </h2>
+                            <div class="flex flex-wrap justify-center gap-4 pt-2">
+                                <a href="consultoria-gratuita.html"
+                                    class="h-12 px-8 bg-primary hover:bg-primary-hover text-black text-base font-bold rounded-full transition-all hover:shadow-lg hover:-translate-y-1 shadow-orange-500/20 flex items-center justify-center glow">
+                                    Quiero una consultoría gratuita
+                                </a>
+                                <a href="our-services.html"
+                                    class="h-12 px-8 bg-surface-light dark:bg-surface-dark border border-[#e6e6db] dark:border-[#262626] text-text-main dark:text-white text-base font-bold rounded-full hover:bg-gray-100 dark:hover:bg-[#262626] transition-colors flex items-center justify-center">
+                                    Saber Más
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div
+                        class="flex flex-col gap-2 rounded-xl p-8 bg-surface-light dark:bg-surface-dark border border-[#e6e6db] dark:border-[#262626] hover:border-primary transition-colors group scroll-reveal reveal-left">
+                        <div class="flex items-center justify-between">
+                            <p class="text-text-muted dark:text-gray-400 text-sm font-medium uppercase tracking-wider">
+                                Horas Ahorradas</p>
+                            <span
+                                class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">schedule</span>
+                        </div>
+                        <p class="text-text-main dark:text-white text-4xl font-black tracking-tight">1200+</p>
+                        <p class="text-[#078816] text-sm font-bold bg-[#078816]/10 w-fit px-2 py-1 rounded-md mt-1">+15%
+                            vs Manual</p>
+                    </div>
+                    <div
+                        class="flex flex-col gap-2 rounded-xl p-8 bg-surface-light dark:bg-surface-dark border border-[#e6e6db] dark:border-[#262626] hover:border-primary transition-colors group scroll-reveal reveal-up">
+                        <div class="flex items-center justify-between">
+                            <p class="text-text-muted dark:text-gray-400 text-sm font-medium uppercase tracking-wider">
+                                Incremento de ROI</p>
+                            <span
+                                class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">trending_up</span>
+                        </div>
+                        <p class="text-text-main dark:text-white text-4xl font-black tracking-tight">300%</p>
+                        <p class="text-[#078816] text-sm font-bold bg-[#078816]/10 w-fit px-2 py-1 rounded-md mt-1">Año
+                            tras Año</p>
+                    </div>
+                    <div
+                        class="flex flex-col gap-2 rounded-xl p-8 bg-surface-light dark:bg-surface-dark border border-[#e6e6db] dark:border-[#262626] hover:border-primary transition-colors group scroll-reveal reveal-right">
+                        <div class="flex items-center justify-between">
+                            <p class="text-text-muted dark:text-gray-400 text-sm font-medium uppercase tracking-wider">
+                                Tareas Automatizadas</p>
+                            <span
+                                class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">check_circle</span>
+                        </div>
+                        <p class="text-text-main dark:text-white text-4xl font-black tracking-tight">50k+</p>
+                        <p class="text-[#078816] text-sm font-bold bg-[#078816]/10 w-fit px-2 py-1 rounded-md mt-1">Sin
+                            Errores</p>
+                    </div>
+                </div>
+            </section>
+            <section class="py-10">
+                <div class="flex flex-col gap-10">
+                    <div class="max-w-[720px] scroll-reveal reveal-up">
+                        <h2 class="text-text-main dark:text-white text-3xl md:text-4xl font-black leading-tight mb-4">
+                            Éxito Simplificado
+                        </h2>
+                        <p class="text-text-muted dark:text-gray-300 text-lg">
+                            Beneficios clave de trabajar con Automanize para escalar tus operaciones sin aumentar tu
+                            plantilla.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div
+                            class="flex flex-col gap-4 rounded-xl border border-[#e6e6db] dark:border-[#262626] bg-surface-light dark:bg-surface-dark p-8 hover:-translate-y-1 transition-transform duration-300 scroll-reveal reveal-up">
+                            <div
+                                class="size-12 rounded-full bg-primary/20 flex items-center justify-center text-text-main dark:text-white">
+                                <span class="material-symbols-outlined text-[28px] text-primary">attach_money</span>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <h3 class="text-text-main dark:text-white text-xl font-bold">Precios Transparentes</h3>
+                                <p class="text-text-muted dark:text-gray-400 text-sm leading-relaxed">
+                                    Sin tarifas ocultas. Conoce exactamente lo que pagas por adelantado con nuestros
+                                    modelos claros por proyecto o retainer.
+                                </p>
+                            </div>
+                        </div>
+                        <div
+                            class="flex flex-col gap-4 rounded-xl border border-[#e6e6db] dark:border-[#262626] bg-surface-light dark:bg-surface-dark p-8 hover:-translate-y-1 transition-transform duration-300 scroll-reveal reveal-up">
+                            <div
+                                class="size-12 rounded-full bg-primary/20 flex items-center justify-center text-text-main dark:text-white">
+                                <span class="material-symbols-outlined text-[28px] text-primary">build</span>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <h3 class="text-text-main dark:text-white text-xl font-bold">Configuración Integral</h3>
+                                <p class="text-text-muted dark:text-gray-400 text-sm leading-relaxed">
+                                    Nosotros configuramos, probamos y desplegamos. Tú solo das luz verde. Incluye
+                                    documentación completa y formación.
+                                </p>
+                            </div>
+                        </div>
+                        <div
+                            class="flex flex-col gap-4 rounded-xl border border-[#e6e6db] dark:border-[#262626] bg-surface-light dark:bg-surface-dark p-8 hover:-translate-y-1 transition-transform duration-300 scroll-reveal reveal-up">
+                            <div
+                                class="size-12 rounded-full bg-primary/20 flex items-center justify-center text-text-main dark:text-white">
+                                <span class="material-symbols-outlined text-[28px] text-primary">bar_chart</span>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <h3 class="text-text-main dark:text-white text-xl font-bold">ROI Medible</h3>
+                                <p class="text-text-muted dark:text-gray-400 text-sm leading-relaxed">
+                                    Rastrea las horas ahorradas y los ingresos generados en tiempo real con nuestros
+                                    dashboards personalizados.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section
+                class="rounded-2xl overflow-hidden relative bg-black p-8 md:p-16 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-8 group border border-[#262626] scroll-reveal reveal-up">
+                <div class="absolute inset-0 opacity-20 bg-[url('assets/images/cubes.png')]">
+                </div>
+                <div class="absolute -right-20 -top-20 size-64 bg-primary rounded-full blur-[100px] opacity-20"></div>
+                <div class="relative z-10 max-w-lg">
+                    <h2 class="text-white text-3xl md:text-4xl font-black mb-4">¿Listo para automatizar?</h2>
+                    <p class="text-gray-400 text-lg">Agenda tu llamada de descubrimiento gratuita hoy y descubre dónde
+                        puedes ahorrar tiempo.</p>
+                </div>
+                <div class="relative z-10 shrink-0">
+                    <a href="contactus.html"
+                        class="h-14 px-8 bg-primary hover:bg-white text-black text-lg font-bold rounded-full transition-colors flex items-center gap-2 glow">
+                        <span>Agendar Llamada</span>
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </a>
+                </div>
+            </section>
+
+
+            <section class="success-case-section">
+                <div class="success-case-container">
+                    <div class="success-header">
+                        <span class="success-badge">
+                            ⭐ Casos de Éxito
+                        </span>
+                        <h2 class="success-case-title">Empresas que Confían en Nosotros</h2>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-center gap-6 md:gap-10">
+                        <!-- Biscotto Card -->
+                        <a href="https://biscottocafe.es/" target="_blank" aria-label="Biscotto"
+                            class="success-content-card group transition-all duration-300 transform hover:-translate-y-1">
+                            <div class="client-logo-wrapper">
+                                <img src="assets/images/logoBiscotto.ico" alt="BISCOTTO"
+                                    class="client-logo-img logo-biscotto group-hover:scale-105 transition-transform duration-300"
+                                    loading="lazy" />
+                            </div>
+                        </a>
+
+                        <!-- TMM Card -->
+                        <a href="https://controldeplagastmm.com/" target="_blank" aria-label="TMM Control de Plagas"
+                            class="success-content-card group transition-all duration-300 transform hover:-translate-y-1">
+                            <div class="client-logo-wrapper">
+                                <img src="assets/images/tmmlogo.ico" alt="TMM Control de Plagas"
+                                    class="client-logo-img logo-tmm group-hover:scale-105 transition-transform duration-300"
+                                    loading="lazy" />
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="mt-12 text-center">
+                        <p class="success-quote">
+                            "Una experiencia excepcional que transformó nuestra manera de trabajar.
+                            Profesionalismo, dedicación y resultados que superaron todas nuestras expectativas."
+                        </p>
+                        <div class="success-metrics justify-center">
+                            <div class="metric-item">
+                                <span class="stat-number">100%</span>
+                                <span class="stat-label">Satisfacción</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="stat-number">1+</span>
+                                <span class="stat-label">Año Juntos</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="stat-number">∞</span>
+                                <span class="stat-label">Confianza</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="border-t border-[#e6e6db] dark:border-[#262626] bg-white dark:bg-black py-12">
+            <div
+                class="max-w-[1200px] mx-auto px-4 md:px-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="size-8 rounded-md flex items-center justify-center overflow-hidden">
+                            <img src="assets/images/favicon.ico" alt="Automanize Logo"
+                                class="w-full h-full object-cover" loading="lazy" />
+                        </div>
+                        <h3 class="text-text-main dark:text-white text-lg font-bold">Automanize</h3>
+                    </div>
+                    <p class="text-text-muted text-sm max-w-xs">
+                        Empoderando empresas con soluciones de automatización inteligente.
+                    </p>
+                </div>
+                <div class="flex flex-col md:items-end gap-2">
+                    <a class="flex items-center gap-2 text-text-main dark:text-white font-medium hover:text-primary-hover transition-colors"
+                        href="mailto:automanize@gmail.com">
+                        <span class="material-symbols-outlined text-primary text-[20px]">mail</span>
+                        automanize@gmail.com
+                    </a>
+                    <a class="flex items-center gap-2 text-text-main dark:text-white font-medium hover:text-primary-hover transition-colors"
+                        href="tel:+34617153252">
+                        <span class="material-symbols-outlined text-primary text-[20px]">call</span>
+                        +34 617 15 32 52
+                    </a>
+                </div>
+            </div>
+            <div
+                class="max-w-[1200px] mx-auto px-4 md:px-10 mt-10 pt-6 border-t border-gray-100 dark:border-[#262626] flex flex-col md:flex-row justify-between text-xs text-text-muted">
+                <p>© 2024 Automanize. Todos los derechos reservados.</p>
+                <div class="flex gap-4 mt-2 md:mt-0">
+                    <a class="hover:text-text-main dark:hover:text-white" href="privacy.html">Política de Privacidad</a>
+                    <a class="hover:text-text-main dark:hover:text-white" href="terms.html">Términos de Servicio</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>

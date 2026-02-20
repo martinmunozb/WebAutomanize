@@ -1,0 +1,451 @@
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Automanize - Servicios</title>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#FFB300",
+                        "primary-dark": "#c28b00",
+                        "background-light": "#ffffff",
+                        "background-dark": "#050505",
+                        "surface-dark": "#121212",
+                        "surface-light": "#f9fafb"
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "2xl": "4rem", "full": "9999px" },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+                        'hero-gradient': 'linear-gradient(135deg, #050505 0%, #1a1a1a 100%)',
+                        'card-gradient': 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)',
+                        'primary-gradient': 'linear-gradient(135deg, #FFB300 0%, #FF8F00 100%)'
+                    }
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            }
+            .text-glow {
+                text-shadow: 0 0 20px rgba(255, 179, 0, 0.5);
+            }
+            .glass-panel {
+                @apply backdrop-blur-md bg-white/5 border border-white/10;
+            }
+        }@keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body
+    class="font-display bg-background-light dark:bg-background-dark text-black dark:text-white overflow-x-hidden selection:bg-primary selection:text-black">
+    <div class="relative flex w-full flex-col min-h-screen">
+        <header
+            class="flex items-center justify-between whitespace-nowrap sticky top-0 z-50 border-b border-white/10 px-6 lg:px-10 py-4 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-lg">
+            <div class="flex items-center gap-4 text-black dark:text-white group">
+                <div class="size-8 rounded-lg overflow-hidden group-hover:scale-110 transition-transform duration-500">
+                    <img src="assets/images/favicon.ico" alt="Automanize Logo" class="w-full h-full object-cover"
+                        loading="lazy" />
+                </div>
+                <h2 class="text-xl font-bold leading-tight tracking-tight">Automanize</h2>
+            </div>
+            <div class="hidden md:flex flex-1 justify-end gap-8">
+                <div class="flex items-center gap-9">
+                    <a class="text-sm font-medium leading-normal hover:text-primary hover:tracking-wide transition-all duration-300"
+                        href="index.html">Inicio</a>
+                    <a class="text-sm font-medium leading-normal hover:text-primary hover:tracking-wide transition-all duration-300"
+                        href="our-services.html">Servicios</a>
+                    <a class="text-sm font-medium leading-normal hover:text-primary hover:tracking-wide transition-all duration-300"
+                        href="about.html">Sobre Nosotros</a>
+                    <a class="text-sm font-medium leading-normal hover:text-primary hover:tracking-wide transition-all duration-300"
+                        href="contactus.html">Contacto</a>
+                </div>
+                <a href="contactus.html"
+                    class="relative flex items-center justify-center overflow-hidden rounded-full h-10 px-6 bg-primary text-black text-sm font-bold shadow-[0_0_15px_rgba(255,179,0,0.4)] hover:shadow-[0_0_25px_rgba(255,179,0,0.6)] hover:scale-105 active:scale-95 transition-all duration-300 group">
+                    <span
+                        class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out skew-x-12"></span>
+                    <span class="relative">Empezar Ahora</span>
+                </a>
+            </div>
+        </header>
+        <div class="layout-container flex h-full grow flex-col items-center">
+            <div class="w-full max-w-[1280px] px-4 md:px-8 py-8 md:py-12">
+                <div class="flex min-h-[550px] flex-col gap-6 rounded-[2.5rem] items-center justify-center p-8 md:p-16 relative overflow-hidden group shadow-2xl"
+                    data-alt="Dark abstract geometric background representing digital networks"
+                    style="background-image: linear-gradient(rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.8) 100%), url('assets/images/services-hero.jpg'); background-size: cover; background-position: center;">
+                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-700"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90">
+                    </div>
+                    <div class="flex flex-col gap-6 text-center z-10 max-w-[900px] items-center animate-float">
+                        <div
+                            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-primary text-xs font-bold uppercase tracking-widest mb-2">
+                            <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                            Innovación & IA
+                        </div>
+                        <h1
+                            class="text-white text-5xl md:text-7xl font-black leading-[1.1] tracking-tight drop-shadow-xl text-shadow">
+                            Soluciones Inteligentes<br />
+                            <span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-yellow-200">Empresa
+                                Moderna</span>
+                        </h1>
+                        <h2
+                            class="text-gray-100 text-lg md:text-xl font-medium leading-relaxed max-w-[680px] mx-auto opacity-90">
+                            Escale sus operaciones con automatización estratégica. Desde la facturación hasta la
+                            atención al cliente, impulsamos el futuro de su negocio.
+                        </h2>
+                    </div>
+                    <a href="our-services.html"
+                        class="z-10 mt-6 relative flex min-w-[200px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-10 bg-primary text-black text-lg font-bold hover:scale-110 active:scale-95 hover:shadow-[0_0_40px_rgba(255,179,0,0.5)] transition-all duration-300 group">
+                        <span class="mr-2">Explorar Servicios</span>
+                        <span
+                            class="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+            <div class="w-full max-w-[1000px] px-4 pt-20 pb-8 text-center">
+                <h2
+                    class="text-black dark:text-white text-4xl md:text-5xl font-black leading-tight tracking-tight mb-4">
+                    Ecosistema de <span class="text-primary relative inline-block">
+                        Automatización
+                        <svg class="absolute w-full h-3 -bottom-1 left-0 text-primary opacity-40" fill="currentColor"
+                            preserveAspectRatio="none" viewBox="0 0 100 20">
+                            <path d="M0 10 Q 50 20 100 10 T 200 10" fill="none" stroke="currentColor" stroke-width="4">
+                            </path>
+                        </svg>
+                    </span>
+                </h2>
+                <p class="text-gray-500 dark:text-gray-400 text-lg max-w-2xl mx-auto">Tecnologías diseñadas para
+                    integrarse perfectamente y potenciar cada aspecto de su organización.</p>
+            </div>
+            <div class="w-full max-w-[1200px] px-4 md:px-8 py-8">
+                <div
+                    class="relative rounded-[3rem] overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] group hover:shadow-[0_20px_60px_rgba(255,179,0,0.15)] transition-all duration-500">
+                    <div
+                        class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 blur-[100px] rounded-full pointer-events-none translate-x-1/2 -translate-y-1/2">
+                    </div>
+                    <div
+                        class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 blur-[80px] rounded-full pointer-events-none -translate-x-1/3 translate-y-1/3">
+                    </div>
+                    <div class="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 p-8 md:p-12 lg:p-16">
+                        <div class="lg:col-span-7 flex flex-col justify-center gap-6 z-10">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-primary/10 rounded-lg border border-primary/20 backdrop-blur-sm">
+                                    <span class="material-symbols-outlined text-primary">verified_user</span>
+                                </div>
+                                <span class="text-primary font-bold tracking-widest text-sm uppercase">Nuevo Estándar
+                                    2024</span>
+                            </div>
+                            <h2 class="text-4xl md:text-6xl font-black text-white leading-[1.1]">
+                                Dominio Total de <br />
+                                <span
+                                    class="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500">Veri-Factu</span>
+                            </h2>
+                            <p class="text-gray-400 text-lg md:text-xl font-light leading-relaxed max-w-xl">
+                                No solo cumplimos con la AEAT, redefinimos la eficiencia fiscal. Facturación
+                                verificable, instantánea y a prueba de errores.
+                            </p>
+                            <div class="flex flex-wrap gap-4 mt-4">
+                                <div
+                                    class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/5 hover:bg-white/10 transition-colors">
+                                    <span class="material-symbols-outlined text-green-400 text-sm">check_circle</span>
+                                    <span class="text-gray-300 text-sm font-medium">Anti-fraude</span>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/5 hover:bg-white/10 transition-colors">
+                                    <span class="material-symbols-outlined text-green-400 text-sm">check_circle</span>
+                                    <span class="text-gray-300 text-sm font-medium">QR Verificable</span>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/5 hover:bg-white/10 transition-colors">
+                                    <span class="material-symbols-outlined text-green-400 text-sm">check_circle</span>
+                                    <span class="text-gray-300 text-sm font-medium">Remisión Inmediata</span>
+                                </div>
+                            </div>
+                            <div class="pt-6 flex flex-col sm:flex-row gap-4">
+                                <a href="contactus.html"
+                                    class="flex items-center justify-center gap-2 rounded-full h-14 px-8 bg-primary text-black text-base font-bold shadow-lg hover:shadow-primary/50 hover:scale-105 active:scale-95 transition-all duration-300">
+                                    <span>Implementar Veri-Factu</span>
+                                    <span class="material-symbols-outlined text-xl">rocket_launch</span>
+                                </a>
+                                <a href="https://youtu.be/Qq2NH1Q1AwI?si=CV1JZZUkQ5t2k8Qz" target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="flex items-center justify-center gap-2 rounded-full h-14 px-8 bg-transparent border border-white/20 text-white text-base font-bold hover:bg-white/5 hover:border-white/40 transition-all duration-300">
+                                    <span>Ver Demo</span>
+                                    <span class="material-symbols-outlined">play_circle</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-5 relative min-h-[400px] lg:h-auto flex items-center justify-center">
+                            <div
+                                class="relative w-full aspect-[4/5] max-w-sm mx-auto perspective-1000 group-hover:scale-105 transition-transform duration-500">
+                                <div
+                                    class="absolute inset-0 bg-[#2a2a2a] rounded-2xl border border-white/5 transform rotate-6 translate-x-4 translate-y-4 opacity-60">
+                                </div>
+                                <div
+                                    class="absolute inset-0 bg-[#1e1e1e] rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden transform transition-transform duration-500 hover:-rotate-2">
+                                    <div
+                                        class="h-24 bg-gradient-to-r from-primary/20 to-transparent p-6 flex justify-between items-start">
+                                        <div
+                                            class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+                                            <span class="material-symbols-outlined text-2xl">receipt_long</span>
+                                        </div>
+                                        <div
+                                            class="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-full border border-green-500/20 flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                            VERIFICADO
+                                        </div>
+                                    </div>
+                                    <div class="p-6 flex-1 flex flex-col gap-4">
+                                        <div class="h-2 w-2/3 bg-white/10 rounded-full"></div>
+                                        <div class="h-2 w-1/2 bg-white/10 rounded-full"></div>
+                                        <div class="mt-4 p-4 bg-black/40 rounded-xl border border-white/5">
+                                            <div class="flex justify-between mb-2">
+                                                <span class="text-xs text-gray-500">Hash Encadenado</span>
+                                                <span class="text-xs text-primary font-mono">0x7F...3A</span>
+                                            </div>
+                                            <div class="w-full bg-gray-800 rounded-full h-1.5">
+                                                <div
+                                                    class="bg-primary h-1.5 rounded-full w-full animate-[width_2s_ease-in-out]">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-auto flex items-center gap-3 pt-4 border-t border-white/5">
+                                            <div class="p-2 bg-white rounded-md">
+                                                <span
+                                                    class="material-symbols-outlined text-black text-2xl">qr_code_2</span>
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <span class="text-xs text-gray-400">Escanea para verificar</span>
+                                                <span class="text-xs font-bold text-white">aeat.gob.es</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="absolute -right-4 top-1/3 bg-white text-black px-4 py-3 rounded-xl shadow-xl border border-gray-200 transform rotate-12 animate-float z-20">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-primary">lock</span>
+                                        <span class="font-bold text-sm">Seguridad 100%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full max-w-[1200px] px-4 md:px-8 pb-10 gap-8 grid grid-cols-1 md:grid-cols-2">
+                <div
+                    class="group relative rounded-[2.5rem] bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 overflow-hidden hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_40px_rgba(255,179,0,0.1)] transition-all duration-500 hover:-translate-y-2">
+                    <div
+                        class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 group-hover:bg-primary/10 transition-colors">
+                    </div>
+                    <div class="relative p-8 md:p-10 flex flex-col h-full">
+                        <div class="mb-8 w-full aspect-video rounded-2xl overflow-hidden shadow-lg relative">
+                            <div class="absolute inset-0 bg-primary/20 mix-blend-overlay z-10"></div>
+                            <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                                style="background-image: url('assets/images/services-audit.jpg');">
+                            </div>
+                            <div
+                                class="absolute bottom-4 left-4 z-20 bg-black/80 backdrop-blur text-primary px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider border border-primary/20">
+                                Cimientos
+                            </div>
+                        </div>
+                        <h3
+                            class="text-3xl font-bold text-black dark:text-white mb-4 group-hover:text-primary transition-colors">
+                            Auditoría de IA</h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-lg mb-8 line-clamp-3">
+                            Antes de construir, analizamos. Identificamos cuellos de botella y oportunidades ocultas en
+                            sus flujos de trabajo actuales.
+                        </p>
+                        <ul class="flex flex-col gap-4 mt-auto">
+                            <li class="flex items-center gap-4 group/item">
+                                <div
+                                    class="p-2 rounded-full bg-gray-100 dark:bg-white/5 text-primary group-hover/item:bg-primary group-hover/item:text-black transition-colors">
+                                    <span class="material-symbols-outlined text-xl">analytics</span>
+                                </div>
+                                <span class="font-medium text-black dark:text-gray-200">Análisis Profundo de
+                                    Procesos</span>
+                            </li>
+                            <li class="flex items-center gap-4 group/item">
+                                <div
+                                    class="p-2 rounded-full bg-gray-100 dark:bg-white/5 text-primary group-hover/item:bg-primary group-hover/item:text-black transition-colors">
+                                    <span class="material-symbols-outlined text-xl">trending_up</span>
+                                </div>
+                                <span class="font-medium text-black dark:text-gray-200">Evaluación de ROI</span>
+                            </li>
+                        </ul>
+                        <a href="contactus.html"
+                            class="mt-8 w-full py-4 rounded-xl border border-gray-200 dark:border-white/10 font-bold text-black dark:text-white hover:bg-primary hover:border-primary hover:text-black transition-all duration-300 text-center block">
+                            Comenzar Auditoría
+                        </a>
+                    </div>
+                </div>
+                <div
+                    class="group relative rounded-[2.5rem] bg-black text-white overflow-hidden shadow-2xl hover:shadow-[0_20px_40px_rgba(255,255,255,0.1)] transition-all duration-500 hover:-translate-y-2">
+                    <div class="absolute inset-0 bg-cover bg-center opacity-40 transition-transform duration-700 group-hover:scale-105"
+                        style="background-image: url('assets/images/services-agent.jpg');">
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
+                    <div class="relative p-8 md:p-10 flex flex-col h-full z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <div
+                                class="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 group-hover:bg-primary group-hover:text-black transition-colors duration-300">
+                                <span class="material-symbols-outlined text-3xl">support_agent</span>
+                            </div>
+                            <span class="px-3 py-1 bg-primary text-black text-xs font-bold uppercase rounded-full">24/7
+                                Activo</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-white mb-4 group-hover:text-primary transition-colors">Agente
+                            IA Autónomo</h3>
+                        <p class="text-gray-300 text-lg mb-8">
+                            Nunca pierda una oportunidad. Nuestros agentes manejan interacciones complejas, reservas y
+                            soporte sin intervención humana.
+                        </p>
+                        <div class="grid grid-cols-1 gap-3 mt-auto">
+                            <div
+                                class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                                <span class="material-symbols-outlined text-primary">phone_in_talk</span>
+                                <div>
+                                    <h4 class="font-bold text-sm">Voz Natural</h4>
+                                    <p class="text-xs text-gray-400">Conversaciones fluidas y humanas</p>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                                <span class="material-symbols-outlined text-primary">calendar_month</span>
+                                <div>
+                                    <h4 class="font-bold text-sm">Gestión de Agenda</h4>
+                                    <p class="text-xs text-gray-400">Reservas automáticas en tiempo real</p>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                                <span class="material-symbols-outlined text-primary">hub</span>
+                                <div>
+                                    <h4 class="font-bold text-sm">Omnicanal</h4>
+                                    <p class="text-xs text-gray-400">WhatsApp, Web y Teléfono unificados</p>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="https://youtu.be/Qq2NH1Q1AwI?si=CV1JZZUkQ5t2k8Qz" target="_blank"
+                            rel="noopener noreferrer"
+                            class="mt-8 w-full py-4 rounded-xl bg-white text-black font-bold hover:bg-primary hover:scale-[1.02] transition-all duration-300 shadow-lg text-center block">
+                            Ver Demo en Vivo
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="w-full bg-surface-light dark:bg-[#080808] py-20 mt-10 border-t border-gray-200 dark:border-[#262626]">
+                <div class="max-w-[1200px] mx-auto px-4 md:px-8">
+                    <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+                        <div>
+                            <h2 class="text-3xl md:text-4xl font-bold text-black dark:text-white tracking-tight mb-2">
+                                Herramientas de Crecimiento
+                            </h2>
+                            <p class="text-gray-500 dark:text-gray-400 max-w-lg">
+                                Micro-servicios esenciales para mantener su maquinaria digital perfectamente engrasada.
+                            </p>
+                        </div>
+                        <button class="text-primary font-bold hover:underline flex items-center gap-1 group">
+                            Ver catálogo completo
+                            <span
+                                class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div
+                            class="group bg-white dark:bg-[#121212] p-8 rounded-3xl border border-gray-100 dark:border-[#262626] hover:border-primary/50 hover:shadow-xl dark:hover:shadow-[0_10px_30px_rgba(255,179,0,0.05)] transition-all duration-300 hover:-translate-y-2 cursor-pointer relative overflow-hidden">
+                            <div
+                                class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/20 to-transparent rounded-bl-full -mr-4 -mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            </div>
+                            <div
+                                class="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-[#1a1a1a] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-black transition-all duration-300 text-black dark:text-white shadow-sm">
+                                <span class="material-symbols-outlined text-2xl">share</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-black dark:text-white mb-3">Auto-Social</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-4">
+                                Distribución de contenido programada inteligente. Mantenga sus redes vivas sin mover un
+                                dedo.
+                            </p>
+                            <div
+                                class="mt-auto pt-4 border-t border-gray-100 dark:border-white/5 flex items-center justify-between">
+                                <span class="text-xs font-bold text-primary tracking-wider uppercase">Marketing</span>
+                                <span
+                                    class="material-symbols-outlined text-gray-300 group-hover:text-primary transition-colors">arrow_outward</span>
+                            </div>
+                        </div>
+                        <div
+                            class="group bg-white dark:bg-[#121212] p-8 rounded-3xl border border-gray-100 dark:border-[#262626] hover:border-primary/50 hover:shadow-xl dark:hover:shadow-[0_10px_30px_rgba(255,179,0,0.05)] transition-all duration-300 hover:-translate-y-2 cursor-pointer relative overflow-hidden">
+                            <div
+                                class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/20 to-transparent rounded-bl-full -mr-4 -mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            </div>
+                            <div
+                                class="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-[#1a1a1a] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-black transition-all duration-300 text-black dark:text-white shadow-sm">
+                                <span class="material-symbols-outlined text-2xl">shield</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-black dark:text-white mb-3">Web Guardian</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-4">
+                                Copias de seguridad automáticas y blindaje contra amenazas. Su activo digital, siempre
+                                seguro.
+                            </p>
+                            <div
+                                class="mt-auto pt-4 border-t border-gray-100 dark:border-white/5 flex items-center justify-between">
+                                <span class="text-xs font-bold text-primary tracking-wider uppercase">Seguridad</span>
+                                <span
+                                    class="material-symbols-outlined text-gray-300 group-hover:text-primary transition-colors">arrow_outward</span>
+                            </div>
+                        </div>
+                        <div
+                            class="group bg-white dark:bg-[#121212] p-8 rounded-3xl border border-gray-100 dark:border-[#262626] hover:border-primary/50 hover:shadow-xl dark:hover:shadow-[0_10px_30px_rgba(255,179,0,0.05)] transition-all duration-300 hover:-translate-y-2 cursor-pointer relative overflow-hidden">
+                            <div
+                                class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/20 to-transparent rounded-bl-full -mr-4 -mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            </div>
+                            <div
+                                class="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-[#1a1a1a] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-black transition-all duration-300 text-black dark:text-white shadow-sm">
+                                <span class="material-symbols-outlined text-2xl">campaign</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-black dark:text-white mb-3">Smart Push</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-4">
+                                Re-engagement potenciado por IA. Notificaciones que llegan en el momento exacto para
+                                convertir.
+                            </p>
+                            <div
+                                class="mt-auto pt-4 border-t border-gray-100 dark:border-white/5 flex items-center justify-between">
+                                <span class="text-xs font-bold text-primary tracking-wider uppercase">Retención</span>
+                                <span
+                                    class="material-symbols-outlined text-gray-300 group-hover:text-primary transition-colors">arrow_outward</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

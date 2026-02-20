@@ -1,0 +1,112 @@
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Agendar llamada - Automanize</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#FFAB00",
+                        "primary-hover": "#E69900",
+                        "background-light": "#fcfcfb",
+                        "background-dark": "#0a0a0a",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#141414",
+                        "text-main": "#181811",
+                        "text-muted": "#6b6b5f"
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: "Spline Sans", sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light text-text-main overflow-x-hidden font-display">
+    <div class="relative flex flex-col min-h-screen w-full">
+        <header class="w-full border-b border-[#e6e6db] bg-background-light/90 backdrop-blur-md">
+            <div class="px-4 md:px-10 py-4 flex items-center justify-between max-w-[1200px] mx-auto w-full">
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="size-10 rounded-lg flex items-center justify-center shadow-md overflow-hidden">
+                        <img src="assets/images/favicon.ico" alt="Automanize Logo" class="w-full h-full object-cover" loading="lazy" />
+                    </div>
+                    <h1 class="text-text-main text-2xl font-bold tracking-tight">Automanize</h1>
+                </a>
+                <a href="index.html" class="text-sm font-semibold hover:text-primary-hover transition-colors">Volver al inicio</a>
+            </div>
+        </header>
+
+        <main class="flex-1 w-full max-w-[920px] mx-auto px-4 md:px-10 py-12 md:py-20">
+            <section class="rounded-2xl border border-[#e6e6db] bg-surface-light p-6 md:p-10 shadow-sm">
+                <p class="text-sm font-semibold uppercase tracking-wider text-primary mb-3">Paso 2 de 2</p>
+                <h2 class="text-3xl md:text-4xl font-black leading-tight">Agenda tu llamada de consultoria gratuita</h2>
+                <p class="mt-4 text-text-muted text-lg">
+                    Ya tenemos tu informacion. Elige un horario y confirma la cita.
+                </p>
+
+                <div id="lead-summary" class="mt-6 rounded-xl border border-[#ececdc] bg-[#fafaf7] px-4 py-3 text-sm text-text-muted hidden"></div>
+
+                <div class="mt-8 rounded-2xl border border-dashed border-[#d8d8cc] bg-[#f8f8f4] p-6 md:p-8 text-center">
+                    <p class="text-lg font-semibold text-text-main">Calendly se integrara aqui</p>
+                    <p class="mt-2 text-text-muted">
+                        En el siguiente paso conectamos tu enlace de Calendly para que el agendado quede automatico.
+                    </p>
+
+                    <div class="mt-6">
+                        <a href="#" class="inline-flex h-12 px-7 items-center justify-center rounded-full bg-primary hover:bg-primary-hover text-black font-bold transition-colors">
+                            Abrir calendario (pendiente de configurar)
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <div class="mt-6 flex justify-start">
+                <a id="back-link" href="consultoria-gratuita.html"
+                    class="inline-flex h-11 px-5 items-center justify-center rounded-full border border-[#d6d6ca] bg-white hover:bg-[#f5f5f1] text-text-main font-semibold transition-colors">
+                    Volver atras
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const nombre = params.get("nombre");
+        const email = params.get("email");
+        const dedicacion = params.get("dedicacion");
+        const problema = params.get("problema");
+        const backLink = document.getElementById("back-link");
+
+        const summary = document.getElementById("lead-summary");
+        if (summary && (nombre || email || dedicacion || problema)) {
+            const lines = [];
+            if (nombre) lines.push(`<strong>Nombre:</strong> ${nombre}`);
+            if (email) lines.push(`<strong>Email:</strong> ${email}`);
+            if (dedicacion) lines.push(`<strong>A que te dedicas:</strong> ${dedicacion}`);
+            if (problema) lines.push(`<strong>Problema a solucionar:</strong> ${problema}`);
+            summary.innerHTML = lines.join("<br>");
+            summary.classList.remove("hidden");
+        }
+
+        if (backLink && params.toString()) {
+            backLink.href = `consultoria-gratuita.html?${params.toString()}`;
+        }
+    </script>
+</body>
+
+</html>

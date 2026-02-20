@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMM Control Integral de Plagas | Expertos en Murcia</title>
+    <meta name="description"
+        content="Soluciones profesionales de control de plagas en Murcia. Elimine cucarachas, roedores e insectos de forma definitiva. Inspección gratuita y servicio 24h.">
+    <meta name="keywords"
+        content="control de plagas murcia, fumigación la unión, desratización, desinsectación, eliminar cucarachas murcia, empresa control plagas cartagena">
+    <meta name="author" content="TMM Control Integral de Plagas">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://controldeplagastmm.com/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="business.business">
+    <meta property="og:url" content="https://controldeplagastmm.com/">
+    <meta property="og:title" content="TMM Control Integral de Plagas | Expertos en Murcia">
+    <meta property="og:description"
+        content="Soluciones profesionales de control de plagas en Murcia. Inspección gratuita, tratamientos certificados y seguimiento incluido.">
+    <meta property="og:image" content="https://controldeplagastmm.com/og-image.jpg">
+    <meta property="og:locale" content="es_ES">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://controldeplagastmm.com/">
+    <meta property="twitter:title" content="TMM Control Integral de Plagas | Expertos en Murcia">
+    <meta property="twitter:description"
+        content="Soluciones profesionales de control de plagas en Murcia. Inspección gratuita.">
+    <meta property="twitter:image" content="https://controldeplagastmm.com/og-image.jpg">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='white'/%3E%3Ctext y='65' x='50' font-size='40' font-family='Arial, sans-serif' font-weight='900' fill='%23D32F2F' text-anchor='middle'%3ETMM%3C/text%3E%3C/svg%3E">
+
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "PestControl",
+      "name": "TMM Control Integral de Plagas",
+      "image": "https://controldeplagastmm.com/og-image.jpg",
+      "@id": "https://controldeplagastmm.com",
+      "url": "https://controldeplagastmm.com",
+      "telephone": "+34663045041",
+      "email": "tmmcartagena@hotmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "La Unión",
+        "addressLocality": "La Unión",
+        "addressRegion": "Murcia",
+        "postalCode": "30360",
+        "addressCountry": "ES"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 37.617,
+        "longitude": -0.867
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "opens": "09:00",
+        "closes": "14:00"
+      },
+      "priceRange": "$$",
+      "description": "Empresa especializada en control de plagas en Murcia. Servicios de desinsectación, desratización y fumigación para hogares y empresas."
+    }
+    </script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header__content">
+                <div class="header__logo">
+                    <span class="logo-text">TMM<span class="logo-subtitle">Control de Plagas</span></span>
+                </div>
+
+                <nav class="nav" id="nav">
+                    <ul class="nav__list">
+                        <li class="nav__item"><a href="#inicio" class="nav__link">Inicio</a></li>
+                        <li class="nav__item"><a href="#servicios" class="nav__link">Servicios</a></li>
+                        <li class="nav__item"><a href="#proceso" class="nav__link">Cómo Trabajamos</a></li>
+                        <li class="nav__item"><a href="#sectores" class="nav__link">Sectores</a></li>
+                    </ul>
+                </nav>
+
+                <div class="header__actions">
+                    <a href="tel:+34663045041" class="btn btn--secondary header__btn">
+                        <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
+                        Llamar Ahora
+                    </a>
+                    <a href="#contacto" class="btn btn--primary header__btn">Solicitar Presupuesto</a>
+                </div>
+
+                <button class="hamburger" id="hamburger" aria-label="Menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="hero__overlay"></div>
+        <div class="container">
+            <div class="hero__content">
+                <div class="hero__badges">
+                    <span class="badge">
+                        <svg class="badge__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                        </svg>
+                        Respuesta en 24h
+                    </span>
+                    <span class="badge">
+                        <svg class="badge__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Tratamientos Certificados
+                    </span>
+                    <span class="badge">
+                        <svg class="badge__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        Seguimiento Incluido
+                    </span>
+                </div>
+
+                <h1 class="hero__title">Soluciones efectivas de control de plagas en <span
+                        class="text-highlight">Murcia</span></h1>
+
+                <p class="hero__subtitle">Inspección gratuita, tratamientos específicos según tipo de plaga y
+                    seguimiento periódico. Aplicamos productos certificados bajo normativa vigente para su total
+                    seguridad.</p>
+
+                <div class="hero__cta">
+                    <a href="#contacto" class="btn btn--primary btn--large">Solicitar Inspección Gratuita</a>
+                    <a href="tel:+34663045041" class="btn btn--secondary btn--large">
+                        <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
+                        Llamar Ahora
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="servicios">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Servicios Especializados</h2>
+                <p class="section-subtitle">Tratamientos específicos diseñados para cada tipo de plaga con resultados
+                    verificables y duraderos.</p>
+            </div>
+
+            <div class="services__grid">
+                <!-- Service 1: Insects -->
+                <article class="service-card">
+                    <div class="service-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="service-card__title">Control de Insectos</h3>
+                    <p class="service-card__problem">Eliminamos cucarachas, hormigas, arañas, mosquitos y otros insectos
+                        rastreros y voladores de forma definitiva.</p>
+                    <div class="service-card__includes">
+                        <h4>Qué incluye:</h4>
+                        <ul>
+                            <li>Inspección de puntos de entrada y anidación</li>
+                            <li>Tratamiento con productos específicos según especie</li>
+                            <li>Barrera preventiva perimetral de larga duración</li>
+                        </ul>
+                    </div>
+                    <div class="service-card__when">
+                        <strong>Cuándo aplicarlo:</strong> Presencia visible, rastros de actividad o prevención
+                        estacional.
+                    </div>
+                    <div class="service-card__results">
+                        <strong>Resultado:</strong> Eliminación en 48-72h con protección residual de 3-6
+                        meses.
+                    </div>
+                </article>
+
+                <!-- Service 2: Rodents -->
+                <article class="service-card service-card--popular">
+                    <span class="card-badge">Más Demandado</span>
+                    <div class="service-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="service-card__title">Control de Roedores</h3>
+                    <p class="service-card__problem">Solución integral contra ratas, ratones y otros roedores en
+                        viviendas y negocios con métodos seguros.</p>
+                    <div class="service-card__includes">
+                        <h4>Qué incluye:</h4>
+                        <ul>
+                            <li>Identificación de rutas de tránsito y madrigueras</li>
+                            <li>Colocación estratégica de cebos y estaciones</li>
+                            <li>Sellado de puntos de acceso (asesoramiento incluido)</li>
+                        </ul>
+                    </div>
+                    <div class="service-card__when">
+                        <strong>Cuándo aplicarlo:</strong> Ruidos nocturnos, excrementos, daños en cables o
+                        envases mordidos.
+                    </div>
+                    <div class="service-card__results">
+                        <strong>Resultado:</strong> Actividad eliminada en 7-14 días con seguimiento
+                        preventivo.
+                    </div>
+                </article>
+
+                <!-- Service 3: Desinsectación -->
+                <article class="service-card">
+                    <div class="service-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                    </div>
+                    <h3 class="service-card__title">Desinsectación Profesional</h3>
+                    <p class="service-card__problem">Tratamiento completo para negocios que requieren certificación
+                        sanitaria</p>
+                    <div class="service-card__includes">
+                        <h4>Qué incluye:</h4>
+                        <ul>
+                            <li>Pulverización, nebulización o gel según necesidad</li>
+                            <li>Productos certificados con fichas de seguridad</li>
+                            <li>Aplicación fuera de horario comercial si se requiere</li>
+                            <li>Certificado de tratamiento para inspecciones</li>
+                        </ul>
+                    </div>
+                    <div class="service-card__when">
+                        <strong>Cuándo aplicarlo:</strong> Mantenimiento periódico, auditorías sanitarias o
+                        certificaciones APPCC
+                    </div>
+                    <div class="service-card__results">
+                        <strong>Resultado:</strong> Certificado oficial + control efectivo sin interrumpir operaciones
+                    </div>
+                </article>
+
+                <!-- Service 4: Fumigación -->
+                <article class="service-card">
+                    <div class="service-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <h3 class="service-card__title">Fumigación Integral</h3>
+                    <p class="service-card__problem">Para infestaciones graves que requieren intervención completa del
+                        espacio</p>
+                    <div class="service-card__includes">
+                        <h4>Qué incluye:</h4>
+                        <ul>
+                            <li>Evaluación previa del nivel de infestación</li>
+                            <li>Instrucciones para preparación del espacio</li>
+                            <li>Aplicación técnica profesional con equipos especializados</li>
+                            <li>Protocolo de seguridad y tiempos de reingreso</li>
+                        </ul>
+                    </div>
+                    <div class="service-card__when">
+                        <strong>Cuándo aplicarlo:</strong> Infestación severa, tratamientos previos sin éxito o espacios
+                        desocupados
+                    </div>
+                    <div class="service-card__results">
+                        <strong>Resultado:</strong> Eliminación total con garantía de eficacia a 30 días
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="process" id="proceso">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Cómo Trabajamos</h2>
+                <p class="section-subtitle">Proceso transparente de 4 pasos con resultados garantizados</p>
+            </div>
+
+            <div class="process__steps">
+                <div class="process-step">
+                    <div class="process-step__number">01</div>
+                    <div class="process-step__content">
+                        <h3 class="process-step__title">Diagnóstico in situ</h3>
+                        <p class="process-step__description">Inspección gratuita en tu espacio. Identificamos el tipo de
+                            plaga, nivel de infestación y puntos críticos. Sin compromiso.</p>
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="process-step__number">02</div>
+                    <div class="process-step__content">
+                        <h3 class="process-step__title">Plan personalizado</h3>
+                        <p class="process-step__description">Propuesta de tratamiento específico con cronograma,
+                            productos a usar y precio cerrado. Todo claro desde el principio.</p>
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="process-step__number">03</div>
+                    <div class="process-step__content">
+                        <h3 class="process-step__title">Aplicación técnica</h3>
+                        <p class="process-step__description">Tratamiento profesional con productos certificados bajo
+                            normativa vigente. Técnicos cualificados con equipos especializados.</p>
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="process-step__number">04</div>
+                    <div class="process-step__content">
+                        <h3 class="process-step__title">Seguimiento</h3>
+                        <p class="process-step__description">Revisiones programadas incluidas. Asesoramiento preventivo
+                            para mantener resultados a largo plazo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sectors Section -->
+    <section class="sectors" id="sectores">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Sectores que Atendemos</h2>
+                <p class="section-subtitle">Experiencia en distintos tipos de espacios con necesidades específicas</p>
+            </div>
+
+            <div class="sectors__grid">
+                <div class="sector-card">
+                    <div class="sector-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                    </div>
+                    <h3 class="sector-card__title">Hogares y Viviendas</h3>
+                    <p class="sector-card__description">Tratamientos seguros para familias. Productos aptos sin riesgo
+                        para mascotas ni niños.</p>
+                </div>
+
+                <div class="sector-card">
+                    <div class="sector-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                    </div>
+                    <h3 class="sector-card__title">Comunidades de Propietarios</h3>
+                    <p class="sector-card__description">Mantenimiento preventivo de zonas comunes, garajes y trasteros.
+                        Planes anuales disponibles.</p>
+                </div>
+
+                <div class="sector-card">
+                    <div class="sector-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <h3 class="sector-card__title">Restaurantes y Alimentación</h3>
+                    <p class="sector-card__description">Certificaciones APPCC, fichas de seguridad y seguimiento
+                        continuo para auditorías sanitarias.</p>
+                </div>
+
+                <div class="sector-card">
+                    <div class="sector-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                        </svg>
+                    </div>
+                    <h3 class="sector-card__title">Espacios Industriales</h3>
+                    <p class="sector-card__description">Naves, almacenes y centros logísticos. Tratamientos amplios sin
+                        interrumpir operaciones.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Info Section -->
+    <section class="technical-info">
+        <div class="container">
+            <div class="technical-info__content">
+                <h2 class="technical-info__title">Compromiso con la Seguridad</h2>
+                <p class="technical-info__text">Todos nuestros tratamientos cumplen con la normativa vigente. Utilizamos
+                    productos certificados con fichas de seguridad disponibles. Aplicamos protocolos específicos según
+                    el tipo de espacio y plaga.</p>
+
+                <details class="technical-info__details">
+                    <summary class="technical-info__summary">Ver información técnica de productos</summary>
+                    <div class="technical-info__expanded">
+                        <h3>Productos Utilizados</h3>
+                        <ul>
+                            <li><strong>Insecticidas de contacto y residual:</strong> Piretroides sintéticos de baja
+                                toxicidad, aprobados para uso doméstico y alimentario.</li>
+                            <li><strong>Rodenticidas anticoagulantes:</strong> Estaciones cerradas de seguridad,
+                                inaccesibles para niños y mascotas.</li>
+                            <li><strong>Geles y cebos:</strong> Aplicación dirigida en puntos estratégicos, sin
+                                pulverización en el ambiente.</li>
+                            <li><strong>Desinfectantes y limpiadores:</strong> Para eliminación de feromonas y rastros
+                                de actividad.</li>
+                        </ul>
+                        <p class="technical-info__note"><strong>Nota:</strong> Todas las fichas de seguridad están
+                            disponibles bajo petición. Cumplimos con RD 3349/1983 y normativa europea de biocidas.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contacto">
+        <div class="container">
+            <div class="contact__wrapper">
+                <div class="contact__info">
+                    <h2 class="contact__title">Solicita tu Presupuesto Gratuito</h2>
+                    <p class="contact__subtitle">Respuesta en menos de 24 horas. Inspección sin compromiso.</p>
+
+                    <div class="contact__methods">
+                        <a href="tel:+34663045041" class="contact-method">
+                            <div class="contact-method__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                            </div>
+                            <div class="contact-method__content">
+                                <span class="contact-method__label">Teléfono</span>
+                                <span class="contact-method__value">663 045 041</span>
+                            </div>
+                        </a>
+
+                        <a href="https://wa.me/34663045041?text=Hola%2C%20necesito%20información%20sobre%20control%20de%20plagas"
+                            class="contact-method contact-method--whatsapp" target="_blank">
+                            <div class="contact-method__icon">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                                </svg>
+                            </div>
+                            <div class="contact-method__content">
+                                <span class="contact-method__label">WhatsApp</span>
+                                <span class="contact-method__value">Enviar mensaje</span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="contact__hours">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Lunes a Viernes: 9:00 - 14:00</span>
+                    </div>
+                </div>
+
+                <form class="contact__form" id="contactForm" action="https://formsubmit.co/tmmcartagena@hotmail.com"
+                    method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="_subject" value="Nuevo Mensaje Web TMM">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_template" value="table">
+
+                    <div class="form-group">
+                        <label for="nombre" class="form-label">Nombre completo <span class="required">*</span></label>
+                        <input type="text" id="nombre" name="nombre" class="form-input" required>
+                        <span class="form-error" id="nombreError"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="telefono" class="form-label">Teléfono <span class="required">*</span></label>
+                            <input type="tel" id="telefono" name="telefono" class="form-input" required>
+                            <span class="form-error" id="telefonoError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" class="form-input" required>
+                            <span class="form-error" id="emailError"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipoEspacio" class="form-label">Tipo de espacio <span
+                                class="required">*</span></label>
+                        <select id="tipoEspacio" name="tipoEspacio" class="form-input" required>
+                            <option value="">Selecciona una opción</option>
+                            <option value="vivienda">Vivienda particular</option>
+                            <option value="negocio">Negocio/Local</option>
+                            <option value="comunidad">Comunidad de propietarios</option>
+                            <option value="industrial">Espacio industrial</option>
+                        </select>
+                        <span class="form-error" id="tipoEspacioError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="problema" class="form-label">Describe el problema <span
+                                class="required">*</span></label>
+                        <textarea id="problema" name="problema" class="form-input" rows="4"
+                            placeholder="Ej: He visto cucarachas en la cocina por las noches, he encontrado excrementos de roedores en el garaje..."
+                            required></textarea>
+                        <span class="form-error" id="problemaError"></span>
+                    </div>
+
+
+
+                    <div class="form-group form-group--checkbox">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="privacidad" name="privacidad" required>
+                            <span class="checkbox-text">Acepto la <a href="#" class="link">política de privacidad</a> y
+                                el tratamiento de mis datos <span class="required">*</span></span>
+                        </label>
+                        <span class="form-error" id="privacidadError"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn--primary btn--large btn--full">Solicitar Presupuesto
+                        Gratuito</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__section">
+                    <div class="footer__logo">
+                        <span class="logo-text">TMM<span class="logo-subtitle">Control de Plagas</span></span>
+                    </div>
+                    <p class="footer__description">Soluciones profesionales de control de plagas en Murcia y provincia.
+                    </p>
+                </div>
+
+                <div class="footer__section">
+                    <h3 class="footer__heading">Contacto</h3>
+                    <address class="footer__address">
+                        <p><strong>TMM Control Integral de Plagas, S.L.</strong></p>
+                        <p>La Unión, Murcia 30360</p>
+                        <p>NIF: B00000000X</p>
+                        <p>Tel: <a href="tel:+34663045041">663 045 041</a></p>
+                        <p>Email: <a href="mailto:tmmcartagena@hotmail.com">tmmcartagena@hotmail.com</a></p>
+                    </address>
+                </div>
+
+                <div class="footer__section">
+                    <h3 class="footer__heading">Servicios</h3>
+                    <ul class="footer__links">
+                        <li><a href="#servicios">Control de Insectos</a></li>
+                        <li><a href="#servicios">Control de Roedores</a></li>
+                        <li><a href="#servicios">Desinsectación</a></li>
+                        <li><a href="#servicios">Fumigación</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer__section">
+                    <h3 class="footer__heading">Legal</h3>
+                    <ul class="footer__links">
+                        <li><a href="#">Aviso Legal</a></li>
+                        <li><a href="#">Política de Privacidad</a></li>
+                        <li><a href="#">Política de Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer__bottom">
+                <p>&copy; 2026 TMM Control Integral de Plagas, S.L. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+
+</html>
