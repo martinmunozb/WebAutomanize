@@ -1,4 +1,16 @@
 {
+  "redirects": [
+    {
+      "source": "/privacy.html",
+      "destination": "/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/terms.html",
+      "destination": "/index.html",
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

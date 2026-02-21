@@ -42,6 +42,10 @@
         }
     </script>
     <style>
+        #inicio-principal {
+            scroll-margin-top: 96px;
+        }
+
         body {
             font-family: "Spline Sans", sans-serif;
         }
@@ -552,14 +556,14 @@
         <header
             class="sticky top-0 z-50 w-full border-b border-[#e6e6db] dark:border-[#262626] bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md">
             <div class="px-4 md:px-10 py-4 flex items-center justify-between max-w-[1200px] mx-auto w-full">
-                <div class="flex items-center gap-3">
+                <a href="index.html#inicio-principal" class="flex items-center gap-3" aria-label="Ir al inicio principal">
                     <div
                         class="size-10 rounded-lg flex items-center justify-center shadow-md overflow-hidden scale-hover">
-                        <img src="assets/images/favicon.ico" alt="Automanize Logo" class="w-full h-full object-cover"
+                        <img src="assets/images/automanize.png" alt="Automanize Logo" class="w-full h-full object-cover"
                             loading="lazy" />
                     </div>
                     <h2 class="text-text-main dark:text-white text-2xl font-bold tracking-tight">Automanize</h2>
-                </div>
+                </a>
                 <div class="hidden md:flex items-center gap-8">
                     <a class="text-text-main dark:text-white text-sm font-medium hover:text-primary-hover transition-colors"
                         href="index.html">Inicio</a>
@@ -580,7 +584,7 @@
         </header>
 
         <main class="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-10 flex flex-col gap-16 pb-20">
-            <section class="pt-14 md:pt-24">
+            <section id="inicio-principal" class="pt-14 md:pt-24">
                 <div class="@container">
                     <div class="flex justify-center items-center">
                         <div
@@ -718,7 +722,7 @@
                         puedes ahorrar tiempo.</p>
                 </div>
                 <div class="relative z-10 shrink-0">
-                    <a href="contactus.html"
+                    <a href="consultoria-gratuita.html"
                         class="h-14 px-8 bg-primary hover:bg-white text-black text-lg font-bold rounded-full transition-colors flex items-center gap-2 glow">
                         <span>Agendar Llamada</span>
                         <span class="material-symbols-outlined">arrow_forward</span>
@@ -785,13 +789,13 @@
             <div
                 class="max-w-[1200px] mx-auto px-4 md:px-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
                 <div class="flex flex-col gap-4">
-                    <div class="flex items-center gap-3">
+                    <a href="index.html#inicio-principal" aria-label="Ir al inicio principal" class="flex items-center gap-3">
                         <div class="size-8 rounded-md flex items-center justify-center overflow-hidden">
-                            <img src="assets/images/favicon.ico" alt="Automanize Logo"
+                            <img src="assets/images/automanize.png" alt="Automanize Logo"
                                 class="w-full h-full object-cover" loading="lazy" />
                         </div>
                         <h3 class="text-text-main dark:text-white text-lg font-bold">Automanize</h3>
-                    </div>
+                    </a>
                     <p class="text-text-muted text-sm max-w-xs">
                         Empoderando empresas con soluciones de automatización inteligente.
                     </p>
@@ -812,10 +816,6 @@
             <div
                 class="max-w-[1200px] mx-auto px-4 md:px-10 mt-10 pt-6 border-t border-gray-100 dark:border-[#262626] flex flex-col md:flex-row justify-between text-xs text-text-muted">
                 <p>© 2024 Automanize. Todos los derechos reservados.</p>
-                <div class="flex gap-4 mt-2 md:mt-0">
-                    <a class="hover:text-text-main dark:hover:text-white" href="privacy.html">Política de Privacidad</a>
-                    <a class="hover:text-text-main dark:hover:text-white" href="terms.html">Términos de Servicio</a>
-                </div>
             </div>
         </footer>
     </div>
@@ -823,3 +823,5 @@
 </body>
 
 </html>
+
+
