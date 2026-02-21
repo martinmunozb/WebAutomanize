@@ -3,6 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://assets.calendly.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://calendly.com https://assets.calendly.com; frame-src https://calendly.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests" />
     <title>Agendar llamada - Automanize</title>
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
@@ -78,25 +81,45 @@
 
     <script>
         const params = new URLSearchParams(window.location.search);
-        const nombre = params.get("nombre");
-        const email = params.get("email");
-        const dedicacion = params.get("dedicacion");
-        const problema = params.get("problema");
+        const sanitize = (value, maxLen = 300) => {
+            if (!value) return "";
+            return value.replace(/[\u0000-\u001F\u007F]/g, "").trim().slice(0, maxLen);
+        };
+        const nombre = sanitize(params.get("nombre"), 80);
+        const email = sanitize(params.get("email"), 120);
+        const dedicacion = sanitize(params.get("dedicacion"), 120);
+        const problema = sanitize(params.get("problema"), 500);
         const backLink = document.getElementById("back-link");
 
         const summary = document.getElementById("lead-summary");
         if (summary && (nombre || email || dedicacion || problema)) {
-            const lines = [];
-            if (nombre) lines.push(`<strong>Nombre:</strong> ${nombre}`);
-            if (email) lines.push(`<strong>Email:</strong> ${email}`);
-            if (dedicacion) lines.push(`<strong>A que te dedicas:</strong> ${dedicacion}`);
-            if (problema) lines.push(`<strong>Problema a solucionar:</strong> ${problema}`);
-            summary.innerHTML = lines.join("<br>");
+            const addLine = (label, value) => {
+                const row = document.createElement("div");
+                const strong = document.createElement("strong");
+                strong.textContent = `${label}: `;
+                const text = document.createTextNode(value);
+                row.appendChild(strong);
+                row.appendChild(text);
+                summary.appendChild(row);
+            };
+
+            if (nombre) addLine("Nombre", nombre);
+            if (email) addLine("Email", email);
+            if (dedicacion) addLine("A qué te dedicas", dedicacion);
+            if (problema) addLine("Problema a solucionar", problema);
             summary.classList.remove("hidden");
         }
 
-        if (backLink && params.toString()) {
-            backLink.href = `consultoria-gratuita.html?${params.toString()}`;
+        if (backLink) {
+            const safeParams = new URLSearchParams();
+            if (nombre) safeParams.set("nombre", nombre);
+            if (email) safeParams.set("email", email);
+            if (dedicacion) safeParams.set("dedicacion", dedicacion);
+            if (problema) safeParams.set("problema", problema);
+
+            if (safeParams.toString()) {
+                backLink.href = `consultoria-gratuita.html?${safeParams.toString()}`;
+            }
         }
     </script>
     <script src="https://assets.calendly.com/assets/external/widget.js" async></script>

@@ -3,6 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests" />
     <title>Consultoría gratuita - Automanize</title>
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
@@ -61,17 +64,20 @@
                     </p>
                 </div>
 
-                <form action="agendar-llamada.html" method="get" class="max-w-[760px] mx-auto mt-8 grid gap-5">
+                <form id="lead-form" action="agendar-llamada.html" method="get" class="max-w-[760px] mx-auto mt-8 grid gap-5">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <label class="flex flex-col gap-2 text-left">
                             <span class="text-sm font-semibold text-text-main">Nombre</span>
                             <input type="text" name="nombre" required
+                                autocomplete="name" maxlength="80"
+                                pattern="[A-Za-zÀ-ÿÑñ' .-]{2,80}"
                                 class="w-full rounded-xl border border-[#d9d9ce] bg-white px-4 py-3 text-text-main focus:border-primary focus:ring-primary"
                                 placeholder="Tu nombre" />
                         </label>
                         <label class="flex flex-col gap-2 text-left">
                             <span class="text-sm font-semibold text-text-main">Email</span>
                             <input type="email" name="email" required
+                                autocomplete="email" maxlength="120"
                                 class="w-full rounded-xl border border-[#d9d9ce] bg-white px-4 py-3 text-text-main focus:border-primary focus:ring-primary"
                                 placeholder="tu@email.com" />
                         </label>
@@ -80,6 +86,8 @@
                     <label class="flex flex-col gap-2 text-left">
                         <span class="text-sm font-semibold text-text-main">A qué te dedicas</span>
                         <input type="text" name="dedicacion" required
+                            autocomplete="organization-title" maxlength="120"
+                            pattern="[A-Za-zÀ-ÿÑñ0-9 .,()&+/_-]{2,120}"
                             class="w-full rounded-xl border border-[#d9d9ce] bg-white px-4 py-3 text-text-main focus:border-primary focus:ring-primary"
                             placeholder="Ej: ecommerce, asesoría, clínica, agencia..." />
                     </label>
@@ -87,6 +95,7 @@
                     <label class="flex flex-col gap-2 text-left">
                         <span class="text-sm font-semibold text-text-main">Problema a solucionar (opcional)</span>
                         <textarea name="problema" rows="4"
+                            maxlength="500"
                             class="w-full rounded-xl border border-[#d9d9ce] bg-white px-4 py-3 text-text-main focus:border-primary focus:ring-primary"
                             placeholder="Cuéntanos qué quieres automatizar..."></textarea>
                         <span class="text-xs text-text-muted">
@@ -108,12 +117,65 @@
     <script>
         const params = new URLSearchParams(window.location.search);
         const fields = ["nombre", "email", "dedicacion", "problema"];
+        const blockedPattern = /(<|>|`|--|\/\*|\*\/|\b(select|insert|update|delete|drop|union|alter|create|truncate|exec|script)\b)/i;
+        const sanitize = (value, maxLen = 300) => {
+            if (!value) return "";
+            return value.replace(/[\u0000-\u001F\u007F]/g, "").trim().slice(0, maxLen);
+        };
+        const isValidName = (value) => /^[A-Za-zÀ-ÿÑñ' .-]{2,80}$/.test(value);
+        const isValidDedicacion = (value) => /^[A-Za-zÀ-ÿÑñ0-9 .,()&+/_-]{2,120}$/.test(value);
+        const isSafeText = (value) => !blockedPattern.test(value);
+        const maxLenByField = {
+            nombre: 80,
+            email: 120,
+            dedicacion: 120,
+            problema: 500
+        };
 
         fields.forEach((fieldName) => {
-            const value = params.get(fieldName);
+            const value = sanitize(params.get(fieldName), maxLenByField[fieldName] || 300);
             const input = document.querySelector(`[name="${fieldName}"]`);
             if (value && input) input.value = value;
         });
+
+        const form = document.getElementById("lead-form");
+        if (form) {
+            form.addEventListener("submit", (event) => {
+                const nombreInput = form.querySelector('[name="nombre"]');
+                const emailInput = form.querySelector('[name="email"]');
+                const dedicacionInput = form.querySelector('[name="dedicacion"]');
+                const problemaInput = form.querySelector('[name="problema"]');
+
+                const nombre = sanitize(nombreInput.value, 80);
+                const email = sanitize(emailInput.value, 120);
+                const dedicacion = sanitize(dedicacionInput.value, 120);
+                const problema = sanitize(problemaInput.value, 500);
+
+                nombreInput.value = nombre;
+                emailInput.value = email;
+                dedicacionInput.value = dedicacion;
+                problemaInput.value = problema;
+
+                nombreInput.setCustomValidity("");
+                dedicacionInput.setCustomValidity("");
+                problemaInput.setCustomValidity("");
+
+                if (!isValidName(nombre) || !isSafeText(nombre)) {
+                    nombreInput.setCustomValidity("Introduce un nombre valido, sin simbolos o sentencias.");
+                }
+                if (!isValidDedicacion(dedicacion) || !isSafeText(dedicacion)) {
+                    dedicacionInput.setCustomValidity("Introduce una dedicacion valida, sin sentencias.");
+                }
+                if (problema && !isSafeText(problema)) {
+                    problemaInput.setCustomValidity("El texto incluye contenido no permitido.");
+                }
+
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    form.reportValidity();
+                }
+            });
+        }
     </script>
 </body>
 
