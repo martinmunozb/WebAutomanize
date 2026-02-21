@@ -61,17 +61,9 @@
 
                 <div id="lead-summary" class="mt-6 rounded-xl border border-[#ececdc] bg-[#fafaf7] px-4 py-3 text-sm text-text-muted hidden"></div>
 
-                <div class="mt-8 rounded-2xl border border-dashed border-[#d8d8cc] bg-[#f8f8f4] p-6 md:p-8 text-center">
-                    <p class="text-lg font-semibold text-text-main">Calendly se integrara aqui</p>
-                    <p class="mt-2 text-text-muted">
-                        En el siguiente paso conectamos tu enlace de Calendly para que el agendado quede automatico.
-                    </p>
-
-                    <div class="mt-6">
-                        <a href="#" class="inline-flex h-12 px-7 items-center justify-center rounded-full bg-primary hover:bg-primary-hover text-black font-bold transition-colors">
-                            Abrir calendario (pendiente de configurar)
-                        </a>
-                    </div>
+                <div class="mt-8 rounded-2xl border border-[#d8d8cc] bg-[#f8f8f4] p-3 md:p-5">
+                    <div class="calendly-inline-widget" data-url="https://calendly.com/automanize/30min"
+                        style="min-width: 320px; height: 760px;"></div>
                 </div>
             </section>
 
@@ -107,6 +99,7 @@
             backLink.href = `consultoria-gratuita.html?${params.toString()}`;
         }
     </script>
+    <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 </body>
 
 </html>
