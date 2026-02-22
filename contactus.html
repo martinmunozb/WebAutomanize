@@ -245,8 +245,6 @@
                     </div>
                     <span class="font-bold text-lg tracking-tight">Automanize</span>
                 </a>
-                <p class="text-sm text-[#8c8b5f] dark:text-gray-500">© 2023 Automanize. Todos los derechos reservados.
-                </p>
             </div>
             <div class="flex items-center gap-6">
                 <a class="text-[#5c5b4f] dark:text-gray-400 hover:text-primary transition-colors" href="#">
@@ -268,6 +266,28 @@
             </div>
         </div>
     </footer>
+    <script>
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            const serviceKey = params.get("servicio");
+            if (!serviceKey) return;
+
+            const serviceMessages = {
+                "facturacion-automatica": "Quiero activar facturacion automatica para mi negocio.",
+                "correos-automaticos": "Quiero implementar gestion de correos automatica.",
+                "seguimiento-leads-clientes": "Quiero automatizar el seguimiento de leads y clientes.",
+                "instalacion-odoo": "Quiero ayuda con la instalacion de Odoo."
+            };
+
+            const message = serviceMessages[serviceKey];
+            const messageField = document.getElementById("contact-message");
+            if (!message || !messageField) return;
+
+            if (!messageField.value.trim()) {
+                messageField.value = message;
+            }
+        })();
+    </script>
 </body>
 
 </html>
