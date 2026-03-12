@@ -69,7 +69,8 @@
     <div class="relative flex w-full flex-col min-h-screen">
         <header
             class="flex items-center justify-between whitespace-nowrap sticky top-0 z-50 border-b border-white/10 px-6 lg:px-10 py-4 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-lg">
-            <a href="index.html#inicio-principal" aria-label="Ir al inicio principal" class="flex items-center gap-4 text-black dark:text-white group">
+            <a href="index.html#inicio-principal" aria-label="Ir al inicio principal"
+                class="flex items-center gap-4 text-black dark:text-white group">
                 <div class="size-8 rounded-lg overflow-hidden group-hover:scale-110 transition-transform duration-500">
                     <img src="assets/images/automanize.png" alt="Automanize Logo" class="w-full h-full object-cover"
                         loading="lazy" />
@@ -164,7 +165,8 @@
                             <h2 class="text-4xl md:text-6xl font-black text-white leading-[1.1]">
                                 Facturacion lista, <br />
                                 <span
-                                    class="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500">legal y automatica</span>
+                                    class="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500">legal
+                                    y automatica</span>
                             </h2>
                             <p class="text-gray-400 text-lg md:text-xl font-light leading-relaxed max-w-xl">
                                 Cumpla la ley sin complicarse. Sus facturas salen bien, a tiempo y con menos
@@ -253,7 +255,7 @@
                     </div>
                 </div>
             </div>
-            <div class="w-full max-w-[1200px] px-4 md:px-8 pb-10 gap-8 grid grid-cols-1 md:grid-cols-2">
+            <div class="w-full max-w-[1200px] px-4 md:px-8 pb-10 gap-8 grid grid-cols-1 md:grid-cols-3">
                 <div
                     class="group relative rounded-[2.5rem] bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 overflow-hidden hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_40px_rgba(255,179,0,0.1)] transition-all duration-500 hover:-translate-y-2">
                     <div
@@ -325,10 +327,11 @@
                         <div class="grid grid-cols-1 gap-3 mt-auto">
                             <div
                                 class="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-                                <span class="material-symbols-outlined text-primary">phone_in_talk</span>
+                                <span class="material-symbols-outlined text-primary">chat</span>
                                 <div>
-                                    <h4 class="font-bold text-sm">Atencion por voz</h4>
-                                    <p class="text-xs text-gray-400">Habla con clientes de forma clara y cercana</p>
+                                    <h4 class="font-bold text-sm">Respuesta en Chat Inteligente</h4>
+                                    <p class="text-xs text-gray-400">Conversa con clientes de forma natural por escrito
+                                    </p>
                                 </div>
                             </div>
                             <div
@@ -348,6 +351,53 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div
+                    class="group relative rounded-[2.5rem] bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 overflow-hidden hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_40px_rgba(255,179,0,0.1)] transition-all duration-500 hover:-translate-y-2">
+                    <div
+                        class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 group-hover:bg-primary/10 transition-colors">
+                    </div>
+                    <div class="relative p-8 md:p-10 flex flex-col h-full z-10">
+                        <div class="mb-8 w-full aspect-video rounded-2xl overflow-hidden shadow-lg relative">
+                            <div class="absolute inset-0 bg-primary/20 mix-blend-overlay z-10"></div>
+                            <div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                                style="background-image: url('assets/images/services-hero.jpg');">
+                            </div>
+                            <div
+                                class="absolute bottom-4 left-4 z-20 bg-black/80 backdrop-blur text-primary px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider border border-primary/20">
+                                A Medida
+                            </div>
+                        </div>
+                        <h3
+                            class="text-3xl font-bold text-black dark:text-white mb-4 group-hover:text-primary transition-colors">
+                            Sistemas a Medida
+                        </h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-lg mb-8 line-clamp-3">
+                            Analizamos tu negocio y desarrollamos algo que te ahorre tiempo y dinero desde el día 1.
+                        </p>
+                        <ul class="flex flex-col gap-4 mt-auto">
+                            <li class="flex items-center gap-4 group/item">
+                                <div
+                                    class="p-2 rounded-full bg-gray-100 dark:bg-white/5 text-primary group-hover/item:bg-primary group-hover/item:text-black transition-colors">
+                                    <span class="material-symbols-outlined text-xl">hub</span>
+                                </div>
+                                <span class="font-medium text-black dark:text-gray-200">Desarrollo rápido y
+                                    seguro</span>
+                            </li>
+                            <li class="flex items-center gap-4 group/item">
+                                <div
+                                    class="p-2 rounded-full bg-gray-100 dark:bg-white/5 text-primary group-hover/item:bg-primary group-hover/item:text-black transition-colors">
+                                    <span class="material-symbols-outlined text-xl">integration_instructions</span>
+                                </div>
+                                <span class="font-medium text-black dark:text-gray-200">Integración con tus
+                                    herramientas</span>
+                            </li>
+                        </ul>
+                        <a href="contactus.html?servicio=sistemas-a-medida#contact_form"
+                            class="mt-8 w-full py-4 rounded-xl border border-gray-200 dark:border-white/10 font-bold text-black dark:text-white hover:bg-primary hover:border-primary hover:text-black transition-all duration-300 text-center block">
+                            Crear mi sistema
+                        </a>
                     </div>
                 </div>
             </div>
@@ -371,7 +421,8 @@
                                 class="absolute bottom-3 left-3 text-[11px] font-bold uppercase tracking-wider bg-primary text-black px-3 py-1 rounded-full">Correos</span>
                         </div>
                         <div class="p-6">
-                            <h3 class="text-xl font-bold text-black dark:text-white mb-3">Gestion de correos automatica</h3>
+                            <h3 class="text-xl font-bold text-black dark:text-white mb-3">Gestion de correos automatica
+                            </h3>
                             <p class="text-gray-600 dark:text-gray-400 mb-5">
                                 Los mensajes se ordenan solos y cada persona recibe respuesta mas rapido.
                             </p>
@@ -401,7 +452,8 @@
                                 class="absolute bottom-3 left-3 text-[11px] font-bold uppercase tracking-wider bg-primary text-black px-3 py-1 rounded-full">Leads</span>
                         </div>
                         <div class="p-6">
-                            <h3 class="text-xl font-bold text-black dark:text-white mb-3">Seguimiento de leads y clientes</h3>
+                            <h3 class="text-xl font-bold text-black dark:text-white mb-3">Seguimiento de leads y
+                                clientes</h3>
                             <p class="text-gray-600 dark:text-gray-400 mb-5">
                                 Ningun contacto se queda sin respuesta y su equipo sabe siempre a quien llamar.
                             </p>
@@ -458,8 +510,3 @@
 </body>
 
 </html>
-
-
-
-
-
