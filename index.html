@@ -480,6 +480,15 @@
             max-height: 62px;
         }
 
+        .logo-manuelconesa {
+            max-height: 72px;
+        }
+
+        .logo-invicta {
+            max-height: 80px;
+            border-radius: 8px;
+        }
+
         .client-logo-img:hover {
             opacity: 1;
         }
@@ -600,35 +609,460 @@
         </header>
 
         <main class="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-10 flex flex-col gap-16 pb-20">
-            <section id="inicio-principal" class="pt-14 md:pt-24">
-                <div class="@container">
-                    <div class="flex justify-center items-center">
-                        <div class="flex flex-col gap-6 max-w-[860px] text-center items-center scroll-reveal reveal-up">
-                            <h1
-                                class="text-text-main dark:text-white text-4xl md:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
-                                Automatiza Inteligente, <br /><span
-                                    class="relative inline-block z-10 text-shimmer">Escala Sin Límites</span>
-                            </h1>
-                            <h2
-                                class="text-text-muted dark:text-gray-400 text-lg md:text-xl font-normal leading-relaxed max-w-[650px]">
-                                Estás <strong class="text-text-main dark:text-white">perdiendo tiempo y dinero</strong>
-                                en tareas que un agente inteligente puede hacer en segundos. Descubre cómo transformar
-                                tus operaciones hoy mismo.
-                            </h2>
-                            <div class="flex flex-wrap justify-center gap-4 pt-2">
-                                <a href="consultoria-gratuita.html"
-                                    class="h-12 px-8 bg-primary hover:bg-primary-hover text-black text-base font-bold rounded-full transition-all hover:shadow-lg hover:-translate-y-1 shadow-orange-500/20 flex items-center justify-center glow">
-                                    Quiero una consultoría gratuita
-                                </a>
-                                <a href="our-services.html"
-                                    class="h-12 px-8 bg-surface-light dark:bg-surface-dark border border-[#e6e6db] dark:border-[#262626] text-text-main dark:text-white text-base font-bold rounded-full hover:bg-gray-100 dark:hover:bg-[#262626] transition-colors flex items-center justify-center">
-                                    Saber Más
-                                </a>
+            <section id="inicio-principal" class="pt-14 md:pt-20">
+                <div class="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8">
+
+                    <!-- Texto izquierda -->
+                    <div
+                        class="flex flex-col gap-6 max-w-[560px] text-center lg:text-left items-center lg:items-start scroll-reveal reveal-left">
+                        <h1
+                            class="text-text-main dark:text-white text-4xl md:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
+                            Automatiza Inteligente, <br /><span class="relative inline-block z-10 text-shimmer">Escala
+                                Sin Límites</span>
+                        </h1>
+                        <h2 class="text-text-muted dark:text-gray-400 text-lg md:text-xl font-normal leading-relaxed">
+                            Estás <strong class="text-text-main dark:text-white">perdiendo tiempo y dinero</strong>
+                            en tareas que un agente inteligente puede hacer en segundos. Descubre cómo transformar
+                            tus operaciones hoy mismo.
+                        </h2>
+                        <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
+                            <a href="consultoria-gratuita.html"
+                                class="h-12 px-8 bg-primary hover:bg-primary-hover text-black text-base font-bold rounded-full transition-all hover:shadow-lg hover:-translate-y-1 shadow-orange-500/20 flex items-center justify-center glow">
+                                Quiero una consultoría gratuita
+                            </a>
+                            <a href="our-services.html"
+                                class="h-12 px-8 bg-surface-light dark:bg-surface-dark border border-[#e6e6db] dark:border-[#262626] text-text-main dark:text-white text-base font-bold rounded-full hover:bg-gray-100 dark:hover:bg-[#262626] transition-colors flex items-center justify-center">
+                                Saber Más
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Widget chat Nize -->
+                    <div class="flex-shrink-0 scroll-reveal reveal-right" style="animation-delay:0.15s">
+                        <div class="nize-widget">
+                            <div class="nize-header">
+                                <div class="nize-av-wrap">
+                                    <img src="assets/images/automanize.png" class="nize-av" alt="Nize" />
+                                    <span class="nize-dot"></span>
+                                </div>
+                                <div style="flex:1">
+                                    <p class="nize-name">Nize</p>
+                                    <p class="nize-sub">Agente IA &middot; Automanize</p>
+                                </div>
+                                <span class="nize-badge">IA</span>
+                            </div>
+                            <div class="nize-body" id="nize-body"></div>
+                            <div class="nize-footer">
+                                <div class="nize-input">Escribe tu mensaje...</div>
+                                <button class="nize-btn">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
+                                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+
+            <style>
+                .nize-widget {
+                    width: 320px;
+                    border-radius: 20px;
+                    overflow: hidden;
+                    border: 1px solid rgba(0, 0, 0, 0.08);
+                    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+                    background: #fff;
+                    animation: nizeFloat 5s ease-in-out infinite;
+                }
+
+                .dark .nize-widget {
+                    background: #141414;
+                    border-color: rgba(255, 255, 255, 0.07);
+                }
+
+                @keyframes nizeFloat {
+
+                    0%,
+                    100% {
+                        transform: translateY(0px);
+                    }
+
+                    50% {
+                        transform: translateY(-12px);
+                    }
+                }
+
+                .nize-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 14px 16px;
+                    background: rgba(255, 255, 255, 0.08);
+                    backdrop-filter: blur(12px);
+                    -webkit-backdrop-filter: blur(12px);
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .nize-header::after {
+                    content: '';
+                    position: absolute;
+                    top: -20px;
+                    right: -20px;
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.1);
+                }
+
+                .nize-av-wrap {
+                    position: relative;
+                    flex-shrink: 0;
+                }
+
+                .nize-av {
+                    width: 42px;
+                    height: 42px;
+                    border-radius: 50%;
+                    border: 2px solid rgba(255, 255, 255, 0.85);
+                    object-fit: cover;
+                    display: block;
+                    background: #fff;
+                }
+
+                .nize-dot {
+                    position: absolute;
+                    bottom: 1px;
+                    right: 1px;
+                    width: 10px;
+                    height: 10px;
+                    background: #22c55e;
+                    border-radius: 50%;
+                    border: 2px solid rgba(255, 255, 255, 0.6);
+                    animation: nizeDot 2s ease-in-out infinite;
+                }
+
+                @keyframes nizeDot {
+
+                    0%,
+                    100% {
+                        box-shadow: 0 0 0 0 rgba(34, 197, 94, .5)
+                    }
+
+                    50% {
+                        box-shadow: 0 0 0 4px rgba(34, 197, 94, 0)
+                    }
+                }
+
+                .nize-name {
+                    color: #1a1a1a;
+                    font-weight: 800;
+                    font-size: 14px;
+                    margin: 0;
+                    line-height: 1.2;
+                }
+
+                .nize-sub {
+                    color: rgba(0, 0, 0, .5);
+                    font-size: 10.5px;
+                    margin: 0;
+                }
+
+                .nize-badge {
+                    background: rgba(99, 140, 255, 0.15);
+                    color: #3b6fd4;
+                    font-size: 9px;
+                    font-weight: 800;
+                    letter-spacing: .06em;
+                    padding: 3px 7px;
+                    border-radius: 20px;
+                }
+
+                .nize-body {
+                    min-height: 260px;
+                    max-height: 300px;
+                    overflow: hidden;
+                    padding: 14px 12px 8px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    background: #f7f7f5;
+                }
+
+                .dark .nize-body {
+                    background: #0f0f0f;
+                }
+
+                .nize-row {
+                    display: flex;
+                    align-items: flex-end;
+                    gap: 6px;
+                }
+
+                .nize-row.sent {
+                    flex-direction: row-reverse;
+                }
+
+                .nize-mini-av {
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    background: #fff;
+                    overflow: hidden;
+                    flex-shrink: 0;
+                    border: 1px solid rgba(255, 171, 0, 0.3);
+                }
+
+                .nize-mini-av img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+                .nize-bubble {
+                    max-width: 78%;
+                    padding: 8px 11px;
+                    border-radius: 14px;
+                    font-size: 11.5px;
+                    line-height: 1.5;
+                    word-break: break-word;
+                    animation: nizePop .3s cubic-bezier(.34, 1.56, .64, 1);
+                    position: relative;
+                }
+
+                @keyframes nizePop {
+                    from {
+                        transform: scale(.65) translateY(10px);
+                        opacity: 0
+                    }
+
+                    to {
+                        transform: scale(1) translateY(0);
+                        opacity: 1
+                    }
+                }
+
+                .nize-bubble.r {
+                    background: #fff;
+                    color: #111;
+                    border-bottom-left-radius: 4px;
+                    box-shadow: 0 1px 3px rgba(0, 0, 0, .07);
+                }
+
+                .dark .nize-bubble.r {
+                    background: #242424;
+                    color: #eee;
+                }
+
+                .nize-bubble.s {
+                    background: #EEF2FF;
+                    color: #1e3a8a;
+                    border-bottom-right-radius: 4px;
+                    box-shadow: 0 1px 4px rgba(59, 111, 212, .12);
+                }
+
+                .nize-time {
+                    display: block;
+                    font-size: 9px;
+                    opacity: .4;
+                    margin-top: 3px;
+                    text-align: right;
+                }
+
+                .nize-bubble.r .nize-time {
+                    text-align: left;
+                }
+
+                .nize-bubble.s .nize-time {
+                    color: #6b8fd4;
+                    opacity: .7;
+                }
+
+                .nize-typing {
+                    display: flex;
+                    align-items: flex-end;
+                    gap: 6px;
+                    animation: nizePop .25s ease;
+                }
+
+                .nize-typing-bub {
+                    background: #fff;
+                    border-radius: 14px;
+                    border-bottom-left-radius: 4px;
+                    padding: 10px 12px;
+                    display: flex;
+                    gap: 4px;
+                    align-items: center;
+                    box-shadow: 0 1px 3px rgba(0, 0, 0, .07);
+                }
+
+                .dark .nize-typing-bub {
+                    background: #242424;
+                }
+
+                .nize-typing-bub span {
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                    background: #ccc;
+                    animation: nizeTypeDot 1.3s ease-in-out infinite;
+                }
+
+                .nize-typing-bub span:nth-child(2) {
+                    animation-delay: .2s
+                }
+
+                .nize-typing-bub span:nth-child(3) {
+                    animation-delay: .4s
+                }
+
+                @keyframes nizeTypeDot {
+
+                    0%,
+                    60%,
+                    100% {
+                        transform: translateY(0);
+                        opacity: .35
+                    }
+
+                    30% {
+                        transform: translateY(-5px);
+                        opacity: 1;
+                        background: #FFAB00
+                    }
+                }
+
+                .nize-footer {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 10px 12px;
+                    background: #fff;
+                    border-top: 1px solid rgba(0, 0, 0, 0.06);
+                }
+
+                .dark .nize-footer {
+                    background: #141414;
+                    border-color: rgba(255, 255, 255, 0.06)
+                }
+
+                .nize-input {
+                    flex: 1;
+                    font-size: 11.5px;
+                    color: #bbb;
+                    background: #f2f2f0;
+                    border-radius: 20px;
+                    padding: 7px 13px;
+                }
+
+                .dark .nize-input {
+                    background: #1e1e1e;
+                    color: #555
+                }
+
+                .nize-btn {
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    background: #3b6fd4;
+                    border: none;
+                    color: #fff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    flex-shrink: 0;
+                    box-shadow: 0 2px 8px rgba(59, 111, 212, .3);
+                    transition: transform .15s;
+                }
+
+                .nize-btn:hover {
+                    transform: scale(1.1)
+                }
+
+                @media(max-width:1024px) {
+                    .nize-widget {
+                        width: 290px
+                    }
+                }
+
+                @media(max-width:768px) {
+                    .nize-widget {
+                        width: 100%;
+                        max-width: 340px
+                    }
+                }
+            </style>
+
+            <script>
+                    (function () {
+                        var msgs = [
+                            { f: 'r', t: 'Hola, soy Nize. Ayudamos a empresas a escalar eliminando el trabajo manual con sistemas inteligentes a medida.' },
+                            { f: 's', t: '¿Que significa eso exactamente?' },
+                            { f: 'r', t: 'Que tu empresa trabaje para ti y no al reves. Identificamos las tareas repetitivas y las convertimos en procesos autonomos que funcionan 24/7 sin errores.' },
+                            { f: 's', t: '¿Podeis automatizar mi facturacion? Es un caos.' },
+                            { f: 'r', t: 'Totalmente. No solo el envio, tambien la conciliacion y el seguimiento de impagos. Lo que hoy te lleva horas, ocurrira en segundos.' },
+                            { f: 'r', t: 'Para no darte algo generico, ¿agendamos una sesion rapida? Analizamos tu flujo y te digo donde estas perdiendo mas dinero ahora mismo.' }
+                        ];
+                        var idx = 0;
+                        function gt() { var d = new Date(); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
+                        function run() {
+                            var box = document.getElementById('nize-body');
+                            if (!box) { setTimeout(run, 200); return; }
+                            idx = 0; box.innerHTML = '';
+                            step(box);
+                        }
+                        function step(box) {
+                            if (idx >= msgs.length) { setTimeout(function () { run(); }, 5000); return; }
+                            var m = msgs[idx++];
+                            if (m.f === 'r') {
+                                var tr = document.createElement('div');
+                                tr.className = 'nize-typing';
+                                tr.id = 'nize-tp';
+                                var av = document.createElement('div');
+                                av.className = 'nize-mini-av';
+                                av.innerHTML = '<img src="assets/images/automanize.png" alt="N"/>';
+                                var tb = document.createElement('div');
+                                tb.className = 'nize-typing-bub';
+                                tb.innerHTML = '<span></span><span></span><span></span>';
+                                tr.appendChild(av); tr.appendChild(tb);
+                                box.appendChild(tr); box.scrollTop = 9999;
+                                setTimeout(function () {
+                                    var tp = document.getElementById('nize-tp');
+                                    if (tp) tp.remove();
+                                    addBubble(box, m);
+                                    setTimeout(function () { step(box); }, 2000);
+                                }, 1800);
+                            } else {
+                                addBubble(box, m);
+                                setTimeout(function () { step(box); }, 1600);
+                            }
+                        }
+                        function addBubble(box, m) {
+                            var row = document.createElement('div');
+                            row.className = 'nize-row ' + (m.f === 's' ? 'sent' : '');
+                            if (m.f === 'r') {
+                                var av = document.createElement('div');
+                                av.className = 'nize-mini-av';
+                                av.innerHTML = '<img src="assets/images/automanize.png" alt="N"/>';
+                                row.appendChild(av);
+                            }
+                            var b = document.createElement('div');
+                            b.className = 'nize-bubble ' + m.f;
+                            b.innerHTML = m.t + '<span class="nize-time">' + gt() + (m.f === 's' ? ' ✓✓' : '') + '</span>';
+                            row.appendChild(b);
+                            box.appendChild(row);
+                            box.scrollTop = 9999;
+                        }
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', function () { setTimeout(run, 800); });
+                        } else {
+                            setTimeout(run, 800);
+                        }
+                    })();
+            </script>
             <section>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div
@@ -1028,6 +1462,26 @@
                                     loading="lazy" />
                             </div>
                         </a>
+
+                        <!-- Manuel Conesa Card -->
+                        <a href="https://www.manuelconesa.com/" target="_blank" aria-label="Manuel Conesa"
+                            class="success-content-card group transition-all duration-300 transform hover:-translate-y-1">
+                            <div class="client-logo-wrapper">
+                                <img src="assets/images/logobusc.png" alt="Manuel Conesa"
+                                    class="client-logo-img logo-manuelconesa group-hover:scale-105 transition-transform duration-300"
+                                    loading="lazy" />
+                            </div>
+                        </a>
+
+                        <!-- Invicta Rent Card -->
+                        <a href="https://www.instagram.com/invictarent/" target="_blank" aria-label="Invicta Rent"
+                            class="success-content-card group transition-all duration-300 transform hover:-translate-y-1">
+                            <div class="client-logo-wrapper">
+                                <img src="assets/images/invictarent.jpeg" alt="Invicta Rent"
+                                    class="client-logo-img logo-invicta group-hover:scale-105 transition-transform duration-300"
+                                    loading="lazy" />
+                            </div>
+                        </a>
                     </div>
 
                     <div class="mt-12 text-center">
@@ -1071,9 +1525,10 @@
                 </div>
                 <div class="flex flex-col md:items-end gap-2">
                     <a class="flex items-center gap-2 text-text-main dark:text-white font-medium hover:text-primary-hover transition-colors"
-                        href="mailto:automanize@gmail.com">
+                        href="/cdn-cgi/l/email-protection#9effebeaf1f3fff0f7e4fbdef9f3fff7f2b0fdf1f3">
                         <span class="material-symbols-outlined text-primary text-[20px]">mail</span>
-                        automanize@gmail.com
+                        <span class="__cf_email__"
+                            data-cfemail="533226273c3e323d3a293613343e323a3f7d303c3e">[email&#160;protected]</span>
                     </a>
                     <a class="flex items-center gap-2 text-text-main dark:text-white font-medium hover:text-primary-hover transition-colors"
                         href="tel:+34617153252">
@@ -1082,12 +1537,4 @@
                     </a>
                 </div>
             </div>
-            <div
-                class="max-w-[1200px] mx-auto px-4 md:px-10 mt-10 pt-6 border-t border-gray-100 dark:border-[#262626] flex flex-col md:flex-row justify-between text-xs text-text-muted">
-            </div>
-        </footer>
-    </div>
-
-</body>
-
-</html>
+            <div class="max-w-[1200px] mx-auto px-4 md:px-10 mt-10 pt-6 border-t border-gray-100 dark:border-[#262626] flex flex-col md:flex-row ju
