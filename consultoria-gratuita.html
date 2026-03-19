@@ -162,10 +162,10 @@
                 problemaInput.setCustomValidity("");
 
                 if (!isValidName(nombre) || !isSafeText(nombre)) {
-                    nombreInput.setCustomValidity("Introduce un nombre valido, sin simbolos o sentencias.");
+                    nombreInput.setCustomValidity("Introduce un nombre válido, sin símbolos o sentencias.");
                 }
                 if (!isValidDedicacion(dedicacion) || !isSafeText(dedicacion)) {
-                    dedicacionInput.setCustomValidity("Introduce una dedicacion valida, sin sentencias.");
+                    dedicacionInput.setCustomValidity("Introduce una dedicación válida, sin sentencias.");
                 }
                 if (problema && !isSafeText(problema)) {
                     problemaInput.setCustomValidity("El texto incluye contenido no permitido.");
