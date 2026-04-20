@@ -495,10 +495,10 @@
       <div class="field">
         <label>Justificante de pago</label>
         <div class="file-drop" id="fileDrop">
-          <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf" />
+          <input type="file" id="fileInput" accept="image/*,.pdf,application/pdf" />
           <div class="file-icon">📎</div>
           <p>Arrastra aquí o pulsa para seleccionar</p>
-          <span class="file-hint">JPG, PNG o PDF · Máx. 10 MB</span>
+          <span class="file-hint">Cualquier imagen o PDF · Máx. 10 MB</span>
         </div>
         <div class="file-selected" id="fileSelected">
           <span>📄</span>
@@ -612,6 +612,12 @@
 
   // ─── ARCHIVO ─────────────────────────────────────────────────────
   fileInput.addEventListener('change', () => {
+    if (fileInput.files.length > 1) {
+      alert('Solo puedes subir un archivo.');
+      fileInput.value = '';
+      return;
+    }
+
     if (fileInput.files[0]) setFile(fileInput.files[0]);
   });
 
@@ -620,10 +626,23 @@
   fileDrop.addEventListener('drop', e => {
     e.preventDefault();
     fileDrop.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 1) {
+      alert('Solo puedes subir un archivo.');
+      return;
+    }
     if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
   });
 
   function setFile(f) {
+    const isImage = f.type.startsWith('image/');
+    const isPdf = f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
+
+    if (!isImage && !isPdf) {
+      alert('Solo se permiten archivos de imagen o PDF.');
+      fileInput.value = '';
+      return;
+    }
+
     if (f.size > 10 * 1024 * 1024) { alert('El archivo supera los 10 MB.'); return; }
     selectedFile = f;
     fileName.textContent = f.name;
@@ -653,17 +672,21 @@
     const form = new FormData();
     form.append('token',    token);
     form.append('pago_id',  selectedMes.id);
-    form.append('mes',      selectedMes.mes);
+    form.append('mes',      selectedMes.etiqueta);
     form.append('importe',  selectedMes.importe);
     form.append('archivo',  selectedFile, selectedFile.name);
 
     try {
       const res = await fetch(WEBHOOK_POST, { method: 'POST', body: form });
-      if (!res.ok) throw new Error('error');
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || `HTTP ${res.status}`);
+      }
 
       formState.style.display   = 'none';
       successState.style.display = 'block';
     } catch (e) {
+      console.error('Error al enviar justificante:', e);
       btnSubmit.classList.remove('loading');
       btnSubmit.disabled = false;
       alert('Hubo un error al enviar. Inténtalo de nuevo o escríbenos por WhatsApp.');
