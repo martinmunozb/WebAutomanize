@@ -24,11 +24,8 @@
     <meta name="twitter:description" content="Automatización empresarial, agentes IA y chatbots a medida. Conoce Nize, el sistema inteligente de Automanize." />
     <meta name="twitter:image" content="https://automanize.com/assets/images/nize.png" />
     <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico" />
-    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script id="tailwind-config">
         tailwind.config = {
@@ -43,830 +40,385 @@
                         "surface-dark": "#121212",
                         "surface-light": "#f9fafb"
                     },
-                    fontFamily: {
-                        "display": ["Spline Sans", "sans-serif"]
-                    },
-                    borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "2xl": "4rem", "full": "9999px" },
-                    backgroundImage: {
-                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-                        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-                        'hero-gradient': 'linear-gradient(135deg, #050505 0%, #1a1a1a 100%)',
-                        'card-gradient': 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)',
-                        'primary-gradient': 'linear-gradient(135deg, #FFB300 0%, #FF8F00 100%)'
-                    }
+                    fontFamily: { "display": ["Spline Sans", "sans-serif"] },
                 },
             },
         }
     </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .text-shadow {
-                text-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            }
-            .text-glow {
-                text-shadow: 0 0 20px rgba(255, 179, 0, 0.5);
-            }
-            .glass-panel {
-                @apply backdrop-blur-md bg-white/5 border border-white/10;
-            }
-        }@keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-        .animate-float {
-            animation: float 6s ease-in-out infinite;
-        }
+    <style>
+        body { font-family: "Spline Sans", sans-serif; }
+        .step-arrow { color: #d1d5db; }
     </style>
 </head>
 
-<body
-    class="font-display bg-background-light dark:bg-background-dark text-black dark:text-white overflow-x-hidden selection:bg-primary selection:text-black">
+<body class="bg-white text-black overflow-x-hidden">
     <div class="relative flex w-full flex-col min-h-screen">
-        <header
-            class="flex items-center justify-between whitespace-nowrap sticky top-0 z-50 border-b border-white/10 px-6 lg:px-10 py-4 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-lg">
-            <a href="index.html#inicio-principal" aria-label="Ir al inicio principal"
-                class="flex items-center gap-4 text-black dark:text-white group">
-                <div class="size-8 rounded-lg overflow-hidden group-hover:scale-110 transition-transform duration-500">
-                    <img src="assets/images/Automanize%20(4).png" alt="Automanize Logo" class="w-full h-full object-cover"
-                        loading="lazy" />
-                </div>
-                <h2 class="text-xl font-bold leading-tight tracking-tight">Automanize</h2>
-            </a>
-            <div class="hidden md:flex flex-1 justify-end gap-8">
-                <div class="flex items-center gap-9">
-                    <a class="text-sm font-medium leading-normal hover:text-primary hover:tracking-wide transition-all duration-300"
-                        href="index.html">Inicio</a>
-                    <a class="text-sm font-medium leading-normal hover:text-primary hover:tracking-wide transition-all duration-300"
-                        href="our-services.html">Servicios</a>
-                    <a class="text-sm font-medium leading-normal hover:text-primary hover:tracking-wide transition-all duration-300"
-                        href="contactus.html">Contacto</a>
-                </div>
-                <a href="consultoria-gratuita.html"
-                    class="relative flex items-center justify-center overflow-hidden rounded-full h-10 px-6 bg-primary text-black text-sm font-bold shadow-[0_0_15px_rgba(255,179,0,0.4)] hover:shadow-[0_0_25px_rgba(255,179,0,0.6)] hover:scale-105 active:scale-95 transition-all duration-300 group">
-                    <span
-                        class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out skew-x-12"></span>
-                    <span class="relative">Empezar Ahora</span>
+
+        <!-- Header -->
+        <header class="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-xl border-b border-[#e8e8e8]">
+            <div class="px-4 md:px-10 py-3 flex items-center justify-between max-w-[1200px] mx-auto w-full">
+                <a href="index.html" class="flex items-center gap-3 group" aria-label="Inicio">
+                    <div class="size-9 rounded-lg flex items-center justify-center bg-white shadow-sm overflow-hidden border border-gray-100">
+                        <img src="assets/images/Automanize%20(4).png" alt="Automanize Logo" class="w-full h-full object-cover p-0.5" loading="lazy" />
+                    </div>
+                    <span class="text-[#111] text-[17px] font-semibold tracking-tight">Automanize</span>
                 </a>
+
+                <nav class="hidden md:flex items-center gap-8">
+                    <a class="text-[#555] text-[14px] font-medium hover:text-[#111] transition-colors" href="index.html">Inicio</a>
+                    <div class="relative group">
+                        <a href="our-services.html" class="flex items-center gap-0.5 text-[14px] text-[#111] font-semibold border-b-2 border-[#FFB300] pb-0.5 hover:text-[#FFB300] transition-colors">
+                            Servicios <span class="material-symbols-outlined text-[16px]">expand_more</span>
+                        </a>
+                        <div class="absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-60 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 ease-out z-50">
+                            <div class="bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-[#e8e8e8] p-2 flex flex-col gap-0.5">
+                                <a href="our-services.html#whatsapp" class="block px-4 py-2.5 text-[13px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-lg transition-colors">Asistente de WhatsApp</a>
+                                <a href="facturacion.html" class="block px-4 py-2.5 text-[13px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-lg transition-colors">Facturación Inteligente</a>
+                                <a href="radar.html" class="block px-4 py-2.5 text-[13px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-lg transition-colors">Radar de Oportunidades</a>
+                                <a href="crm.html" class="block px-4 py-2.5 text-[13px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-lg transition-colors">Control Operativo 360°</a>
+                                <a href="diseno-web.html" class="block px-4 py-2.5 text-[13px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-lg transition-colors">Diseño Web</a>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="text-[#555] text-[14px] font-medium hover:text-[#111] transition-colors" href="consultoria-gratuita.html">Consultoría</a>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    <a class="hidden lg:flex items-center gap-1.5 text-[13px] font-medium text-[#555] hover:text-[#111] transition-colors" href="tel:+34617153252">
+                        <span class="material-symbols-outlined text-[16px]">call</span>
+                        +34 617 15 32 52
+                    </a>
+                    <a href="contactus.html" class="hidden sm:flex items-center justify-center h-9 px-5 bg-[#FFB300] hover:bg-[#E69900] text-black text-[13px] font-bold rounded-full transition-colors">
+                        Contáctanos
+                    </a>
+                    <button onclick="document.getElementById('mobileMenuSvc').classList.toggle('hidden')" class="md:hidden p-2 rounded-lg hover:bg-[#f5f5f5] transition-colors">
+                        <span class="material-symbols-outlined text-[22px]">menu</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobileMenuSvc" class="hidden md:hidden bg-white border-t border-[#f0f0f0]">
+                <div class="px-4 py-3 flex flex-col gap-1">
+                    <a href="index.html" class="px-3 py-3 text-[15px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors block">Inicio</a>
+                    <div>
+                        <button onclick="this.nextElementSibling.classList.toggle('hidden')" class="w-full flex items-center justify-between px-3 py-3 text-[15px] font-semibold text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">
+                            Servicios <span class="material-symbols-outlined text-[18px]">expand_more</span>
+                        </button>
+                        <div class="hidden pl-3 flex flex-col gap-0.5 pb-1">
+                            <a href="our-services.html#whatsapp" class="block px-3 py-2.5 text-[14px] text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">Asistente de WhatsApp</a>
+                            <a href="facturacion.html" class="block px-3 py-2.5 text-[14px] text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">Facturación Inteligente</a>
+                            <a href="radar.html" class="block px-3 py-2.5 text-[14px] text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">Radar de Oportunidades</a>
+                            <a href="crm.html" class="block px-3 py-2.5 text-[14px] text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">Control Operativo 360°</a>
+                            <a href="diseno-web.html" class="block px-3 py-2.5 text-[14px] text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">Diseño Web</a>
+                        </div>
+                    </div>
+                    <a href="consultoria-gratuita.html" class="px-3 py-3 text-[15px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors block">Consultoría</a>
+                    <div class="pt-3 mt-1 border-t border-[#f0f0f0]">
+                        <a href="contactus.html" class="flex items-center justify-center h-11 bg-[#FFB300] hover:bg-[#E69900] text-black text-[14px] font-bold rounded-full transition-colors w-full">Contáctanos</a>
+                    </div>
+                </div>
             </div>
         </header>
-        <div class="layout-container flex h-full grow flex-col items-center">
 
-            <!-- Titulo seccion — hero visual -->
-            <div class="w-full relative overflow-hidden" style="min-height:340px">
+        <main class="flex-1 flex flex-col">
 
-                <!-- Fondo claro con partículas decorativas -->
-                <div class="absolute inset-0 bg-gradient-to-br from-[#fffdf5] via-[#fff9e6] to-[#fffbf0]"></div>
-                <!-- Círculos de luz ambiental -->
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] rounded-full opacity-30"
-                    style="background:radial-gradient(ellipse,#FFB300 0%,transparent 70%);filter:blur(60px)"></div>
-                <div class="absolute bottom-0 right-0 w-[400px] h-[200px] rounded-full opacity-15"
-                    style="background:radial-gradient(ellipse,#FFB300 0%,transparent 70%);filter:blur(80px)"></div>
-                <!-- Grid de puntos decorativo -->
-                <div class="absolute inset-0 opacity-20"
-                    style="background-image:radial-gradient(circle,#FFB300 1px,transparent 1px);background-size:32px 32px">
-                </div>
-
-                <!-- Contenido centrado -->
-                <div
-                    class="relative z-10 flex flex-col items-center justify-center text-center px-6 md:px-10 py-20 max-w-[1200px] mx-auto">
-
-                    <!-- Badge -->
-                    <div
-                        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/40 bg-primary/15 mb-6">
-                        <img src="assets/images/nize.png" alt="Nize" class="w-4 h-4 rounded" />
-                        <span class="text-primary text-xs font-bold uppercase tracking-widest">Nize · por Automanize</span>
-                    </div>
-
-                    <!-- Titulo principal -->
-                    <h1 class="text-gray-900 font-black leading-[1.05] tracking-tight mb-6"
-                        style="font-size:clamp(2.4rem,5vw,4rem)">
-                        Todo lo que puede hacer<br>
-                        <span class="relative inline-block">
-                            <span class="text-transparent"
-                                style="background:linear-gradient(90deg,#cc8800,#FFB300,#cc8800);background-size:200%;-webkit-background-clip:text;background-clip:text;animation:shimmerText 3s linear infinite">Nize,
-                                tu agente inmobiliario.</span>
-                        </span>
-                    </h1>
-
-                    <!-- Subtitulo -->
-                    <p class="text-gray-500 text-lg md:text-xl max-w-2xl leading-relaxed mb-10">
-                        Nize gestiona todo el ciclo de tu propiedad — desde el primer mensaje hasta el último pago. Cada parte del proceso automatizada.
-                    </p>
-
-                    <!-- Stats rápidas -->
-                    <div class="flex flex-wrap items-center justify-center gap-8">
-                        <div class="text-center">
-                            <p class="text-3xl font-black text-gray-900">1200<span class="text-primary">+</span></p>
-                            <p class="text-xs text-gray-400 uppercase tracking-wider mt-1">Horas ahorradas</p>
-                        </div>
-                        <div class="w-px h-10 bg-gray-200 hidden sm:block"></div>
-                        <div class="text-center">
-                            <p class="text-3xl font-black text-gray-900">3</p>
-                            <p class="text-xs text-gray-400 uppercase tracking-wider mt-1">Servicios activos</p>
-                        </div>
-                        <div class="w-px h-10 bg-gray-200 hidden sm:block"></div>
-                        <div class="text-center">
-                            <p class="text-3xl font-black text-gray-900">24<span class="text-primary">/7</span></p>
-                            <p class="text-xs text-gray-400 uppercase tracking-wider mt-1">Automatizado</p>
-                        </div>
-                        <div class="w-px h-10 bg-gray-200 hidden sm:block"></div>
-                        <div class="text-center">
-                            <p class="text-3xl font-black text-gray-900">100<span class="text-primary">%</span></p>
-                            <p class="text-xs text-gray-400 uppercase tracking-wider mt-1">A medida</p>
-                        </div>
+            <!-- Hero -->
+            <section class="border-b border-[#e8e8e8]">
+                <div class="max-w-[1200px] mx-auto px-6 md:px-10 py-24 md:py-32">
+                    <div class="max-w-3xl">
+                        <span class="inline-block text-xs font-bold text-[#FFB300] tracking-[0.2em] uppercase mb-6">Servicios — Automanize</span>
+                        <h1 class="text-[2rem] md:text-[3rem] lg:text-[4rem] font-black text-[#111] leading-[1.05] tracking-tight mb-6">
+                            Automatización para<br>el sector inmobiliario
+                        </h1>
+                        <p class="text-[16px] md:text-xl text-[#666] leading-relaxed max-w-xl">
+                            Herramientas diseñadas para agencias y gestores de alquileres que quieren operar con más eficiencia y menos trabajo manual.
+                        </p>
                     </div>
                 </div>
+            </section>
 
-                <!-- Curva de transición al contenido -->
-                <div class="absolute bottom-0 left-0 right-0 h-12 bg-background-light dark:bg-background-dark"
-                    style="clip-path:ellipse(55% 100% at 50% 100%)"></div>
-            </div>
+            <!-- WhatsApp Assistant -->
+            <section id="whatsapp" class="border-b border-[#e8e8e8]">
+                <div class="max-w-[1200px] mx-auto px-6 md:px-10 py-20 md:py-28">
 
-            <style>
-                @keyframes shimmerText {
-                    0% {
-                        background-position: 0%
-                    }
-
-                    100% {
-                        background-position: 200%
-                    }
-                }
-            </style>
-
-            <!-- Grid de cards estilo viñeta -->
-            <div class="w-full max-w-[1200px] px-6 md:px-10 pb-24">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
-
-                    <!-- 1. Sistema principal -->
-                    <div
-                        class="group sm:col-span-2 lg:col-span-3 flex flex-col rounded-2xl bg-[#f2f0eb] dark:bg-[#141414] border border-transparent hover:border-primary/30 hover:shadow-lg transition-all duration-300 overflow-hidden">
-                        <div class="flex items-center gap-2 px-5 pt-5 pb-0">
-                            <svg width="12" height="12" viewBox="0 0 12 12">
-                                <circle cx="6" cy="6" r="5" fill="none" stroke="#aaa" stroke-width="1.5" />
-                            </svg>
-                            <span class="text-xs text-gray-400 font-medium">Sistema principal</span>
+                    <!-- Header -->
+                    <div class="mb-16">
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-8 h-8 rounded-lg bg-[#FFF8E1] flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[18px] text-[#FFB300]">smart_toy</span>
+                            </div>
+                            <span class="text-xs font-bold text-[#999] tracking-[0.2em] uppercase">Asistente WhatsApp</span>
                         </div>
-                        <div
-                            class="w-full mt-4 relative overflow-hidden border-y border-gray-100 dark:border-white/5 bg-gradient-to-br from-white via-[#fffdf8] to-[#f7f2e8] dark:from-[#0f0f0f] dark:via-[#131313] dark:to-[#17130a]">
-                            <div class="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr]">
-                                <div class="p-5 md:p-6 border-b lg:border-b-0 lg:border-r border-gray-100 dark:border-white/5">
-                                    <div class="flex items-start justify-between gap-4 mb-5">
-                                        <div>
-                                            <p class="text-[10px] uppercase tracking-[0.2em] text-gray-400 mb-2">Explora situaciones reales</p>
-                                            <p class="text-2xl md:text-3xl font-black text-gray-900 dark:text-white">
-                                                Qué hace el sistema
-                                            </p>
-                                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Haz clic en un caso y mira cómo responde sin que tengas que intervenir.</p>
+                        <h2 class="text-4xl md:text-5xl font-black text-[#111] leading-tight tracking-tight">
+                            Nize — tu agente<br>inmobiliario por WhatsApp
+                        </h2>
+                    </div>
+
+                    <!-- Split: left text + flows | right image -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+
+                        <!-- Left -->
+                        <div>
+                            <p class="text-lg text-[#666] leading-relaxed mb-14">
+                                Nize gestiona el ciclo completo desde WhatsApp — atiende prospectos, cualifica leads, agenda visitas y controla cobros de inquilinos. Sin que tengas que intervenir.
+                            </p>
+
+                            <!-- Phase 1 -->
+                            <div class="mb-12">
+                                <div class="flex items-center gap-2.5 mb-6">
+                                    <span class="text-[11px] font-black text-white bg-[#111] px-3 py-1 rounded-full tracking-widest uppercase">Fase 1</span>
+                                    <span class="text-sm font-semibold text-[#444]">Captación y cualificación de leads</span>
+                                </div>
+                                <div class="flex items-center gap-1 overflow-x-auto pb-1">
+                                    <div class="flex-shrink-0 text-center w-[80px]">
+                                        <div class="border border-[#e8e8e8] rounded-xl p-3 bg-white mb-2">
+                                            <span class="material-symbols-outlined text-[22px] text-[#FFB300]">chat</span>
                                         </div>
-                                        <div class="rounded-2xl bg-primary/10 border border-primary/20 px-4 py-3 min-w-[128px]">
-                                            <p class="text-[10px] uppercase tracking-[0.18em] text-gray-500 mb-1">Modo</p>
-                                            <p class="text-2xl font-black text-gray-900 dark:text-white" id="im-mode-label">Autónomo</p>
-                                        </div>
+                                        <span class="text-[10px] text-[#666] font-medium leading-tight">Prospecto<br>escribe</span>
                                     </div>
-                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5" id="im-scenario-buttons">
-                                        <button type="button" data-scenario="lead"
-                                            class="im-scenario-btn rounded-2xl border border-primary/30 bg-primary/10 px-4 py-3 text-left transition-all duration-300">
-                                            <p class="text-[10px] uppercase tracking-[0.18em] text-gray-400 mb-1">Caso 1</p>
-                                            <p class="text-sm font-black text-gray-900 dark:text-white">Lead nuevo</p>
-                                        </button>
-                                        <button type="button" data-scenario="visit"
-                                            class="im-scenario-btn rounded-2xl border border-gray-200 dark:border-white/10 bg-white/80 dark:bg-black/20 px-4 py-3 text-left transition-all duration-300">
-                                            <p class="text-[10px] uppercase tracking-[0.18em] text-gray-400 mb-1">Caso 2</p>
-                                            <p class="text-sm font-black text-gray-900 dark:text-white">Visita</p>
-                                        </button>
-                                        <button type="button" data-scenario="payment"
-                                            class="im-scenario-btn rounded-2xl border border-gray-200 dark:border-white/10 bg-white/80 dark:bg-black/20 px-4 py-3 text-left transition-all duration-300">
-                                            <p class="text-[10px] uppercase tracking-[0.18em] text-gray-400 mb-1">Caso 3</p>
-                                            <p class="text-sm font-black text-gray-900 dark:text-white">Pago</p>
-                                        </button>
-                                        <button type="button" data-scenario="issue"
-                                            class="im-scenario-btn rounded-2xl border border-gray-200 dark:border-white/10 bg-white/80 dark:bg-black/20 px-4 py-3 text-left transition-all duration-300">
-                                            <p class="text-[10px] uppercase tracking-[0.18em] text-gray-400 mb-1">Caso 4</p>
-                                            <p class="text-sm font-black text-gray-900 dark:text-white">Incidencia</p>
-                                        </button>
+                                    <div class="flex-shrink-0 step-arrow pb-4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                                    <div class="flex-shrink-0 text-center w-[80px]">
+                                        <div class="border border-[#e8e8e8] rounded-xl p-3 bg-white mb-2">
+                                            <span class="material-symbols-outlined text-[22px] text-[#FFB300]">quiz</span>
+                                        </div>
+                                        <span class="text-[10px] text-[#666] font-medium leading-tight">Nize<br>cualifica</span>
                                     </div>
-                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                        <div class="rounded-2xl bg-white/80 dark:bg-black/20 border border-gray-200 dark:border-white/10 p-4">
-                                            <p class="text-[10px] uppercase tracking-[0.18em] text-gray-400 mb-1">Disparador</p>
-                                            <p class="text-sm font-black text-gray-900 dark:text-white" id="im-trigger-label">Mensaje entrante</p>
+                                    <div class="flex-shrink-0 step-arrow pb-4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                                    <div class="flex-shrink-0 text-center w-[80px]">
+                                        <div class="border border-[#e8e8e8] rounded-xl p-3 bg-white mb-2">
+                                            <span class="material-symbols-outlined text-[22px] text-[#FFB300]">home_work</span>
                                         </div>
-                                        <div class="rounded-2xl bg-white/80 dark:bg-black/20 border border-gray-200 dark:border-white/10 p-4">
-                                            <p class="text-[10px] uppercase tracking-[0.18em] text-gray-400 mb-1">Acción principal</p>
-                                            <p class="text-sm font-black text-gray-900 dark:text-white" id="im-main-action">Califica y responde</p>
+                                        <span class="text-[10px] text-[#666] font-medium leading-tight">Envía<br>propiedades</span>
+                                    </div>
+                                    <div class="flex-shrink-0 step-arrow pb-4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                                    <div class="flex-shrink-0 text-center w-[80px]">
+                                        <div class="border border-[#e8e8e8] rounded-xl p-3 bg-white mb-2">
+                                            <span class="material-symbols-outlined text-[22px] text-[#FFB300]">event</span>
                                         </div>
-                                        <div class="rounded-2xl bg-white/80 dark:bg-black/20 border border-gray-200 dark:border-white/10 p-4">
-                                            <p class="text-[10px] uppercase tracking-[0.18em] text-gray-400 mb-1">Resultado</p>
-                                            <p class="text-sm font-black text-gray-900 dark:text-white" id="im-result-label">Lead filtrado</p>
+                                        <span class="text-[10px] text-[#666] font-medium leading-tight">Agenda<br>visita</span>
+                                    </div>
+                                    <div class="flex-shrink-0 step-arrow pb-4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                                    <div class="flex-shrink-0 text-center w-[80px]">
+                                        <div class="border-2 border-[#FFB300] rounded-xl p-3 bg-[#FFF8E1] mb-2">
+                                            <span class="material-symbols-outlined text-[22px] text-[#FFB300]">person_check</span>
                                         </div>
+                                        <span class="text-[10px] text-[#111] font-black leading-tight">Lead<br>cualificado</span>
                                     </div>
                                 </div>
-                                <div class="p-5 md:p-6">
-                                    <div class="rounded-[1.75rem] bg-white/90 dark:bg-black/25 border border-gray-200 dark:border-white/10 p-5 shadow-[0_10px_30px_rgba(0,0,0,0.04)]">
-                                        <div class="flex items-center justify-between mb-4">
-                                            <div>
-                                                <p class="text-[10px] uppercase tracking-[0.2em] text-gray-400">Flujo activo</p>
-                                                <p class="text-lg font-black text-gray-900 dark:text-white" id="im-panel-title">Lead nuevo</p>
-                                            </div>
-                                            <div class="px-3 py-1.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 text-[10px] font-black uppercase tracking-wider" id="im-panel-badge">Tiempo real</div>
-                                        </div>
-                                        <div class="space-y-3">
-                                            <div class="rounded-2xl border border-gray-200 dark:border-white/10 bg-[#faf7ef] dark:bg-white/5 px-4 py-3">
-                                                <p class="text-[10px] uppercase tracking-[0.18em] text-gray-400 mb-1">Lo que entra</p>
-                                                <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed" id="im-input-text">Un interesado pregunta por un inmueble disponible.</p>
-                                            </div>
-                                            <div class="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/20 px-4 py-4">
-                                                <p class="text-[10px] uppercase tracking-[0.18em] text-gray-400 mb-3">Lo que hace Nize</p>
-                                                <div class="space-y-2 text-sm text-gray-700 dark:text-gray-300" id="im-actions-list">
-                                                    <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span><span>Responde al instante.</span></div>
-                                                    <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span><span>Envía ficha, fotos o vídeo.</span></div>
-                                                    <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span><span>Filtra interés y propone visita.</span></div>
+                            </div>
+
+                            <!-- Phase 2 -->
+                            <div class="mb-12">
+                                <div class="flex items-center gap-2.5 mb-6">
+                                    <span class="text-[11px] font-black text-white bg-[#111] px-3 py-1 rounded-full tracking-widest uppercase">Fase 2</span>
+                                    <span class="text-sm font-semibold text-[#444]">Gestión de cobros e incidencias</span>
+                                </div>
+                                <div class="space-y-4">
+                                    <!-- Flujo cobro exitoso -->
+                                    <div>
+                                        <div class="text-[10px] font-bold text-[#4caf50] tracking-widest uppercase mb-2 ml-1">Pago recibido</div>
+                                        <div class="flex items-center gap-1 overflow-x-auto pb-1">
+                                            <div class="flex-shrink-0 text-center w-[80px]">
+                                                <div class="border border-[#e8e8e8] rounded-xl p-3 bg-white mb-2">
+                                                    <span class="material-symbols-outlined text-[22px] text-[#FFB300]">calendar_today</span>
                                                 </div>
+                                                <span class="text-[10px] text-[#666] font-medium leading-tight">Fecha<br>vencimiento</span>
                                             </div>
-                                            <div class="rounded-2xl border border-primary/20 bg-primary/10 px-4 py-3">
-                                                <p class="text-[10px] uppercase tracking-[0.18em] text-gray-500 mb-1">Lo que recibes tú</p>
-                                                <p class="text-sm font-semibold text-gray-800 dark:text-white leading-relaxed" id="im-summary">
-                                                    Te llega el lead filtrado y con el siguiente paso ya preparado.
-                                                </p>
+                                            <div class="flex-shrink-0 step-arrow pb-4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                                            <div class="flex-shrink-0 text-center w-[80px]">
+                                                <div class="border border-[#e8e8e8] rounded-xl p-3 bg-white mb-2">
+                                                    <span class="material-symbols-outlined text-[22px] text-[#FFB300]">send</span>
+                                                </div>
+                                                <span class="text-[10px] text-[#666] font-medium leading-tight">Recordatorio<br>automático</span>
+                                            </div>
+                                            <div class="flex-shrink-0 step-arrow pb-4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                                            <div class="flex-shrink-0 text-center w-[80px]">
+                                                <div class="border-2 border-[#4caf50] rounded-xl p-3 bg-[#f0faf0] mb-2">
+                                                    <span class="material-symbols-outlined text-[22px] text-[#4caf50]">check_circle</span>
+                                                </div>
+                                                <span class="text-[10px] text-[#111] font-black leading-tight">Cobrado<br>y registrado</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Flujo impago -->
+                                    <div>
+                                        <div class="text-[10px] font-bold text-[#f44336] tracking-widest uppercase mb-2 ml-1">Sin pago</div>
+                                        <div class="flex items-center gap-1 overflow-x-auto pb-1">
+                                            <div class="flex-shrink-0 text-center w-[80px]">
+                                                <div class="border border-[#e8e8e8] rounded-xl p-3 bg-white mb-2 opacity-40">
+                                                    <span class="material-symbols-outlined text-[22px] text-[#FFB300]">calendar_today</span>
+                                                </div>
+                                                <span class="text-[10px] text-[#666] font-medium leading-tight opacity-40">Fecha<br>vencimiento</span>
+                                            </div>
+                                            <div class="flex-shrink-0 step-arrow pb-4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                                            <div class="flex-shrink-0 text-center w-[80px]">
+                                                <div class="border border-[#e8e8e8] rounded-xl p-3 bg-white mb-2 opacity-40">
+                                                    <span class="material-symbols-outlined text-[22px] text-[#FFB300]">send</span>
+                                                </div>
+                                                <span class="text-[10px] text-[#666] font-medium leading-tight opacity-40">Recordatorio<br>automático</span>
+                                            </div>
+                                            <div class="flex-shrink-0 step-arrow pb-4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                                            <div class="flex-shrink-0 text-center w-[80px]">
+                                                <div class="border-2 border-[#f44336] rounded-xl p-3 bg-[#fff5f5] mb-2">
+                                                    <span class="material-symbols-outlined text-[22px] text-[#f44336]">warning</span>
+                                                </div>
+                                                <span class="text-[10px] text-[#111] font-black leading-tight">Alerta<br>de impago</span>
+                                            </div>
+                                            <div class="flex-shrink-0 step-arrow pb-4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                                            <div class="flex-shrink-0 text-center w-[80px]">
+                                                <div class="border border-[#e8e8e8] rounded-xl p-3 bg-white mb-2">
+                                                    <span class="material-symbols-outlined text-[22px] text-[#FFB300]">replay</span>
+                                                </div>
+                                                <span class="text-[10px] text-[#666] font-medium leading-tight">Seguimiento<br>activo</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Checklist -->
+                            <div class="grid grid-cols-2 gap-x-8 gap-y-3 pt-8 border-t border-[#e8e8e8] mb-10">
+                                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-[#FFB300]">check</span><span class="text-sm text-[#444]">Respuesta 24/7 en WhatsApp</span></div>
+                                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-[#FFB300]">check</span><span class="text-sm text-[#444]">Integración con Calendly</span></div>
+                                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-[#FFB300]">check</span><span class="text-sm text-[#444]">Envío de fotos y fichas</span></div>
+                                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-[#FFB300]">check</span><span class="text-sm text-[#444]">Recordatorios automáticos</span></div>
+                                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-[#FFB300]">check</span><span class="text-sm text-[#444]">Leads filtrados y cualificados</span></div>
+                                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-[#FFB300]">check</span><span class="text-sm text-[#444]">Alertas y seguimiento de impagos</span></div>
+                                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-[#FFB300]">check</span><span class="text-sm text-[#444]">Gestión de incidencias</span></div>
+                                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-[#FFB300]">check</span><span class="text-sm text-[#444]">100% personalizable</span></div>
+                            </div>
+
+                            <a href="consultoria-gratuita.html" class="inline-flex items-center gap-2 bg-[#FFB300] hover:bg-[#E69900] text-black font-bold text-sm px-7 py-3.5 rounded-full transition-colors">
+                                Quiero este sistema <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                            </a>
                         </div>
-                        <div class="px-5 pt-5 pb-1 flex items-center gap-2">
-                            <img src="assets/images/nize.png" alt="Nize" class="w-6 h-6 rounded-md" />
-                            <h3
-                                class="text-[15px] font-black text-black dark:text-white group-hover:text-primary transition-colors">
-                                Nize — Sistema de gestión inmobiliaria</h3>
-                        </div>
-                        <div class="px-5 pb-4 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Nize es un agente IA
-                            conectado a tu WhatsApp que gestiona todo el ciclo de tu propiedad solo. Tus clientes e
-                            inquilinos siempre atendidos, tú siempre informado.</div>
-                        <div class="px-5 pb-5 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm text-gray-700 dark:text-gray-300">
-                            <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span>Respuestas automáticas a preguntas frecuentes</div>
-                            <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span>Envío de fichas, fotos y vídeos del inmueble</div>
-                            <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span>Agenda de visitas con Calendly — sin ir y venir por WhatsApp</div>
-                            <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span>Reagendado y cancelaciones automáticas</div>
-                            <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span>Filtrado y seguimiento de leads</div>
-                            <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span>Estado de propiedades actualizado en tiempo real</div>
-                            <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span>Envío de contratos para firma digital</div>
-                            <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span>Recordatorios de vencimiento de contrato</div>
-                            <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span>Gestión de incidencias con seguimiento hasta resolución</div>
-                            <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span>Recordatorios de pago y registro de cobros</div>
-                            <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span>Alertas automáticas si un pago no se ha recibido</div>
-                            <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span>Solicitud automática de documentación al inquilino</div>
-                            <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span>Informes semanales de actividad</div>
-                            <div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span>App de escritorio para gestionar todo desde un solo lugar</div>
-                        </div>
-                        <div class="px-5 pb-6">
-                            <a href="contactus.html?servicio=sistema-gestion-inmobiliaria#contact_form"
-                                class="inline-flex items-center justify-center rounded-xl py-3 px-5 bg-primary text-black font-bold hover:brightness-95 transition-all">Quiero este sistema →</a>
+
+                        <!-- Right: Image -->
+                        <div class="flex justify-center lg:justify-end">
+                            <div class="w-full max-w-[500px] rounded-2xl overflow-hidden border border-[#e8e8e8] bg-[#f9f9f9]">
+                                <img src="assets/images/whatsapp-assistant.png" alt="Nize — Asistente WhatsApp para inmobiliarias" class="w-full h-auto block" />
+                            </div>
                         </div>
                     </div>
-
-                    <div class="sm:col-span-2 lg:col-span-3 pt-4">
-                        <div class="flex items-center gap-3 mb-1">
-                            <div class="w-10 h-px bg-primary/40"></div>
-                            <span class="text-[12px] font-black uppercase tracking-[0.25em] text-primary">Otros servicios</span>
-                        </div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Servicios complementarios con el mismo objetivo: menos trabajo manual y más control.</p>
-                    </div>
-
-                    <!-- 2. Facturación por voz -->
-                    <a href="contactus.html?servicio=facturacion-por-voz#contact_form"
-                        class="group order-3 flex flex-col rounded-2xl bg-[#f2f0eb] dark:bg-[#141414] border border-transparent hover:border-primary/30 hover:shadow-lg transition-all duration-300 overflow-hidden">
-                        <div class="flex items-center justify-between px-5 pt-5 pb-0">
-                            <div class="flex items-center gap-2">
-                                <svg width="12" height="12" viewBox="0 0 12 12">
-                                    <circle cx="6" cy="6" r="5" fill="none" stroke="#aaa" stroke-width="1.5" />
-                                </svg>
-                                <span class="text-xs text-gray-400 font-medium">Finanzas</span>
-                            </div>
-                            <span
-                                class="px-2 py-0.5 bg-primary text-black text-[10px] font-black rounded-full">VOZ</span>
-                        </div>
-                        <div
-                            class="w-full h-52 mt-4 bg-[#1a1a1a] relative overflow-hidden px-5 py-4 border-y border-gray-100 dark:border-white/5">
-                            <div class="rounded-xl border border-white/10 bg-black/40 px-3 py-3 text-[11px] text-gray-300 leading-relaxed"
-                                style="animation:msgIn 3s ease-in-out infinite">🎙️ "Factura para empresa Acme, 1500
-                                euros, concepto automatización..."</div>
-                            <div class="mt-3 rounded-xl border border-primary/20 bg-primary/10 px-3 py-3 text-[11px] text-primary font-bold"
-                                style="animation:msgIn 3s ease-in-out 1s infinite">→ Factura generada ✓</div>
-                            <div class="mt-4 w-full bg-gray-800 rounded-full h-1.5">
-                                <div class="bg-primary h-1.5 rounded-full"
-                                    style="animation:progressFill 3s ease-in-out infinite;width:0%"></div>
-                            </div>
-                            <div class="absolute top-3 right-4 flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-green-500"
-                                    style="animation:pulse 1.5s infinite"></span>
-                                <span class="text-[10px] text-green-600 dark:text-green-400 font-bold">Lista para enviar</span>
-                            </div>
-                        </div>
-                        <div class="px-5 pt-5 pb-1">
-                            <h3
-                                class="text-[15px] font-black text-black dark:text-white group-hover:text-primary transition-colors">
-                                Facturación por voz</h3>
-                        </div>
-                        <div class="px-5 pb-5 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Di en voz alta
-                            los datos de una factura y el sistema la genera, la valida y la envía automáticamente. Sin
-                            teclear nada. Sin errores manuales.</div>
-                        <div class="px-5 pb-6">
-                            <span class="inline-flex items-center justify-center rounded-xl py-3 px-5 bg-primary text-black font-bold hover:brightness-95 transition-all">Quiero este servicio</span>
-                        </div>
-                    </a>
-
-                    <!-- 3. Scraper — terminal → transición → excel -->
-                    <a href="contactus.html?servicio=scraper-inmobiliario#contact_form"
-                        class="group sm:col-span-2 lg:col-span-2 order-2 flex flex-col rounded-2xl bg-[#f2f0eb] dark:bg-[#141414] border border-transparent hover:border-primary/30 hover:shadow-lg transition-all duration-300 overflow-hidden">
-                        <div class="flex items-center justify-between px-5 pt-5 pb-0">
-                            <div class="flex items-center gap-2">
-                                <svg width="12" height="12" viewBox="0 0 12 12">
-                                    <circle cx="6" cy="6" r="5" fill="none" stroke="#aaa" stroke-width="1.5" />
-                                </svg>
-                                <span class="text-xs text-gray-400 font-medium">Inmobiliario</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#7AC143]/10 border border-[#7AC143]/25">
-                                    <svg width="7" height="7" viewBox="0 0 7 7">
-                                        <circle cx="3.5" cy="3.5" r="3.5" fill="#7AC143" />
-                                    </svg>
-                                    <span class="text-[11px] font-bold text-[#4a8a1f] dark:text-[#7AC143]"
-                                        style="font-family:Arial,sans-serif">idealista</span>
-                                </div>
-                                <div
-                                    class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E8003D]/10 border border-[#E8003D]/25">
-                                    <svg width="9" height="9" viewBox="0 0 9 9">
-                                        <rect x="0" y="1" width="9" height="8" rx="2" fill="#E8003D" />
-                                        <polygon points="1,8 3.5,5 5.5,7 6.5,5.8 8,8" fill="white" />
-                                        <circle cx="6" cy="3.5" r="1.1" fill="white" />
-                                    </svg>
-                                    <span class="text-[11px] font-bold text-[#E8003D]"
-                                        style="font-family:Arial,sans-serif">fotocasa</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Zona animada -->
-                        <div class="w-full mt-5 bg-[#0d0d0d] relative overflow-hidden" style="height:260px"
-                            id="scraper-stage">
-
-                            <!-- FASE 1: Terminal -->
-                            <div id="sc-terminal"
-                                class="absolute inset-0 flex items-center justify-center px-6 transition-opacity duration-700">
-                                <div class="w-full max-w-2xl">
-                                    <div class="bg-[#111] rounded-xl border border-white/10 overflow-hidden shadow-2xl">
-                                        <div
-                                            class="flex items-center gap-2 px-5 py-3 bg-[#1a1a1a] border-b border-white/10">
-                                            <div class="w-2.5 h-2.5 rounded-full bg-red-500/70"></div>
-                                            <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/70"></div>
-                                            <div class="w-2.5 h-2.5 rounded-full bg-green-500/70"></div>
-                                            <span class="ml-2 text-[11px] text-gray-500 font-mono"
-                                                id="sc-title">scraper.py</span>
-                                            <span class="ml-auto w-2 h-2 rounded-full bg-green-400" id="sc-dot"></span>
-                                        </div>
-                                        <div class="p-5 font-mono text-[13px] space-y-2 min-h-[140px]" id="sc-lines">
-                                            <p><span class="text-primary">$</span> <span class="text-gray-400">python
-                                                    scraper.py --portal idealista fotocasa</span></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- FASE 2: Excel -->
-                            <div id="sc-excel"
-                                class="absolute inset-0 opacity-0 transition-opacity duration-700 flex items-center justify-center px-6">
-                                <div class="w-full max-w-2xl">
-                                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-2xl">
-                                        <!-- Excel top bar -->
-                                        <div class="flex items-center gap-3 px-5 py-3 bg-[#1a7f37]">
-                                            <svg width="18" height="18" viewBox="0 0 14 14" fill="white">
-                                                <rect x="1" y="1" width="12" height="12" rx="2" />
-                                                <path d="M4 4l2.5 3L4 10h1.5l1.5-2 1.5 2H10L7.5 7 10 4H8.5L7 6 5.5 4z"
-                                                    fill="#1a7f37" />
-                                            </svg>
-                                            <span class="text-[12px] text-white font-bold">datos_scraper.xlsx</span>
-                                            <span class="ml-auto text-[11px] text-white/70">247 registros
-                                                exportados</span>
-                                        </div>
-                                        <!-- Column headers -->
-                                        <div
-                                            class="flex bg-[#f2f2f2] border-b border-gray-200 text-[10px] font-bold text-gray-600">
-                                            <div
-                                                class="w-8 px-2 py-2 border-r border-gray-200 text-center text-gray-400">
-                                                #</div>
-                                            <div class="w-24 px-3 py-2 border-r border-gray-200">Portal</div>
-                                            <div class="flex-1 px-3 py-2 border-r border-gray-200">Titulo</div>
-                                            <div class="w-20 px-3 py-2 border-r border-gray-200 text-right">Precio</div>
-                                            <div class="w-14 px-3 py-2 border-r border-gray-200 text-right">m²</div>
-                                            <div class="w-24 px-3 py-2 border-r border-gray-200">Tipo</div>
-                                            <div class="w-28 px-3 py-2">Contacto</div>
-                                        </div>
-                                        <!-- Data rows -->
-                                        <div id="sc-rows" class="text-[10px] text-gray-700 overflow-hidden"
-                                            style="max-height:148px"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Overlay flash transición -->
-                            <div id="sc-flash"
-                                class="absolute inset-0 bg-primary pointer-events-none opacity-0 transition-opacity duration-300">
-                            </div>
-                        </div>
-
-                        <div class="px-6 pt-5 pb-1">
-                            <h3
-                                class="text-lg font-black text-black dark:text-white group-hover:text-primary transition-colors">
-                                Scraper inmobiliario</h3>
-                        </div>
-                        <div class="px-6 pb-6 text-sm text-gray-500 dark:text-gray-400 leading-relaxed max-w-3xl">
-                            Extraemos automáticamente los anuncios de Idealista y Fotocasa: particulares, agencias,
-                            precios, superficie y tipo de anunciante. Exportación instantánea a Excel, Google Sheets o
-                            CRM.</div>
-                        <div class="px-6 pb-7">
-                            <span class="inline-flex items-center justify-center rounded-xl py-3 px-5 bg-primary text-black font-bold hover:brightness-95 transition-all">Quiero este servicio</span>
-                        </div>
-                    </a>
-
-                    <script>
-                            (function () {
-                                var buttons = Array.prototype.slice.call(document.querySelectorAll('.im-scenario-btn'));
-                                if (buttons.length) {
-                                    var refs = {
-                                        mode: document.getElementById('im-mode-label'),
-                                        trigger: document.getElementById('im-trigger-label'),
-                                        mainAction: document.getElementById('im-main-action'),
-                                        result: document.getElementById('im-result-label'),
-                                        panelTitle: document.getElementById('im-panel-title'),
-                                        panelBadge: document.getElementById('im-panel-badge'),
-                                        input: document.getElementById('im-input-text'),
-                                        actions: document.getElementById('im-actions-list'),
-                                        summary: document.getElementById('im-summary')
-                                    };
-
-                                    var scenarios = {
-                                        lead: {
-                                            mode: 'Autónomo',
-                                            trigger: 'Mensaje entrante',
-                                            mainAction: 'Califica y responde',
-                                            result: 'Lead filtrado',
-                                            title: 'Lead nuevo',
-                                            badge: 'Tiempo real',
-                                            input: 'Un interesado pregunta por un inmueble disponible.',
-                                            actions: [
-                                                'Responde al instante por WhatsApp.',
-                                                'Envía ficha, fotos y vídeo del inmueble.',
-                                                'Filtra presupuesto, zona e interés real.',
-                                                'Propone el siguiente paso sin que intervengas.'
-                                            ],
-                                            summary: 'Te llega el lead filtrado y con el siguiente paso ya preparado.'
-                                        },
-                                        visit: {
-                                            mode: 'Sin fricción',
-                                            trigger: 'Solicitud de visita',
-                                            mainAction: 'Agenda y confirma',
-                                            result: 'Visita cerrada',
-                                            title: 'Visita',
-                                            badge: 'Calendly',
-                                            input: 'Un cliente quiere ver el piso y pregunta por horarios.',
-                                            actions: [
-                                                'Ofrece horarios disponibles en Calendly.',
-                                                'Confirma la cita automáticamente.',
-                                                'Gestiona cambios y cancelaciones.',
-                                                'Envía recordatorio antes de la visita.'
-                                            ],
-                                            summary: 'Tú solo apareces en la visita ya confirmada.'
-                                        },
-                                        payment: {
-                                            mode: 'Controlado',
-                                            trigger: 'Fecha de cobro',
-                                            mainAction: 'Recuerda y registra',
-                                            result: 'Cobro controlado',
-                                            title: 'Pago',
-                                            badge: 'Seguimiento',
-                                            input: 'Llega la fecha de pago del alquiler y toca verificar el cobro.',
-                                            actions: [
-                                                'Envía recordatorio de pago automáticamente.',
-                                                'Registra el cobro cuando entra.',
-                                                'Si falta el pago, lanza alerta y seguimiento.',
-                                                'Deja trazabilidad para que veas el estado en un vistazo.'
-                                            ],
-                                            summary: 'No tienes que perseguir pagos uno a uno ni revisar manualmente cada caso.'
-                                        },
-                                        issue: {
-                                            mode: 'Ordenado',
-                                            trigger: 'Nueva incidencia',
-                                            mainAction: 'Recoge y deriva',
-                                            result: 'Caso trazado',
-                                            title: 'Incidencia',
-                                            badge: 'Seguimiento',
-                                            input: 'Un inquilino avisa de un problema en la vivienda.',
-                                            actions: [
-                                                'Recoge la incidencia con contexto y documentación.',
-                                                'Clasifica urgencia y tipo de problema.',
-                                                'Mantiene informado al inquilino durante el proceso.',
-                                                'Te deja el estado actualizado hasta resolución.'
-                                            ],
-                                            summary: 'Evitas mensajes sueltos, llamadas fuera de hora y pérdida de contexto.'
-                                        }
-                                    };
-
-                                    function renderScenario(key) {
-                                        var scenario = scenarios[key];
-                                        if (!scenario) return;
-
-                                        refs.mode.textContent = scenario.mode;
-                                        refs.trigger.textContent = scenario.trigger;
-                                        refs.mainAction.textContent = scenario.mainAction;
-                                        refs.result.textContent = scenario.result;
-                                        refs.panelTitle.textContent = scenario.title;
-                                        refs.panelBadge.textContent = scenario.badge;
-                                        refs.input.textContent = scenario.input;
-                                        refs.summary.textContent = scenario.summary;
-                                        refs.actions.innerHTML = scenario.actions.map(function (item) {
-                                            return '<div class="flex items-start gap-2"><span class="material-symbols-outlined text-primary text-base">check_circle</span><span>' + item + '</span></div>';
-                                        }).join('');
-
-                                        buttons.forEach(function (button) {
-                                            var active = button.getAttribute('data-scenario') === key;
-                                            button.classList.toggle('bg-primary/10', active);
-                                            button.classList.toggle('border-primary/30', active);
-                                            button.classList.toggle('bg-white/80', !active);
-                                            button.classList.toggle('dark:bg-black/20', !active);
-                                            button.classList.toggle('border-gray-200', !active);
-                                            button.classList.toggle('dark:border-white/10', !active);
-                                        });
-                                    }
-
-                                    buttons.forEach(function (button) {
-                                        button.addEventListener('click', function () {
-                                            renderScenario(button.getAttribute('data-scenario'));
-                                        });
-                                    });
-
-                                    renderScenario('lead');
-                                }
-                            })();
-
-                            (function () {
-                                var data = [
-                                    ['idealista', 'Piso 3 hab. centro Madrid', '285.000€', '82', 'Particular', '645 32 11 98'],
-                                    ['fotocasa', 'Atico con terraza Barcelona', '412.000€', '95', 'Inmobiliaria', 'Re/Max'],
-                                    ['idealista', 'Estudio reformado Valencia', '128.000€', '45', 'Particular', '612 87 44 21'],
-                                    ['fotocasa', 'Chalet adosado Sevilla', '320.000€', '140', 'Inmobiliaria', 'Keller W.'],
-                                    ['idealista', 'Loft industrial Bilbao', '195.000€', '67', 'Particular', '688 11 55 33'],
-                                    ['fotocasa', 'Duplex vistas mar Malaga', '520.000€', '110', 'Inmobiliaria', 'Engel V.'],
-                                    ['idealista', 'Piso familiar Zaragoza', '165.000€', '88', 'Particular', '654 90 27 15'],
-                                ];
-                                var termLines = [
-                                    { t: 600, cls: 'text-gray-400', txt: 'Iniciando sesión en portales...' },
-                                    { t: 1100, cls: 'text-green-400', txt: '✓ Conexión establecida' },
-                                    { t: 1600, cls: 'text-gray-400', txt: 'Buscando anuncios...' },
-                                    { t: 2300, cls: 'text-green-400', txt: '✓ 247 anuncios encontrados' },
-                                    { t: 2700, cls: 'text-blue-400', txt: '  particulares:  89' },
-                                    { t: 2900, cls: 'text-yellow-400', txt: '  inmobiliarias: 158' },
-                                    { t: 3300, cls: 'text-gray-400', txt: 'Extrayendo datos...' },
-                                    { t: 4200, cls: 'text-green-400', txt: '✓ datos_scraper.xlsx generado' },
-                                ];
-
-                                var portal = {
-                                    'idealista': '<span style="color:#4a8a1f;font-weight:700">idealista</span>',
-                                    'fotocasa': '<span style="color:#E8003D;font-weight:700">fotocasa</span>'
-                                };
-                                var tipo = {
-                                    'Particular': '<span style="background:#dbeafe;color:#1d4ed8;padding:1px 5px;border-radius:4px">Particular</span>',
-                                    'Inmobiliaria': '<span style="background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:4px">Agencia</span>'
-                                };
-
-                                function rowHtml(i, d) {
-                                    return '<div class="flex border-b border-gray-100 hover:bg-gray-50" style="animation:rowFadeIn .3s ease ' + (i * 80) + 'ms both">' +
-                                        '<div class="w-8 px-2 py-2 border-r border-gray-100 text-center text-gray-400">' + (i + 1) + '</div>' +
-                                        '<div class="w-24 px-3 py-2 border-r border-gray-100">' + portal[d[0]] + '</div>' +
-                                        '<div class="flex-1 px-3 py-2 border-r border-gray-100 truncate text-gray-600">' + d[1] + '</div>' +
-                                        '<div class="w-20 px-3 py-2 border-r border-gray-100 text-right font-bold text-gray-800">' + d[2] + '</div>' +
-                                        '<div class="w-14 px-3 py-2 border-r border-gray-100 text-right text-gray-600">' + d[3] + '</div>' +
-                                        '<div class="w-24 px-3 py-2 border-r border-gray-100">' + tipo[d[4]] + '</div>' +
-                                        '<div class="w-28 px-3 py-2 text-gray-500 truncate">' + d[5] + '</div>' +
-                                        '</div>';
-                                }
-
-                                function runCycle() {
-                                    var linesEl = document.getElementById('sc-lines');
-                                    var terminal = document.getElementById('sc-terminal');
-                                    var excel = document.getElementById('sc-excel');
-                                    var flash = document.getElementById('sc-flash');
-                                    var rowsEl = document.getElementById('sc-rows');
-                                    var dot = document.getElementById('sc-dot');
-                                    if (!linesEl) return;
-
-                                    // Reset
-                                    linesEl.innerHTML = '<p><span style="color:#FFB300">$</span> <span style="color:#9ca3af">python scraper.py --portal idealista fotocasa</span></p>';
-                                    terminal.style.opacity = '1';
-                                    excel.style.opacity = '0';
-                                    dot.style.background = '#4ade80';
-
-                                    // Add terminal lines
-                                    termLines.forEach(function (l) {
-                                        setTimeout(function () {
-                                            if (!linesEl) return;
-                                            var p = document.createElement('p');
-                                            p.className = l.cls;
-                                            p.textContent = l.txt;
-                                            linesEl.appendChild(p);
-                                        }, l.t);
-                                    });
-
-                                    // Flash + transition to excel
-                                    setTimeout(function () {
-                                        flash.style.opacity = '0.6';
-                                        setTimeout(function () {
-                                            flash.style.opacity = '0';
-                                            terminal.style.opacity = '0';
-                                            excel.style.opacity = '1';
-                                            // Populate rows
-                                            rowsEl.innerHTML = data.map(function (d, i) { return rowHtml(i, d); }).join('');
-                                        }, 350);
-                                    }, 5000);
-
-                                    // Restart after showing excel
-                                    setTimeout(runCycle, 9000);
-                                }
-
-                                if (document.readyState === 'loading') {
-                                    document.addEventListener('DOMContentLoaded', function () { setTimeout(runCycle, 400); });
-                                } else {
-                                    setTimeout(runCycle, 400);
-                                }
-                            })();
-                    </script>
-
                 </div>
+            </section>
 
-                <!-- Keyframes para las animaciones -->
-                <style>
-                    @keyframes barGrow {
-                        from {
-                            transform: scaleY(0.6)
-                        }
+            <!-- Other Services -->
+            <section class="bg-[#fafafa] border-b border-[#e8e8e8]">
+                <div class="max-w-[1200px] mx-auto px-6 md:px-10 py-20 md:py-24">
+                    <div class="mb-12">
+                        <span class="text-xs font-bold text-[#999] tracking-[0.2em] uppercase">Más servicios</span>
+                        <h2 class="text-3xl md:text-4xl font-black text-[#111] leading-tight tracking-tight mt-3">
+                            Más automatizaciones para tu negocio
+                        </h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <a href="facturacion.html" class="bg-white border border-[#e8e8e8] rounded-2xl p-8 hover:border-[#FFB300] transition-colors duration-200 group block">
+                            <div class="w-11 h-11 rounded-xl bg-[#FFF8E1] flex items-center justify-center mb-5">
+                                <span class="material-symbols-outlined text-[22px] text-[#FFB300]">mic</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-[#111] mb-2 group-hover:text-[#FFB300] transition-colors">Facturación por voz</h3>
+                            <p class="text-[#666] text-sm leading-relaxed mb-6">Di en voz alta los datos de una factura. El sistema la genera, la valida y la envía automáticamente. Sin teclear nada, sin errores manuales.</p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs font-medium text-[#888] bg-[#f3f3f3] px-3 py-1.5 rounded-full">Dictado natural</span>
+                                <span class="text-xs font-medium text-[#888] bg-[#f3f3f3] px-3 py-1.5 rounded-full">Validación automática</span>
+                                <span class="text-xs font-medium text-[#888] bg-[#f3f3f3] px-3 py-1.5 rounded-full">Envío directo</span>
+                            </div>
+                            <span class="text-xs font-semibold text-[#FFB300]">Ver más →</span>
+                        </a>
+                        <a href="radar.html" class="bg-white border border-[#e8e8e8] rounded-2xl p-8 hover:border-[#FFB300] transition-colors duration-200 group block">
+                            <div class="w-11 h-11 rounded-xl bg-[#FFF8E1] flex items-center justify-center mb-5">
+                                <span class="material-symbols-outlined text-[22px] text-[#FFB300]">travel_explore</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-[#111] mb-2 group-hover:text-[#FFB300] transition-colors">Radar de Oportunidades</h3>
+                            <p class="text-[#666] text-sm leading-relaxed mb-6">Encuentra anuncios de particulares en Idealista y Fotocasa con su número de teléfono, automáticamente. Llega siempre el primero.</p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs font-medium text-[#888] bg-[#f3f3f3] px-3 py-1.5 rounded-full">Idealista</span>
+                                <span class="text-xs font-medium text-[#888] bg-[#f3f3f3] px-3 py-1.5 rounded-full">Fotocasa</span>
+                                <span class="text-xs font-medium text-[#888] bg-[#f3f3f3] px-3 py-1.5 rounded-full">Exportar a Excel</span>
+                            </div>
+                            <span class="text-xs font-semibold text-[#FFB300]">Ver más →</span>
+                        </a>
 
-                        to {
-                            transform: scaleY(1)
-                        }
-                    }
+                        <a href="diseno-web.html" class="bg-white border border-[#e8e8e8] rounded-2xl p-8 hover:border-[#FFB300] transition-colors duration-200 group block">
+                            <div class="w-11 h-11 rounded-xl bg-[#FFF8E1] flex items-center justify-center mb-5">
+                                <span class="material-symbols-outlined text-[22px] text-[#FFB300]">web</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-[#111] mb-2 group-hover:text-[#FFB300] transition-colors">Diseño Web</h3>
+                            <p class="text-[#666] text-sm leading-relaxed mb-6">Desde una página de reservas sencilla hasta un sitio complejo y creativo. Diseñado a medida, rápido y adaptado a móvil.</p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs font-medium text-[#888] bg-[#f3f3f3] px-3 py-1.5 rounded-full">Reservas</span>
+                                <span class="text-xs font-medium text-[#888] bg-[#f3f3f3] px-3 py-1.5 rounded-full">Corporativa</span>
+                                <span class="text-xs font-medium text-[#888] bg-[#f3f3f3] px-3 py-1.5 rounded-full">Creativa</span>
+                            </div>
+                            <span class="text-xs font-semibold text-[#FFB300]">Ver más →</span>
+                        </a>
 
-                    @keyframes barFill {
-                        from {
-                            width: 0%
-                        }
+                    </div>
+                </div>
+            </section>
 
-                        to {
-                            width: var(--w, 100%)
-                        }
-                    }
+            <!-- CTA -->
+            <section class="bg-[#111]">
+                <div class="max-w-[1200px] mx-auto px-6 md:px-10 py-20 md:py-24">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-10">
+                        <div>
+                            <h2 class="text-3xl md:text-4xl font-black text-white leading-tight tracking-tight mb-4">
+                                ¿Listo para automatizar<br>tu inmobiliaria?
+                            </h2>
+                            <p class="text-[#888] text-lg leading-relaxed max-w-lg">Cuéntanos tu caso y te mostramos en una llamada cómo Nize encaja en tu operativa. Sin compromiso.</p>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3 flex-shrink-0">
+                            <a href="consultoria-gratuita.html" class="inline-flex items-center justify-center gap-2 bg-[#FFB300] text-[#111] font-bold text-sm px-7 py-3.5 rounded-full hover:bg-[#E69900] transition-colors">
+                                Solicitar demo <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                            </a>
+                            <a href="mailto:automanize@gmail.com" class="inline-flex items-center justify-center gap-2 bg-transparent text-white border border-[#333] font-medium text-sm px-7 py-3.5 rounded-full hover:border-[#555] transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">mail</span>
+                                Escribir un email
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
 
-                    @keyframes progressFill {
-                        0% {
-                            width: 0%
-                        }
-
-                        80% {
-                            width: 100%
-                        }
-
-                        100% {
-                            width: 100%
-                        }
-                    }
-
-                    @keyframes floatBadge {
-
-                        0%,
-                        100% {
-                            transform: translateY(-50%) rotate(2deg)
-                        }
-
-                        50% {
-                            transform: translateY(calc(-50% - 6px)) rotate(-1deg)
-                        }
-                    }
-
-                    @keyframes shimmer {
-
-                        0%,
-                        100% {
-                            opacity: 0.3
-                        }
-
-                        50% {
-                            opacity: 0.7
-                        }
-                    }
-
-                    @keyframes rowFadeIn {
-                        from {
-                            opacity: 0;
-                            transform: translateY(4px)
-                        }
-
-                        to {
-                            opacity: 1;
-                            transform: translateY(0)
-                        }
-                    }
-
-                    @keyframes msgIn {
-                        0% {
-                            opacity: 0;
-                            transform: translateY(8px)
-                        }
-
-                        20%,
-                        80% {
-                            opacity: 1;
-                            transform: translateY(0)
-                        }
-
-                        100% {
-                            opacity: 0
-                        }
-                    }
-
-                    @keyframes emailSlide {
-                        0% {
-                            opacity: 0.4
-                        }
-
-                        20%,
-                        80% {
-                            opacity: 1
-                        }
-
-                        100% {
-                            opacity: 0.4
-                        }
-                    }
-
-                    @keyframes cardPulse {
-
-                        0%,
-                        100% {
-                            border-color: rgba(59, 130, 246, 0.2)
-                        }
-
-                        50% {
-                            border-color: rgba(59, 130, 246, 0.6);
-                            background: rgba(59, 130, 246, 0.15)
-                        }
-                    }
-
-                    @keyframes rowHighlight {
-
-                        0%,
-                        100% {
-                            background: transparent
-                        }
-
-                        50% {
-                            background: rgba(255, 179, 0, 0.05)
-                        }
-                    }
-
-                    @keyframes fadeInLine {
-
-                        0%,
-                        10% {
-                            opacity: 0
-                        }
-
-                        30%,
-                        90% {
-                            opacity: 1
-                        }
-
-                        100% {
-                            opacity: 0
-                        }
-                    }
-
-                    @keyframes pulse {
-
-                        0%,
-                        100% {
-                            opacity: 1
-                        }
-
-                        50% {
-                            opacity: 0.4
-                        }
-                    }
-                </style>
-
-
+        <!-- Footer -->
+        <footer class="bg-white border-t border-[#e8e8e8]">
+            <div class="max-w-[1200px] mx-auto px-6 md:px-10 py-12">
+                <div class="flex flex-col md:flex-row md:justify-between gap-10">
+                    <div class="max-w-xs">
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="size-8 rounded-md overflow-hidden border border-gray-100">
+                                <img src="assets/images/Automanize%20(4).png" alt="Automanize" class="w-full h-full object-cover" />
+                            </div>
+                            <span class="text-base font-bold text-[#111]">Automanize</span>
+                        </div>
+                        <p class="text-sm text-[#888] leading-relaxed">Automatización inteligente para el sector inmobiliario.</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-[#999] tracking-[0.15em] uppercase mb-4">Contacto</p>
+                        <ul class="space-y-2.5">
+                            <li><a href="mailto:automanize@gmail.com" class="text-sm text-[#555] hover:text-[#111] transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-[15px] text-[#ccc]">mail</span>automanize@gmail.com</a></li>
+                            <li><a href="tel:+34617153252" class="text-sm text-[#555] hover:text-[#111] transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-[15px] text-[#ccc]">call</span>+34 617 15 32 52</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-[#999] tracking-[0.15em] uppercase mb-4">Legal</p>
+                        <ul class="space-y-2.5">
+                            <li><a href="aviso-legal.html" class="text-sm text-[#555] hover:text-[#111] transition-colors">Aviso legal</a></li>
+                            <li><a href="privacy.html" class="text-sm text-[#555] hover:text-[#111] transition-colors">Privacidad</a></li>
+                            <li><a href="cookies.html" class="text-sm text-[#555] hover:text-[#111] transition-colors">Cookies</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-12 pt-6 border-t border-[#e8e8e8] flex flex-col sm:flex-row sm:justify-between gap-2">
+                    <p class="text-xs text-[#ccc]">© 2026 Automanize. Todos los derechos reservados.</p>
+                    <p class="text-xs text-[#ccc]">Hecho en España</p>
+                </div>
             </div>
-        </div>
+        </footer>
+
+    </div>
 </body>
 
 </html>

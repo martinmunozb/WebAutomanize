@@ -132,6 +132,120 @@
             scroll-margin-top: 96px;
         }
 
+        /* ===== HERO ESTILO SPLIT (Mobilia-style) ===== */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            min-height: 460px;
+            width: 100%;
+        }
+
+        @media (min-width: 1024px) {
+            .hero-section {
+                flex-direction: row;
+                min-height: 520px;
+            }
+        }
+
+        /* Columna izquierda: imagen que llena todo el alto */
+        .hero-left {
+            position: relative;
+            overflow: hidden;
+            min-height: 280px;
+            flex: 0 0 auto;
+            width: 100%;
+        }
+
+        @media (min-width: 1024px) {
+            .hero-left {
+                width: 44%;
+                min-height: unset;
+            }
+        }
+
+        .hero-left img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+            display: block;
+            /* La imagen ya viene en B/N — solo ajustamos brillo */
+            filter: brightness(0.92) contrast(1.04);
+            animation: heroImgIn 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes heroImgIn {
+            from { opacity: 0; transform: scale(1.04); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        /* Degradado que funde la imagen hacia la derecha */
+        .hero-left-fade {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to right,
+                transparent 55%,
+                rgba(252, 252, 251, 0.55) 80%,
+                rgba(252, 252, 251, 1) 100%
+            );
+            pointer-events: none;
+        }
+
+        /* Degradado abajo en móvil (funde la imagen hacia abajo) */
+        @media (max-width: 1023px) {
+            .hero-left-fade {
+                background: linear-gradient(
+                    to bottom,
+                    transparent 50%,
+                    rgba(252, 252, 251, 0.7) 80%,
+                    rgba(252, 252, 251, 1) 100%
+                );
+            }
+        }
+
+        .dark .hero-left-fade {
+            background: linear-gradient(
+                to right,
+                transparent 55%,
+                rgba(10, 10, 10, 0.55) 80%,
+                rgba(10, 10, 10, 1) 100%
+            );
+        }
+
+        @media (max-width: 1023px) {
+            .dark .hero-left-fade {
+                background: linear-gradient(
+                    to bottom,
+                    transparent 50%,
+                    rgba(10, 10, 10, 0.7) 80%,
+                    rgba(10, 10, 10, 1) 100%
+                );
+            }
+        }
+
+        /* Columna derecha: texto */
+        .hero-right {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding: 2.5rem 1.5rem 2.5rem 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            .hero-right {
+                padding: 3rem 4rem 3rem 2.5rem;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .hero-right {
+                padding: 3rem 5rem 3rem 3rem;
+            }
+        }
+
         body {
             font-family: "Spline Sans", sans-serif;
         }
@@ -663,52 +777,118 @@
 <body class="bg-background-light dark:bg-background-dark text-text-main dark:text-white overflow-x-hidden font-display">
     <div class="relative flex flex-col min-h-screen w-full">
         <header
-            class="sticky top-0 z-50 w-full border-b border-[#e6e6db] dark:border-[#262626] bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md">
-            <div class="px-4 md:px-10 py-4 flex items-center justify-between max-w-[1200px] mx-auto w-full">
-                <a href="index.html#inicio-principal" class="flex items-center gap-3"
+            class="relative z-50 w-full bg-[#EBECEF]/95 dark:bg-[#1c1c1e]/95 backdrop-blur-xl transition-all duration-300">
+            <!-- Difuminado hacia abajo -->
+            <div class="absolute top-full left-0 right-0 h-10 bg-gradient-to-b from-[#EBECEF]/95 dark:from-[#1c1c1e]/95 to-transparent pointer-events-none"></div>
+            <div class="px-4 md:px-10 py-3 flex items-center justify-between max-w-[1200px] mx-auto w-full">
+                <!-- Logo -->
+                <a href="index.html#inicio-principal" class="flex items-center gap-3 group"
                     aria-label="Ir al inicio principal">
                     <div
-                        class="size-10 rounded-lg flex items-center justify-center shadow-md overflow-hidden scale-hover">
-                        <img src="assets/images/Automanize%20(4).png" alt="Automanize Logo" class="w-full h-full object-cover"
+                        class="size-9 rounded-lg flex items-center justify-center bg-white dark:bg-black shadow-[0_2px_8px_rgba(0,0,0,0.08)] overflow-hidden scale-hover border border-gray-100 dark:border-gray-800 transition-transform group-hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)]">
+                        <img src="assets/images/Automanize%20(4).png" alt="Automanize Logo" class="w-full h-full object-cover p-0.5"
                             loading="lazy" />
                     </div>
-                    <h2 class="text-text-main dark:text-white text-2xl font-bold tracking-tight">Automanize</h2>
+                    <h2 class="text-[#1d1d1f] dark:text-[#f5f5f7] text-xl font-semibold tracking-tight transition-colors">Automanize</h2>
                 </a>
-                <div class="hidden md:flex items-center gap-8">
-                    <a class="text-text-main dark:text-white text-sm font-medium hover:text-primary-hover transition-colors"
-                        href="index.html">Inicio</a>
-                    <a class="text-text-main dark:text-white text-sm font-medium hover:text-primary-hover transition-colors"
-                        href="our-services.html">Servicios</a>
-                </div>
-                <div class="flex items-center gap-3">
-                    <a class="hidden lg:flex items-center justify-center h-10 px-4 text-sm font-bold text-text-main dark:text-white bg-transparent hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors"
+
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex items-center gap-9">
+                    <a class="relative text-[#515154] dark:text-[#a1a1a6] text-[14px] font-medium transition-colors duration-300 hover:text-[#FFAB00] group"
+                        href="index.html">
+                        Inicio
+                        <span class="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-[#FFAB00] transition-all duration-300 group-hover:w-full rounded-full"></span>
+                    </a>
+                    <!-- Dropdown Servicios -->
+                    <div class="relative group">
+                        <a class="relative flex items-center gap-1 text-[#515154] dark:text-[#a1a1a6] text-[14px] font-medium transition-colors duration-300 group-hover:text-[#FFAB00]"
+                            href="our-services.html">
+                            Servicios
+                            <span class="material-symbols-outlined text-[16px]">expand_more</span>
+                            <span class="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-[#FFAB00] transition-all duration-300 group-hover:w-full rounded-full"></span>
+                        </a>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="absolute top-[100%] left-1/2 -translate-x-1/2 pt-6 w-60 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 ease-out z-50">
+                            <div class="bg-white dark:bg-[#1c1c1e] rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-100 dark:border-[#333336] p-2 flex flex-col gap-1">
+                                <a href="our-services.html#whatsapp" class="block px-4 py-2.5 text-[13px] font-medium text-[#515154] dark:text-[#a1a1a6] hover:text-[#1d1d1f] hover:bg-gray-50 dark:hover:bg-[#2c2c2e] dark:hover:text-white rounded-lg transition-colors leading-tight">
+                                    Asistente de WhatsApp
+                                </a>
+                                <a href="facturacion.html" class="block px-4 py-2.5 text-[13px] font-medium text-[#515154] dark:text-[#a1a1a6] hover:text-[#1d1d1f] hover:bg-gray-50 dark:hover:bg-[#2c2c2e] dark:hover:text-white rounded-lg transition-colors leading-tight">
+                                    Facturación Inteligente
+                                </a>
+                                <a href="our-services.html#cobros" class="block px-4 py-2.5 text-[13px] font-medium text-[#515154] dark:text-[#a1a1a6] hover:text-[#1d1d1f] hover:bg-gray-50 dark:hover:bg-[#2c2c2e] dark:hover:text-white rounded-lg transition-colors leading-tight">
+                                    Gestor de Cobros
+                                </a>
+                                <a href="radar.html" class="block px-4 py-2.5 text-[13px] font-medium text-[#515154] dark:text-[#a1a1a6] hover:text-[#1d1d1f] hover:bg-gray-50 dark:hover:bg-[#2c2c2e] dark:hover:text-white rounded-lg transition-colors leading-tight">
+                                    Radar de Oportunidades
+                                </a>
+                                <a href="crm.html" class="block px-4 py-2.5 text-[13px] font-medium text-[#515154] dark:text-[#a1a1a6] hover:text-[#1d1d1f] hover:bg-gray-50 dark:hover:bg-[#2c2c2e] dark:hover:text-white rounded-lg transition-colors leading-tight">
+                                    Control Operativo 360°
+                                </a>
+                                <a href="diseno-web.html" class="block px-4 py-2.5 text-[13px] font-medium text-[#515154] dark:text-[#a1a1a6] hover:text-[#1d1d1f] hover:bg-gray-50 dark:hover:bg-[#2c2c2e] dark:hover:text-white rounded-lg transition-colors leading-tight">
+                                    Diseño Web
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="relative text-[#515154] dark:text-[#a1a1a6] text-[14px] font-medium transition-colors duration-300 hover:text-[#FFAB00] group"
+                        href="consultoria-gratuita.html">
+                        Consultoría
+                        <span class="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-[#FFAB00] transition-all duration-300 group-hover:w-full rounded-full"></span>
+                    </a>
+                </nav>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-4 hidden sm:flex">
+                    <a class="hidden lg:flex items-center justify-center h-9 px-4 text-[13px] font-medium text-[#515154] dark:text-[#a1a1a6] bg-transparent hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors hover:text-[#1d1d1f] dark:hover:text-white"
                         href="tel:+34617153252">
+                        <span class="material-symbols-outlined text-[16px] mr-1.5 opacity-80">call</span>
                         +34 617 15 32 52
                     </a>
                     <a href="contactus.html"
-                        class="flex items-center justify-center h-10 px-6 bg-primary hover:bg-primary-hover text-black text-sm font-bold rounded-full transition-transform hover:scale-105 shadow-sm shadow-orange-500/20 glow btn-pulse">
+                        class="flex items-center justify-center h-10 px-6 bg-primary hover:bg-[#E69900] text-black text-[14px] font-bold rounded-full transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_8px_20px_rgba(255,171,0,0.3)] btn-pulse">
                         Contáctanos
                     </a>
+                </div>
+                
+                <!-- Mobile Menu Button (Placeholder for future) -->
+                <div class="sm:hidden flex items-center">
+                   <button class="p-2 text-text-main dark:text-white">
+                        <span class="material-symbols-outlined">menu</span>
+                   </button>
                 </div>
             </div>
         </header>
 
-        <main class="flex-1 w-full max-w-[1200px] mx-auto px-4 md:px-10 flex flex-col gap-16 pb-20">
-            <section id="inicio-principal" class="pt-14 md:pt-20">
-                <div class="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8">
+        <main class="flex-1 w-full flex flex-col pb-20">
 
-                    <!-- Texto izquierda -->
-                    <div
-                        class="flex flex-col gap-6 max-w-[560px] text-center lg:text-left items-center lg:items-start scroll-reveal reveal-left">
-                        <h1
-                            class="text-text-main dark:text-white text-4xl md:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
-                            Gestiona tus propiedades en la mitad de tiempo. <br /><span
-                                class="relative inline-block z-10 text-shimmer">Sin contratar a nadie más.</span>
+            <!-- ===== HERO SPLIT: imagen izquierda sangrada | texto derecha ===== -->
+            <section id="inicio-principal" class="hero-section">
+
+                <!-- Columna izquierda: imagen sangrada a los bordes -->
+                <div class="hero-left">
+                    <img
+                        src="assets/images/hero-house.jpg"
+                        alt="Propiedad de lujo gestionada con Automanize"
+                        loading="eager"
+                        fetchpriority="high"
+                    />
+                    <!-- Funde la imagen hacia el texto -->
+                    <div class="hero-left-fade"></div>
+                </div>
+
+                <!-- Columna derecha: texto -->
+                <div class="hero-right">
+                    <div class="flex flex-col gap-6 max-w-xl">
+                        <h1 class="text-text-main dark:text-white text-4xl md:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight stagger-1">
+                            Gestiona tus propiedades en la mitad de tiempo.
+                            <br /><span class="relative inline-block z-10 text-shimmer">Sin contratar a nadie más.</span>
                         </h1>
-                        <h2 class="text-text-muted dark:text-gray-400 text-lg md:text-xl font-normal leading-relaxed">
-                            ¿Pierdes horas al teléfono intentando alquilar o vender tus pisos? <strong class="text-text-main dark:text-white">Nize</strong>, nuestro agente IA, se conecta a tu WhatsApp y se encarga de todo: responde dudas, envía fichas, agenda visitas, gestiona inquilinos, incidencias y pagos. Tú solo acude a la cita.
-                        </h2>
-                        <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
+                        <p class="text-text-muted dark:text-gray-400 text-lg md:text-xl font-normal leading-relaxed stagger-2">
+                            ¿Pierdes horas al teléfono intentando alquilar o vender tus pisos? <strong class="text-text-main dark:text-white">Nize</strong>, nuestro agente IA, se conecta a tu WhatsApp y se encarga de todo: responde dudas, envía fichas, agenda visitas, gestiona inquilinos, incidencias y pagos.
+                        </p>
+                        <div class="flex flex-wrap gap-4 stagger-3">
                             <a href="consultoria-gratuita.html"
                                 class="h-12 px-8 bg-primary hover:bg-primary-hover text-black text-base font-bold rounded-full transition-all hover:shadow-lg hover:-translate-y-1 shadow-orange-500/20 flex items-center justify-center glow">
                                 Quiero ver cómo funciona →
@@ -719,515 +899,69 @@
                             </a>
                         </div>
                     </div>
-
-                    <!-- Widget chat Nize -->
-                    <div class="flex-shrink-0 scroll-reveal reveal-right" style="animation-delay:0.15s">
-                        <div class="nize-widget">
-                            <div class="nize-header">
-                                <div class="nize-av-wrap">
-                                    <img src="assets/images/nize.png" class="nize-av" alt="Nize" />
-                                    <span class="nize-dot"></span>
-                                </div>
-                                <div style="flex:1">
-                                    <p class="nize-name">Nize</p>
-                                    <p class="nize-sub">Agente IA &middot; Automanize</p>
-                                </div>
-                                <span class="nize-badge">IA</span>
-                            </div>
-                            <div class="nize-body" id="nize-body"></div>
-                            <div class="nize-footer">
-                                <div class="nize-input">Escribe tu mensaje...</div>
-                                <button class="nize-btn">
-                                    <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
-                                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
+
             </section>
 
-            <style>
-                .nize-widget {
-                    width: 320px;
-                    border-radius: 20px;
-                    overflow: hidden;
-                    border: 1px solid rgba(0, 0, 0, 0.08);
-                    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
-                    background: #fff;
-                    animation: nizeFloat 5s ease-in-out infinite;
-                }
-
-                .dark .nize-widget {
-                    background: #141414;
-                    border-color: rgba(255, 255, 255, 0.07);
-                }
-
-                @keyframes nizeFloat {
-
-                    0%,
-                    100% {
-                        transform: translateY(0px);
-                    }
-
-                    50% {
-                        transform: translateY(-12px);
-                    }
-                }
-
-                .nize-header {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    padding: 14px 16px;
-                    background: rgba(255, 255, 255, 0.08);
-                    backdrop-filter: blur(12px);
-                    -webkit-backdrop-filter: blur(12px);
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                .nize-header::after {
-                    content: '';
-                    position: absolute;
-                    top: -20px;
-                    right: -20px;
-                    width: 80px;
-                    height: 80px;
-                    border-radius: 50%;
-                    background: rgba(255, 255, 255, 0.1);
-                }
-
-                .nize-av-wrap {
-                    position: relative;
-                    flex-shrink: 0;
-                }
-
-                .nize-av {
-                    width: 42px;
-                    height: 42px;
-                    border-radius: 50%;
-                    border: 2px solid rgba(255, 255, 255, 0.85);
-                    object-fit: cover;
-                    display: block;
-                    background: #fff;
-                }
-
-                .nize-dot {
-                    position: absolute;
-                    bottom: 1px;
-                    right: 1px;
-                    width: 10px;
-                    height: 10px;
-                    background: #22c55e;
-                    border-radius: 50%;
-                    border: 2px solid rgba(255, 255, 255, 0.6);
-                    animation: nizeDot 2s ease-in-out infinite;
-                }
-
-                @keyframes nizeDot {
-
-                    0%,
-                    100% {
-                        box-shadow: 0 0 0 0 rgba(34, 197, 94, .5)
-                    }
-
-                    50% {
-                        box-shadow: 0 0 0 4px rgba(34, 197, 94, 0)
-                    }
-                }
-
-                .nize-name {
-                    color: #1a1a1a;
-                    font-weight: 800;
-                    font-size: 14px;
-                    margin: 0;
-                    line-height: 1.2;
-                }
-
-                .nize-sub {
-                    color: rgba(0, 0, 0, .5);
-                    font-size: 10.5px;
-                    margin: 0;
-                }
-
-                .nize-badge {
-                    background: rgba(99, 140, 255, 0.15);
-                    color: #3b6fd4;
-                    font-size: 9px;
-                    font-weight: 800;
-                    letter-spacing: .06em;
-                    padding: 3px 7px;
-                    border-radius: 20px;
-                }
-
-                .nize-body {
-                    min-height: 260px;
-                    max-height: 300px;
-                    overflow: hidden;
-                    padding: 14px 12px 8px;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 8px;
-                    background: #f7f7f5;
-                }
-
-                .dark .nize-body {
-                    background: #0f0f0f;
-                }
-
-                .nize-row {
-                    display: flex;
-                    align-items: flex-end;
-                    gap: 6px;
-                }
-
-                .nize-row.sent {
-                    flex-direction: row-reverse;
-                }
-
-                .nize-mini-av {
-                    width: 24px;
-                    height: 24px;
-                    border-radius: 50%;
-                    background: #fff;
-                    overflow: hidden;
-                    flex-shrink: 0;
-                    border: 1px solid rgba(255, 171, 0, 0.3);
-                }
-
-                .nize-mini-av img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                }
-
-                .nize-bubble {
-                    max-width: 78%;
-                    padding: 8px 11px;
-                    border-radius: 14px;
-                    font-size: 11.5px;
-                    line-height: 1.5;
-                    word-break: break-word;
-                    animation: nizePop .3s cubic-bezier(.34, 1.56, .64, 1);
-                    position: relative;
-                }
-
-                @keyframes nizePop {
-                    from {
-                        transform: scale(.65) translateY(10px);
-                        opacity: 0
-                    }
-
-                    to {
-                        transform: scale(1) translateY(0);
-                        opacity: 1
-                    }
-                }
-
-                .nize-bubble.r {
-                    background: #fff;
-                    color: #111;
-                    border-bottom-left-radius: 4px;
-                    box-shadow: 0 1px 3px rgba(0, 0, 0, .07);
-                }
-
-                .dark .nize-bubble.r {
-                    background: #242424;
-                    color: #eee;
-                }
-
-                .nize-bubble.s {
-                    background: #EEF2FF;
-                    color: #1e3a8a;
-                    border-bottom-right-radius: 4px;
-                    box-shadow: 0 1px 4px rgba(59, 111, 212, .12);
-                }
-
-                .nize-time {
-                    display: block;
-                    font-size: 9px;
-                    opacity: .4;
-                    margin-top: 3px;
-                    text-align: right;
-                }
-
-                .nize-bubble.r .nize-time {
-                    text-align: left;
-                }
-
-                .nize-bubble.s .nize-time {
-                    color: #6b8fd4;
-                    opacity: .7;
-                }
-
-                .nize-typing {
-                    display: flex;
-                    align-items: flex-end;
-                    gap: 6px;
-                    animation: nizePop .25s ease;
-                }
-
-                .nize-typing-bub {
-                    background: #fff;
-                    border-radius: 14px;
-                    border-bottom-left-radius: 4px;
-                    padding: 10px 12px;
-                    display: flex;
-                    gap: 4px;
-                    align-items: center;
-                    box-shadow: 0 1px 3px rgba(0, 0, 0, .07);
-                }
-
-                .dark .nize-typing-bub {
-                    background: #242424;
-                }
-
-                .nize-typing-bub span {
-                    width: 6px;
-                    height: 6px;
-                    border-radius: 50%;
-                    background: #ccc;
-                    animation: nizeTypeDot 1.3s ease-in-out infinite;
-                }
-
-                .nize-typing-bub span:nth-child(2) {
-                    animation-delay: .2s
-                }
-
-                .nize-typing-bub span:nth-child(3) {
-                    animation-delay: .4s
-                }
-
-                @keyframes nizeTypeDot {
-
-                    0%,
-                    60%,
-                    100% {
-                        transform: translateY(0);
-                        opacity: .35
-                    }
-
-                    30% {
-                        transform: translateY(-5px);
-                        opacity: 1;
-                        background: #FFAB00
-                    }
-                }
-
-                .nize-footer {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 10px 12px;
-                    background: #fff;
-                    border-top: 1px solid rgba(0, 0, 0, 0.06);
-                }
-
-                .dark .nize-footer {
-                    background: #141414;
-                    border-color: rgba(255, 255, 255, 0.06)
-                }
-
-                .nize-input {
-                    flex: 1;
-                    font-size: 11.5px;
-                    color: #bbb;
-                    background: #f2f2f0;
-                    border-radius: 20px;
-                    padding: 7px 13px;
-                }
-
-                .dark .nize-input {
-                    background: #1e1e1e;
-                    color: #555
-                }
-
-                .nize-btn {
-                    width: 32px;
-                    height: 32px;
-                    border-radius: 50%;
-                    background: #3b6fd4;
-                    border: none;
-                    color: #fff;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                    flex-shrink: 0;
-                    box-shadow: 0 2px 8px rgba(59, 111, 212, .3);
-                    transition: transform .15s;
-                }
-
-                .nize-btn:hover {
-                    transform: scale(1.1)
-                }
-
-                @media(max-width:1024px) {
-                    .nize-widget {
-                        width: 290px
-                    }
-                }
-
-                @media(max-width:768px) {
-                    .nize-widget {
-                        width: 100%;
-                        max-width: 340px
-                    }
-                }
-            </style>
-
-            <script>
-                    (function () {
-                        var msgs = [
-                            { f: 'r', t: 'Hola, soy Nize. Ayudamos a empresas a escalar eliminando el trabajo manual con sistemas inteligentes a medida.' },
-                            { f: 's', t: '¿Qué significa eso exactamente?' },
-                            { f: 'r', t: 'Haz que tu empresa trabaje para ti y no al revés. Identificamos las tareas repetitivas y las convertimos en procesos autónomos que funcionan 24/7 sin errores.' },
-                            { f: 's', t: '¿Podéis automatizar mi facturación? Es un caos.' },
-                            { f: 'r', t: 'Totalmente. No solo el envío, también la conciliación y el seguimiento de impagos. Lo que hoy te lleva horas, ocurrirá en segundos.' },
-                            { f: 'r', t: 'Para no darte algo genérico, ¿agendamos una sesión rápida? Analizamos tu flujo y te digo dónde estás perdiendo más dinero ahora mismo.' }
-                        ];
-                        var idx = 0;
-                        function gt() { var d = new Date(); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
-                        function run() {
-                            var box = document.getElementById('nize-body');
-                            if (!box) { setTimeout(run, 200); return; }
-                            idx = 0; box.innerHTML = '';
-                            step(box);
-                        }
-                        function step(box) {
-                            if (idx >= msgs.length) { setTimeout(function () { run(); }, 5000); return; }
-                            var m = msgs[idx++];
-                            if (m.f === 'r') {
-                                var tr = document.createElement('div');
-                                tr.className = 'nize-typing';
-                                tr.id = 'nize-tp';
-                                var av = document.createElement('div');
-                                av.className = 'nize-mini-av';
-                                av.innerHTML = '<img src="assets/images/nize.png" alt="N"/>';
-                                var tb = document.createElement('div');
-                                tb.className = 'nize-typing-bub';
-                                tb.innerHTML = '<span></span><span></span><span></span>';
-                                tr.appendChild(av); tr.appendChild(tb);
-                                box.appendChild(tr); box.scrollTop = 9999;
-                                setTimeout(function () {
-                                    var tp = document.getElementById('nize-tp');
-                                    if (tp) tp.remove();
-                                    addBubble(box, m);
-                                    setTimeout(function () { step(box); }, 2000);
-                                }, 1800);
-                            } else {
-                                addBubble(box, m);
-                                setTimeout(function () { step(box); }, 1600);
-                            }
-                        }
-                        function addBubble(box, m) {
-                            var row = document.createElement('div');
-                            row.className = 'nize-row ' + (m.f === 's' ? 'sent' : '');
-                            if (m.f === 'r') {
-                                var av = document.createElement('div');
-                                av.className = 'nize-mini-av';
-                                av.innerHTML = '<img src="assets/images/nize.png" alt="N"/>';
-                                row.appendChild(av);
-                            }
-                            var b = document.createElement('div');
-                            b.className = 'nize-bubble ' + m.f;
-                            b.innerHTML = m.t + '<span class="nize-time">' + gt() + (m.f === 's' ? ' ✓✓' : '') + '</span>';
-                            row.appendChild(b);
-                            box.appendChild(row);
-                            box.scrollTop = 9999;
-                        }
-                        if (document.readyState === 'loading') {
-                            document.addEventListener('DOMContentLoaded', function () { setTimeout(run, 800); });
-                        } else {
-                            setTimeout(run, 800);
-                        }
-                    })();
-            </script>
-            <section>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div
-                        class="flex flex-col gap-2 rounded-xl p-8 bg-surface-light dark:bg-surface-dark border border-[#e6e6db] dark:border-[#262626] hover:border-primary transition-colors group scroll-reveal reveal-left">
-                        <div class="flex items-center justify-between">
-                            <p class="text-text-muted dark:text-gray-400 text-sm font-medium uppercase tracking-wider">
-                                Horas Ahorradas</p>
-                            <span
-                                class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">schedule</span>
-                        </div>
-                        <p class="text-text-main dark:text-white text-4xl font-black tracking-tight">1200+</p>
-                        <p class="text-[#078816] text-sm font-bold bg-[#078816]/10 w-fit px-2 py-1 rounded-md mt-1">+15%
-                            vs Manual</p>
-                    </div>
-                    <div
-                        class="flex flex-col gap-2 rounded-xl p-8 bg-surface-light dark:bg-surface-dark border border-[#e6e6db] dark:border-[#262626] hover:border-primary transition-colors group scroll-reveal reveal-up">
-                        <div class="flex items-center justify-between">
-                            <p class="text-text-muted dark:text-gray-400 text-sm font-medium uppercase tracking-wider">
-                                Incremento de ROI</p>
-                            <span
-                                class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">trending_up</span>
-                        </div>
-                        <p class="text-text-main dark:text-white text-4xl font-black tracking-tight">300%</p>
-                        <p class="text-[#078816] text-sm font-bold bg-[#078816]/10 w-fit px-2 py-1 rounded-md mt-1">Año
-                            tras Año</p>
-                    </div>
-                    <div
-                        class="flex flex-col gap-2 rounded-xl p-8 bg-surface-light dark:bg-surface-dark border border-[#e6e6db] dark:border-[#262626] hover:border-primary transition-colors group scroll-reveal reveal-right">
-                        <div class="flex items-center justify-between">
-                            <p class="text-text-muted dark:text-gray-400 text-sm font-medium uppercase tracking-wider">
-                                Tareas Automatizadas</p>
-                            <span
-                                class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">check_circle</span>
-                        </div>
-                        <p class="text-text-main dark:text-white text-4xl font-black tracking-tight">50k+</p>
-                        <p class="text-[#078816] text-sm font-bold bg-[#078816]/10 w-fit px-2 py-1 rounded-md mt-1">Sin
-                            Errores</p>
-                    </div>
-                </div>
-            </section>
+            <!-- ===== Resto de secciones (con contenedor) ===== -->
+            <div class="w-full max-w-[1200px] mx-auto px-4 md:px-10 flex flex-col gap-16 mt-16 relative">
+                <!-- Elementos decorativos minimalistas de fondo -->
+                <div class="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-primary/5 dark:bg-primary/10 blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-32 -left-20 w-48 h-48 rounded-full bg-primary/5 dark:bg-primary/10 blur-3xl pointer-events-none"></div>
+                <div class="absolute top-1/2 right-1/3 w-32 h-32 border border-primary/10 rounded-full pointer-events-none"></div>
 
             <!-- Sección Nize -->
-            <section id="nize" class="scroll-reveal reveal-up">
-                <div class="rounded-2xl border border-[#e6e6db] dark:border-[#262626] bg-surface-light dark:bg-surface-dark overflow-hidden">
-                    <div class="flex flex-col lg:flex-row items-center gap-0">
-                        <!-- Lado izquierdo: info -->
-                        <div class="flex flex-col gap-6 p-10 lg:p-14 flex-1">
-                            <div class="flex items-center gap-3">
-                                <img src="assets/images/nize.png" alt="Nize — Agente IA de Automanize" class="w-10 h-10 rounded-xl" />
-                                <span class="text-xs font-bold uppercase tracking-widest text-primary">Nize · Tecnología propia</span>
+            <section id="nize" class="scroll-reveal reveal-up max-w-[1200px] mx-auto w-full px-4 md:px-10 mt-16">
+                <div class="relative rounded-3xl border border-[#e6e6db] dark:border-[#262626] bg-surface-light dark:bg-surface-dark overflow-hidden flex flex-col md:flex-row min-h-[450px] shadow-sm">
+                    <!-- Lado izquierdo: info -->
+                    <div class="relative z-20 flex flex-col gap-6 p-8 md:p-12 lg:p-16 w-full md:w-[55%] xl:w-1/2">
+                        <div class="flex items-center gap-3">
+                            <div class="size-10 rounded-xl overflow-hidden shadow-sm">
+                                <img src="assets/images/nize.png" alt="Nize — Agente IA de Automanize" class="w-full h-full object-cover" />
                             </div>
-                            <h2 class="text-text-main dark:text-white text-3xl md:text-4xl font-black leading-tight">
-                                Conoce <span class="text-primary">Nize</span>, el sistema inteligente que trabaja por ti.
-                            </h2>
-                            <p class="text-text-muted dark:text-gray-400 text-base leading-relaxed max-w-lg">
-                                Nize es el agente IA desarrollado por Automanize. Se conecta a tu WhatsApp, aprende cómo trabaja tu empresa y se encarga de atender clientes, gestionar inquilinos, enviar recordatorios de pago y resolver incidencias — sin que tú tengas que intervenir.
-                            </p>
-                            <ul class="flex flex-col gap-3">
-                                <li class="flex items-start gap-3 text-sm text-text-muted dark:text-gray-400">
-                                    <span class="material-symbols-outlined text-primary text-base mt-0.5">check_circle</span>
-                                    <span><strong class="text-text-main dark:text-white">Responde 24/7</strong> — Nize nunca descansa. Atiende a tus clientes incluso fuera de horario.</span>
-                                </li>
-                                <li class="flex items-start gap-3 text-sm text-text-muted dark:text-gray-400">
-                                    <span class="material-symbols-outlined text-primary text-base mt-0.5">check_circle</span>
-                                    <span><strong class="text-text-main dark:text-white">100% personalizado</strong> — Nize se adapta a tu sector, tu tono y tus procesos concretos.</span>
-                                </li>
-                                <li class="flex items-start gap-3 text-sm text-text-muted dark:text-gray-400">
-                                    <span class="material-symbols-outlined text-primary text-base mt-0.5">check_circle</span>
-                                    <span><strong class="text-text-main dark:text-white">Sin apps nuevas</strong> — Funciona directamente desde WhatsApp, sin cambiar tu forma de trabajar.</span>
-                                </li>
-                            </ul>
-                            <div class="pt-2">
-                                <a href="consultoria-gratuita.html"
-                                    class="inline-flex items-center gap-2 h-12 px-8 bg-primary hover:bg-primary-hover text-black text-sm font-bold rounded-full transition-all hover:shadow-lg hover:-translate-y-1 shadow-orange-500/20 glow">
-                                    Quiero mi propio Nize →
-                                </a>
-                            </div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-[#FFAB00]">Nize · Tecnología propia</span>
                         </div>
-                        <!-- Lado derecho: visual -->
-                        <div class="hidden lg:flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/10 dark:to-transparent self-stretch px-14 min-w-[260px]">
-                            <img src="assets/images/nize.png" alt="Nize IA" class="w-32 h-32 drop-shadow-2xl float" />
+                        <h2 class="text-text-main dark:text-white text-3xl md:text-4xl lg:text-5xl font-black leading-[1.1] tracking-tight">
+                            Conoce <span class="text-[#FFAB00]">Nize</span>, el sistema que trabaja por ti.
+                        </h2>
+                        <p class="text-text-muted dark:text-gray-400 text-base md:text-[17px] leading-relaxed max-w-lg mb-2">
+                            Nize es el agente de IA exclusivo de Automanize. Integrado en tu WhatsApp, aprende la operativa de tu empresa para atender clientes, enviar cobros y agendar citas automáticamente.
+                        </p>
+                        <ul class="flex flex-col gap-4">
+                            <li class="flex items-start gap-4 text-[15px] text-text-muted dark:text-gray-400 leading-snug">
+                                <div class="mt-0.5 size-6 rounded-full bg-[#FFAB00]/10 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-[#FFAB00] text-[16px]">forum</span>
+                                </div>
+                                <span><strong class="text-text-main dark:text-white font-semibold">Responde 24/7 en WhatsApp</strong> — Atiende dudas recurrentes y capta leads mientras tú descansas.</span>
+                            </li>
+                            <li class="flex items-start gap-4 text-[15px] text-text-muted dark:text-gray-400 leading-snug">
+                                <div class="mt-0.5 size-6 rounded-full bg-[#FFAB00]/10 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-[#FFAB00] text-[16px]">smart_toy</span>
+                                </div>
+                                <span><strong class="text-text-main dark:text-white font-semibold">100% personalizado</strong> — Actúa como un empleado basándose en el catálogo y manuales de tu negocio.</span>
+                            </li>
+                        </ul>
+                        <div class="pt-6">
+                            <a href="consultoria-gratuita.html"
+                                class="inline-flex items-center justify-center gap-2 h-12 px-8 bg-black hover:bg-[#111] dark:bg-white dark:hover:bg-gray-100 text-white dark:text-black text-sm font-bold rounded-full transition-all duration-300 hover:scale-[1.02] shadow-sm hover:shadow-md">
+                                Quiero mi propio Nize →
+                            </a>
                         </div>
+                    </div>
+                    
+                    <!-- Lado derecho: Imagen de fondo a color difuminada -->
+                    <div class="relative w-full md:absolute md:top-0 md:right-0 md:bottom-0 md:w-1/2 min-h-[350px]">
+                        <!-- Degradado horizontal (desktop) para mezclar caja de texto con imagen -->
+                        <div class="hidden md:block absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-surface-light dark:from-surface-dark to-transparent z-10"></div>
+                        <!-- Degradado vertical (mobile) para la separación -->
+                        <div class="md:hidden absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-surface-light dark:from-surface-dark to-transparent z-10"></div>
+                        
+                        <img 
+                            src="assets/images/nize-assistant-phone.jpg" 
+                            alt="Nize asistente virtual en smartphone" 
+                            class="absolute inset-0 w-full h-full object-cover object-center md:object-left"
+                            loading="lazy"
+                        />
                     </div>
                 </div>
             </section>
@@ -1281,6 +1015,16 @@
                                     loading="lazy" />
                             </div>
                         </a>
+
+                        <!-- Azul Marino Card -->
+                        <a href="https://www.azulmarino.com/es-es/agencias-de-viajes/cartagena" target="_blank" aria-label="Azul Marino"
+                            class="success-content-card group transition-all duration-300 transform hover:-translate-y-1">
+                            <div class="client-logo-wrapper">
+                                <img src="assets/images/azulmarino-logo.png" alt="Azul Marino"
+                                    class="client-logo-img logo-azulmarino group-hover:scale-105 transition-transform duration-300"
+                                    loading="lazy" />
+                            </div>
+                        </a>
                     </div>
 
                     <div class="mt-12 text-center">
@@ -1300,249 +1044,6 @@
                             <div class="metric-item">
                                 <span class="stat-number">∞</span>
                                 <span class="stat-label">Confianza</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <!-- 3 Steps Section -->
-            <section class="py-20 md:py-28 relative overflow-hidden scroll-reveal reveal-up">
-                <!-- Background decorative elements -->
-                <div
-                    class="absolute inset-0 opacity-10 dark:opacity-20 bg-[url('assets/images/cubes.png')] bg-cover bg-center pointer-events-none">
-                </div>
-                <div
-                    class="absolute top-0 right-1/4 w-96 h-96 bg-primary/10 blur-[100px] rounded-full pointer-events-none">
-                </div>
-                <div
-                    class="absolute bottom-0 left-1/4 w-96 h-96 bg-primary/5 blur-[120px] rounded-full pointer-events-none">
-                </div>
-
-                <div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-10 flex flex-col items-center">
-                    <h2 class="text-text-main dark:text-white text-3xl md:text-5xl font-black mb-16 text-center">
-                        Gestionar propiedades consume más tiempo del que debería.
-                    </h2>
-
-                    <!-- 3 Main Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mb-6">
-                        <!-- Card 1 -->
-                        <div
-                            class="glass-card flex flex-col items-center text-center p-8 lg:p-10 rounded-2xl hover:border-primary/50 transition-colors duration-300 group">
-                            <div class="w-full h-36 mb-8 relative flex items-center justify-center">
-                                <!-- Document and Magnifying Glass graphic -->
-                                <div
-                                    class="w-16 h-20 bg-surface-light dark:bg-surface-dark border border-[#e6e6db] dark:border-[#262626] rounded group-hover:border-primary/40 transition-colors relative z-10 flex flex-col p-2 gap-2 shadow-sm">
-                                    <div class="w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-                                    <div class="w-3/4 h-1 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-                                    <div class="w-5/6 h-1 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-                                    <div class="w-1/2 h-1 bg-gray-200 dark:bg-gray-700 rounded-full mt-2"></div>
-                                </div>
-                                <div
-                                    class="absolute bottom-[10%] right-[30%] w-12 h-12 rounded-full border-2 border-primary bg-white/10 dark:bg-black/40 backdrop-blur-md shadow-[0_4px_15px_rgba(255,171,0,0.3)] z-20 flex items-center justify-center -rotate-12 group-hover:-rotate-0 group-hover:scale-110 transition-all duration-300">
-                                    <span class="material-symbols-outlined text-primary text-xl">troubleshoot</span>
-                                </div>
-                                <!-- decorative dots -->
-                                <div
-                                    class="absolute top-[20%] right-[25%] w-2 h-2 rounded-full bg-primary/80 animate-pulse">
-                                </div>
-                                <div class="absolute bottom-[20%] left-[25%] w-1.5 h-1.5 rounded-full bg-primary/60">
-                                </div>
-                            </div>
-                            <h3 class="text-text-main dark:text-white text-lg font-bold uppercase tracking-widest mb-4">
-                                Responder las mismas preguntas una y otra vez.</h3>
-                            <p class="text-text-muted dark:text-gray-400 text-sm leading-relaxed">Coordinar visitas
-                                por WhatsApp de forma manual.</p>
-                        </div>
-
-                        <!-- Card 2 -->
-                        <div
-                            class="glass-card flex flex-col items-center text-center p-8 lg:p-10 rounded-2xl hover:border-primary/50 transition-colors duration-300 group relative">
-                            <div class="w-full h-36 mb-8 relative flex items-center justify-center">
-                                <!-- Node architecture graphic -->
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <div
-                                        class="w-[80%] h-0.5 bg-gradient-to-r from-transparent via-[#262626] to-transparent absolute">
-                                    </div>
-                                    <div class="flex gap-4 z-10">
-                                        <div
-                                            class="size-10 rounded-lg bg-surface-light dark:bg-surface-dark border border-[#e6e6db] dark:border-[#262626] flex items-center justify-center group-hover:-translate-y-2 transition-transform duration-300 shadow-sm">
-                                            <span
-                                                class="material-symbols-outlined text-gray-400 text-sm">integration_instructions</span>
-                                        </div>
-                                        <div
-                                            class="size-12 rounded-xl border border-primary/50 bg-primary/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-[0_0_15px_rgba(255,171,0,0.15)] z-20 relative">
-                                            <span class="material-symbols-outlined text-primary">hub</span>
-                                            <div
-                                                class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-primary animate-ping">
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="size-10 rounded-lg bg-surface-light dark:bg-surface-dark border border-[#e6e6db] dark:border-[#262626] flex items-center justify-center group-hover:translate-y-2 transition-transform duration-300 shadow-sm">
-                                            <span
-                                                class="material-symbols-outlined text-gray-400 text-sm">database</span>
-                                        </div>
-                                    </div>
-                                    <!-- Connection lines -->
-                                    <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-20 group-hover:opacity-60 transition-opacity"
-                                        viewBox="0 0 100 100" preserveAspectRatio="none">
-                                        <path d="M30,50 Q50,20 70,50" stroke="currentColor" fill="none"
-                                            class="text-primary stroke-[0.5]" stroke-dasharray="2,2" />
-                                    </svg>
-                                </div>
-                            </div>
-                            <h3 class="text-text-main dark:text-white text-lg font-bold uppercase tracking-widest mb-4">
-                                Perseguir a inquilinos para cobrar.</h3>
-                            <p class="text-text-muted dark:text-gray-400 text-sm leading-relaxed">Atender incidencias
-                                fuera de horario.</p>
-                        </div>
-
-                        <!-- Card 3 -->
-                        <div
-                            class="glass-card flex flex-col items-center text-center p-8 lg:p-10 rounded-2xl hover:border-primary/50 transition-colors duration-300 group">
-                            <div class="w-full h-36 mb-8 relative flex items-center justify-center">
-                                <!-- Rocket / Deployment graphic -->
-                                <div
-                                    class="relative w-20 h-20 rounded-full border border-[#e6e6db] dark:border-[#262626] flex items-center justify-center group-hover:border-primary/40 transition-colors">
-                                    <div
-                                        class="absolute inset-0 rounded-full bg-primary/5 group-hover:scale-110 group-hover:bg-primary/10 transition-all duration-500">
-                                    </div>
-                                    <span
-                                        class="material-symbols-outlined text-primary text-4xl group-hover:-translate-y-2 group-hover:translate-x-2 transition-transform duration-500 drop-shadow-[0_0_10px_rgba(255,171,0,0.5)]">rocket</span>
-                                    <!-- thrust particles -->
-                                    <div
-                                        class="absolute bottom-1 left-2 w-1.5 h-1.5 rounded-full bg-orange-400 opacity-0 group-hover:opacity-100 group-hover:translate-y-4 group-hover:-translate-x-4 transition-all duration-700 delay-100">
-                                    </div>
-                                    <div
-                                        class="absolute bottom-3 left-4 w-2 h-2 rounded-full bg-yellow-400 opacity-0 group-hover:opacity-100 group-hover:translate-y-6 group-hover:-translate-x-6 transition-all duration-500">
-                                    </div>
-                                </div>
-                            </div>
-                            <h3 class="text-text-main dark:text-white text-lg font-bold uppercase tracking-widest mb-4">
-                                Perder leads porque tardaste en responder.</h3>
-                            <p class="text-text-muted dark:text-gray-400 text-sm leading-relaxed">Si tienes propiedades
-                                en alquiler o venta, esto es tu día a día.</p>
-                        </div>
-                    </div>
-
-                    <!-- 4 Bottom small cards -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mt-4">
-                        <div
-                            class="glass-card rounded-xl p-5 flex flex-col md:flex-row items-center justify-center gap-3 hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-                            <span class="material-symbols-outlined text-primary text-xl">sync</span>
-                            <span
-                                class="text-text-main dark:text-gray-300 text-xs font-semibold text-center md:text-left">Y
-                                ese tiempo</span>
-                        </div>
-                        <div
-                            class="glass-card rounded-xl p-5 flex flex-col md:flex-row items-center justify-center gap-3 hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-                            <span class="material-symbols-outlined text-primary text-xl">query_stats</span>
-                            <span
-                                class="text-text-main dark:text-gray-300 text-xs font-semibold text-center md:text-left">lo
-                                podrías estar usando</span>
-                        </div>
-                        <div
-                            class="glass-card rounded-xl p-5 flex flex-col md:flex-row items-center justify-center gap-3 hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-                            <span class="material-symbols-outlined text-primary text-xl">savings</span>
-                            <span
-                                class="text-text-main dark:text-gray-300 text-xs font-semibold text-center md:text-left">en
-                                cerrar</span>
-                        </div>
-                        <div
-                            class="glass-card rounded-xl p-5 flex flex-col md:flex-row items-center justify-center gap-3 hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-                            <span class="material-symbols-outlined text-primary text-xl">support_agent</span>
-                            <span
-                                class="text-text-main dark:text-gray-300 text-xs font-semibold text-center md:text-left">más
-                                operaciones.</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- WhatsApp Agent Section -->
-            <section class="py-24 md:py-32 relative overflow-hidden">
-                <div
-                    class="absolute inset-0 bg-primary/5 dark:bg-primary/10 -skew-y-3 transform origin-bottom-left z-0">
-                </div>
-                <div
-                    class="relative max-w-[1200px] mx-auto px-4 md:px-10 z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    <div class="flex flex-col gap-6 scroll-reveal reveal-left">
-                        <div
-                            class="w-fit text-primary font-bold text-sm tracking-wider uppercase bg-primary/10 px-4 py-2 rounded-full border border-primary/20">
-                            Disponible las 24 horas
-                        </div>
-                        <h2 class="text-text-main dark:text-white text-3xl md:text-5xl font-black leading-tight">
-                            Tu asistente inmobiliario. <br />
-                            <span class="text-shimmer">Disponible las 24 horas.</span>
-                        </h2>
-                        <p class="text-text-muted dark:text-gray-300 text-lg md:text-xl leading-relaxed">
-                            Creamos un sistema conectado a tu WhatsApp que atiende a tus clientes e inquilinos en
-                            tiempo real, gestiona todo el proceso y te mantiene informado sin que tengas que mover un
-                            dedo. No es un chatbot genérico. Es un sistema diseñado específicamente para cómo funciona
-                            tu negocio.
-                        </p>
-                        <ul class="flex flex-col gap-4 mt-4">
-                            <li class="flex items-center gap-3 text-text-muted dark:text-gray-300">
-                                <span
-                                    class="material-symbols-outlined text-primary bg-primary/10 p-1 rounded-full">check</span>
-                                Atiende a tus clientes e inquilinos en tiempo real
-                            </li>
-                            <li class="flex items-center gap-3 text-text-muted dark:text-gray-300">
-                                <span
-                                    class="material-symbols-outlined text-primary bg-primary/10 p-1 rounded-full">check</span>
-                                Gestiona todo el proceso
-                            </li>
-                            <li class="flex items-center gap-3 text-text-muted dark:text-gray-300">
-                                <span
-                                    class="material-symbols-outlined text-primary bg-primary/10 p-1 rounded-full">check</span>
-                                Te mantiene informado sin que tengas que mover un dedo
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Simulación de WhatsApp / Bento Style -->
-                    <div class="relative scroll-reveal reveal-right">
-                        <div
-                            class="absolute -inset-4 bg-gradient-to-r from-primary/30 to-orange-400/30 blur-2xl opacity-50 rounded-full">
-                        </div>
-                        <div
-                            class="glass-card relative shadow-2xl rounded-3xl p-6 flex flex-col gap-4 max-w-md mx-auto transform rotate-1 hover:rotate-0 transition-transform duration-500">
-                            <!-- Chat Header -->
-                            <div class="flex items-center gap-4 border-b border-gray-200 dark:border-gray-800 pb-4">
-                                <div
-                                    class="size-12 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center shadow-lg">
-                                    <span class="material-symbols-outlined text-white">smart_toy</span>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-text-main dark:text-white text-lg">Asistente Nize</h4>
-                                    <p class="text-xs text-[#078816] font-medium flex items-center gap-1">
-                                        <span class="size-2 rounded-full bg-[#078816]"></span> En línea
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Chat Bubbles -->
-                            <div class="flex flex-col gap-4 pt-2">
-                                <div
-                                    class="bg-gray-100 dark:bg-gray-800 text-text-main dark:text-gray-200 p-3 rounded-2xl rounded-tl-sm w-[85%] text-sm relative shadow-sm stagger-1">
-                                    ¡Hola! 👋 Soy Nize, el asistente de Automanize. ¿En qué puedo ayudar a tu empresa
-                                    hoy?
-                                </div>
-                                <div
-                                    class="bg-primary text-black p-3 rounded-2xl rounded-tr-sm w-[80%] text-sm self-end relative shadow-md stagger-2">
-                                    Me gustaría agendar una consultoría gratuita para crear un sistema automatizado.
-                                </div>
-                                <div
-                                    class="bg-gray-100 dark:bg-gray-800 text-text-main dark:text-gray-200 p-3 rounded-2xl rounded-tl-sm w-[90%] text-sm relative shadow-sm stagger-3">
-                                    ¡Excelente! He revisado el calendario de nuestro equipo y tenemos disponibilidad
-                                    mañana a
-                                    las 10:00 AM o el jueves a las 4:00 PM. ¿Cuál prefieres? 📅
-                                </div>
-                                <div
-                                    class="flex items-center justify-center gap-2 mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
-                                    <span class="material-symbols-outlined text-gray-400 text-sm">lock</span>
-                                    <span class="text-xs text-gray-400 font-medium">Citas agendadas en piloto
-                                        automático</span>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1631,6 +1132,7 @@
                     </a>
                 </div>
             </section>
+            </div><!-- /inner-sections wrapper -->
         </main>
         <footer class="border-t border-[#e6e6db] dark:border-[#262626] bg-white dark:bg-black py-12">
             <div

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Radar de Oportunidades — Nize by Automanize</title>
+    <meta name="description" content="Encuentra anuncios de particulares en Idealista y Fotocasa con su número de teléfono, automáticamente. Configura qué datos quieres y exporta al instante." />
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ["Spline Sans", "sans-serif"] },
+                    colors: { primary: "#FFB300" }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: "Spline Sans", sans-serif; }
+        .card-shadow { box-shadow: 0 24px 64px rgba(0,0,0,0.10), 0 4px 16px rgba(0,0,0,0.05); }
+        @keyframes radar-ping {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+        .radar-ring {
+            animation: radar-ping 2s ease-out infinite;
+        }
+        .radar-ring-2 {
+            animation: radar-ping 2s ease-out 0.7s infinite;
+        }
+        @keyframes slideInRow {
+            from { opacity: 0; transform: translateX(-8px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .lead-1 { animation: slideInRow 0.5s ease 0.3s both; }
+        .lead-2 { animation: slideInRow 0.5s ease 0.6s both; }
+        .lead-3 { animation: slideInRow 0.5s ease 0.9s both; }
+        .lead-4 { animation: slideInRow 0.5s ease 1.2s both; }
+    </style>
+</head>
+<body class="bg-white text-[#111] overflow-x-hidden">
+
+    <!-- NAV -->
+    <header class="sticky top-0 z-50 bg-white border-b border-[#e8e8e8]">
+        <div class="max-w-[1200px] mx-auto px-6 md:px-10 h-16 flex items-center justify-between gap-8">
+            <a href="index.html" class="flex items-center gap-2.5 flex-shrink-0">
+                <div class="w-8 h-8 rounded-lg overflow-hidden border border-gray-100">
+                    <img src="assets/images/Automanize%20(4).png" alt="Automanize" class="w-full h-full object-cover" />
+                </div>
+                <span class="font-bold text-[17px] text-[#111]">Automanize</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-7">
+                <a href="index.html" class="text-[14px] text-[#666] font-medium hover:text-[#111] transition-colors">Inicio</a>
+                <div class="relative group">
+                    <a href="our-services.html" class="flex items-center gap-0.5 text-[14px] text-[#111] font-semibold border-b-2 border-[#FFB300] pb-0.5 hover:text-[#FFB300] transition-colors">
+                        Servicios <span class="material-symbols-outlined text-[16px]">expand_more</span>
+                    </a>
+                    <div class="absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-60 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 ease-out z-50">
+                        <div class="bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-[#e8e8e8] p-2 flex flex-col gap-0.5">
+                            <a href="our-services.html#whatsapp" class="block px-4 py-2.5 text-[13px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-lg transition-colors">Asistente de WhatsApp</a>
+                            <a href="facturacion.html" class="block px-4 py-2.5 text-[13px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-lg transition-colors">Facturación Inteligente</a>
+                            <a href="radar.html" class="block px-4 py-2.5 text-[13px] font-semibold text-[#FFB300] bg-[#FFF8E1] rounded-lg">Radar de Oportunidades</a>
+                            <a href="crm.html" class="block px-4 py-2.5 text-[13px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-lg transition-colors">Control Operativo 360°</a>
+                            <a href="diseno-web.html" class="block px-4 py-2.5 text-[13px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-lg transition-colors">Diseño Web</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="consultoria-gratuita.html" class="text-[14px] text-[#666] font-medium hover:text-[#111] transition-colors">Consultoría</a>
+            </nav>
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <a href="tel:+34617153252" class="hidden lg:flex items-center gap-1.5 text-[13px] font-medium text-[#555] hover:text-[#111] transition-colors">
+                    <span class="material-symbols-outlined text-[16px]">call</span>
+                    +34 617 15 32 52
+                </a>
+                <a href="contactus.html" class="hidden sm:flex items-center justify-center h-9 px-5 bg-[#FFB300] hover:bg-[#E69900] text-black text-[13px] font-bold rounded-full transition-colors">
+                    Contáctanos
+                </a>
+                <button onclick="document.getElementById('mobileMenuRadar').classList.toggle('hidden')" class="md:hidden p-2 rounded-lg hover:bg-[#f5f5f5] transition-colors">
+                    <span class="material-symbols-outlined text-[22px]">menu</span>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenuRadar" class="hidden md:hidden bg-white border-t border-[#f0f0f0]">
+            <div class="px-4 py-3 flex flex-col gap-1">
+                <a href="index.html" class="px-3 py-3 text-[15px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors block">Inicio</a>
+                <div>
+                    <button onclick="this.nextElementSibling.classList.toggle('hidden')" class="w-full flex items-center justify-between px-3 py-3 text-[15px] font-semibold text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">
+                        Servicios <span class="material-symbols-outlined text-[18px]">expand_more</span>
+                    </button>
+                    <div class="hidden pl-3 flex flex-col gap-0.5 pb-1">
+                        <a href="our-services.html#whatsapp" class="block px-3 py-2.5 text-[14px] text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">Asistente de WhatsApp</a>
+                        <a href="facturacion.html" class="block px-3 py-2.5 text-[14px] text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">Facturación Inteligente</a>
+                        <a href="radar.html" class="block px-3 py-2.5 text-[14px] font-semibold text-[#FFB300] bg-[#FFF8E1] rounded-xl">Radar de Oportunidades</a>
+                        <a href="crm.html" class="block px-3 py-2.5 text-[14px] text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">Control Operativo 360°</a>
+                        <a href="diseno-web.html" class="block px-3 py-2.5 text-[14px] text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">Diseño Web</a>
+                    </div>
+                </div>
+                <a href="consultoria-gratuita.html" class="px-3 py-3 text-[15px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors block">Consultoría</a>
+                <div class="pt-3 mt-1 border-t border-[#f0f0f0]">
+                    <a href="contactus.html" class="flex items-center justify-center h-11 bg-[#FFB300] hover:bg-[#E69900] text-black text-[14px] font-bold rounded-full transition-colors w-full">Contáctanos</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO -->
+        <section class="border-b border-[#e8e8e8]">
+            <div class="max-w-[1200px] mx-auto px-6 md:px-10 py-12 md:py-20 lg:py-28">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+
+                    <!-- Left -->
+                    <div>
+                        <div class="flex items-center gap-2 mb-6">
+                            <span class="text-[10px] font-black text-[#FFB300] tracking-[0.25em] uppercase">Radar de Oportunidades — Automanize</span>
+                        </div>
+                        <h1 class="text-[2rem] md:text-[2.8rem] lg:text-[3.4rem] font-black text-[#111] leading-[1.05] tracking-tight mb-5">
+                            Encuentra leads<br>antes que<br>tu competencia.
+                        </h1>
+                        <p class="text-[15px] md:text-[17px] text-[#666] leading-relaxed mb-10 max-w-md">
+                            El sistema revisa Idealista y Fotocasa por ti, detecta anuncios de particulares y te entrega su número de teléfono directamente. Tú solo tienes que llamar.
+                        </p>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <a href="consultoria-gratuita.html" class="inline-flex items-center gap-2 bg-[#FFB300] hover:bg-[#E69900] text-black font-bold text-[14px] px-6 py-3 rounded-full transition-colors">
+                                Quiero este servicio <span class="material-symbols-outlined text-[17px]">arrow_forward</span>
+                            </a>
+                            <a href="#como-funciona" class="inline-flex items-center gap-2 border border-[#e0e0e0] hover:border-[#ccc] text-[#333] font-medium text-[14px] px-6 py-3 rounded-full transition-colors">
+                                Ver cómo funciona
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right: Results mockup -->
+                    <div class="flex justify-center lg:justify-end">
+                        <div class="relative w-full max-w-[500px]">
+
+                            <!-- Main results panel -->
+                            <div class="bg-white rounded-2xl card-shadow border border-[#e8e8e8] overflow-hidden">
+
+                                <!-- Header bar -->
+                                <div class="flex items-center justify-between px-5 py-4 border-b border-[#f0f0f0] bg-[#fafafa]">
+                                    <div class="flex items-center gap-2.5">
+                                        <!-- Radar icon with pulse -->
+                                        <div class="relative w-7 h-7 flex items-center justify-center">
+                                            <div class="absolute inset-0 rounded-full bg-[#FFB300]/20 radar-ring"></div>
+                                            <div class="absolute inset-0 rounded-full bg-[#FFB300]/15 radar-ring-2"></div>
+                                            <div class="w-3 h-3 rounded-full bg-[#FFB300]"></div>
+                                        </div>
+                                        <span class="text-[13px] font-bold text-[#111]">Radar activo</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[11px] text-[#888] font-medium">Actualizado hace 2 min</span>
+                                        <span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Filters row -->
+                                <div class="flex items-center gap-2 px-5 py-3 border-b border-[#f5f5f5] overflow-x-auto">
+                                    <span class="flex-shrink-0 text-[11px] font-semibold text-white bg-[#111] px-3 py-1 rounded-full">Todos</span>
+                                    <span class="flex-shrink-0 flex items-center gap-1 text-[11px] font-medium text-[#555] bg-[#f3f3f3] px-3 py-1 rounded-full">
+                                        <img src="https://www.idealista.com/favicon.ico" class="w-3 h-3 rounded" onerror="this.style.display='none'" />
+                                        Idealista
+                                    </span>
+                                    <span class="flex-shrink-0 flex items-center gap-1 text-[11px] font-medium text-[#555] bg-[#f3f3f3] px-3 py-1 rounded-full">
+                                        Fotocasa
+                                    </span>
+                                    <span class="flex-shrink-0 text-[11px] font-medium text-[#555] bg-[#f3f3f3] px-3 py-1 rounded-full">Particulares</span>
+                                    <span class="flex-shrink-0 text-[11px] font-medium text-[#555] bg-[#f3f3f3] px-3 py-1 rounded-full">Cartagena</span>
+                                </div>
+
+                                <!-- Results list -->
+                                <div class="divide-y divide-[#f5f5f5]">
+
+                                    <div class="flex items-center gap-4 px-5 py-4 lead-1">
+                                        <div class="w-12 h-12 rounded-xl bg-[#f5f5f5] flex-shrink-0 overflow-hidden">
+                                            <div class="w-full h-full bg-gradient-to-br from-[#e8e8e8] to-[#d0d0d0] flex items-center justify-center">
+                                                <span class="material-symbols-outlined text-[20px] text-[#aaa]">apartment</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-[13px] font-bold text-[#111] truncate">Piso 3 hab · C/ Mayor, 14</p>
+                                            <p class="text-[12px] text-[#888]">Cartagena · 85 m² · Particular</p>
+                                        </div>
+                                        <div class="text-right flex-shrink-0">
+                                            <p class="text-[13px] font-black text-[#111]">680 €/mes</p>
+                                            <p class="text-[11px] font-semibold text-[#FFB300] flex items-center gap-1 justify-end">
+                                                <span class="material-symbols-outlined text-[13px]">call</span>
+                                                +34 6XX XXX XXX
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center gap-4 px-5 py-4 lead-2">
+                                        <div class="w-12 h-12 rounded-xl bg-[#f5f5f5] flex-shrink-0 overflow-hidden">
+                                            <div class="w-full h-full bg-gradient-to-br from-[#ede8ff] to-[#d4ccff] flex items-center justify-center">
+                                                <span class="material-symbols-outlined text-[20px] text-[#9580ff]">home</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-[13px] font-bold text-[#111] truncate">Chalet adosado · Urb. Las Lomas</p>
+                                            <p class="text-[12px] text-[#888]">Murcia · 140 m² · Particular</p>
+                                        </div>
+                                        <div class="text-right flex-shrink-0">
+                                            <p class="text-[13px] font-black text-[#111]">950 €/mes</p>
+                                            <p class="text-[11px] font-semibold text-[#FFB300] flex items-center gap-1 justify-end">
+                                                <span class="material-symbols-outlined text-[13px]">call</span>
+                                                +34 6XX XXX XXX
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center gap-4 px-5 py-4 lead-3">
+                                        <div class="w-12 h-12 rounded-xl bg-[#f5f5f5] flex-shrink-0 overflow-hidden">
+                                            <div class="w-full h-full bg-gradient-to-br from-[#e8f5e9] to-[#c8e6c9] flex items-center justify-center">
+                                                <span class="material-symbols-outlined text-[20px] text-[#4caf50]">villa</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-[13px] font-bold text-[#111] truncate">Estudio reformado · Centro</p>
+                                            <p class="text-[12px] text-[#888]">Cartagena · 42 m² · Particular</p>
+                                        </div>
+                                        <div class="text-right flex-shrink-0">
+                                            <p class="text-[13px] font-black text-[#111]">490 €/mes</p>
+                                            <p class="text-[11px] font-semibold text-[#FFB300] flex items-center gap-1 justify-end">
+                                                <span class="material-symbols-outlined text-[13px]">call</span>
+                                                +34 6XX XXX XXX
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center gap-4 px-5 py-4 lead-4">
+                                        <div class="w-12 h-12 rounded-xl bg-[#f5f5f5] flex-shrink-0 overflow-hidden">
+                                            <div class="w-full h-full bg-gradient-to-br from-[#fff3e0] to-[#ffe0b2] flex items-center justify-center">
+                                                <span class="material-symbols-outlined text-[20px] text-[#FF9800]">business</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-[13px] font-bold text-[#111] truncate">Local comercial · Av. Alfonso XIII</p>
+                                            <p class="text-[12px] text-[#888]">Cartagena · 95 m² · Particular</p>
+                                        </div>
+                                        <div class="text-right flex-shrink-0">
+                                            <p class="text-[13px] font-black text-[#111]">1.100 €/mes</p>
+                                            <p class="text-[11px] font-semibold text-[#FFB300] flex items-center gap-1 justify-end">
+                                                <span class="material-symbols-outlined text-[13px]">call</span>
+                                                +34 6XX XXX XXX
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- Footer -->
+                                <div class="px-5 py-3 bg-[#fafafa] border-t border-[#f0f0f0] flex items-center justify-between">
+                                    <span class="text-[11px] text-[#888]">47 resultados encontrados hoy</span>
+                                    <button class="text-[11px] font-bold text-[#111] flex items-center gap-1 hover:text-[#FFB300] transition-colors">
+                                        Exportar <span class="material-symbols-outlined text-[14px]">download</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Floating badge -->
+                            <div class="absolute -top-4 -right-4 bg-[#111] text-white text-[11px] font-bold px-4 py-2 rounded-full flex items-center gap-1.5 shadow-lg">
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block"></span>
+                                Búsqueda automática activa
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- CÓMO FUNCIONA -->
+        <section id="como-funciona" class="border-b border-[#e8e8e8]">
+            <div class="max-w-[1200px] mx-auto px-6 md:px-10 py-20 md:py-24">
+                <div class="mb-14 text-center">
+                    <span class="text-[10px] font-black text-[#bbb] tracking-[0.25em] uppercase">Proceso</span>
+                    <h2 class="text-[2rem] md:text-[2.4rem] font-black text-[#111] leading-tight tracking-tight mt-3">
+                        Así funciona el Radar
+                    </h2>
+                    <p class="text-[16px] text-[#888] mt-3 max-w-lg mx-auto">De portal inmobiliario a lead listo para contactar, sin que muevas un dedo.</p>
+                </div>
+
+                <!-- Steps -->
+                <div class="relative">
+                    <!-- Connecting line -->
+                    <div class="hidden md:block absolute top-7 left-[calc(12.5%+24px)] right-[calc(12.5%+24px)] h-px bg-[#e8e8e8]"></div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-6 relative">
+
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-14 h-14 rounded-2xl bg-[#FFF8E1] border border-[#FFE082] flex items-center justify-center mb-5 relative z-10">
+                                <span class="material-symbols-outlined text-[24px] text-[#FFB300]">settings</span>
+                            </div>
+                            <p class="text-[13px] font-black text-[#111] mb-2">Configuras los filtros</p>
+                            <p class="text-[13px] text-[#888] leading-relaxed">Zona, tipo de inmueble, precio máximo, solo particulares… lo que necesites.</p>
+                        </div>
+
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-14 h-14 rounded-2xl bg-[#FFF8E1] border border-[#FFE082] flex items-center justify-center mb-5 relative z-10">
+                                <span class="material-symbols-outlined text-[24px] text-[#FFB300]">travel_explore</span>
+                            </div>
+                            <p class="text-[13px] font-black text-[#111] mb-2">El sistema busca solo</p>
+                            <p class="text-[13px] text-[#888] leading-relaxed">Analiza Idealista y Fotocasa automáticamente y detecta todos los anuncios que encajan.</p>
+                        </div>
+
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-14 h-14 rounded-2xl bg-[#FFF8E1] border border-[#FFE082] flex items-center justify-center mb-5 relative z-10">
+                                <span class="material-symbols-outlined text-[24px] text-[#FFB300]">contact_phone</span>
+                            </div>
+                            <p class="text-[13px] font-black text-[#111] mb-2">Extrae los contactos</p>
+                            <p class="text-[13px] text-[#888] leading-relaxed">Obtiene nombre, teléfono, precio, dirección y todos los datos del anuncio.</p>
+                        </div>
+
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-14 h-14 rounded-2xl bg-[#FFF8E1] border border-[#FFE082] flex items-center justify-center mb-5 relative z-10">
+                                <span class="material-symbols-outlined text-[24px] text-[#FFB300]">table_view</span>
+                            </div>
+                            <p class="text-[13px] font-black text-[#111] mb-2">Recibes la lista</p>
+                            <p class="text-[13px] text-[#888] leading-relaxed">Exporta a Excel, tu CRM o directamente a WhatsApp. Lista para llamar.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUÉ DATOS + CONFIGURABLE -->
+        <section class="border-b border-[#e8e8e8]">
+            <div class="max-w-[1200px] mx-auto px-6 md:px-10 py-20 md:py-24">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+
+                    <!-- Left: Datos que extrae -->
+                    <div>
+                        <span class="text-[10px] font-black text-[#bbb] tracking-[0.25em] uppercase mb-4 block">Qué consigues</span>
+                        <h2 class="text-[2rem] md:text-[2.3rem] font-black text-[#111] leading-tight tracking-tight mb-4">
+                            Toda la información<br>que necesitas.
+                        </h2>
+                        <p class="text-[16px] text-[#888] leading-relaxed mb-10">
+                            Por cada anuncio detectado, el Radar extrae automáticamente:
+                        </p>
+
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4 p-4 rounded-xl border border-[#e8e8e8] hover:border-[#FFB300] transition-colors">
+                                <div class="w-9 h-9 rounded-xl bg-[#FFF8E1] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <span class="material-symbols-outlined text-[18px] text-[#FFB300]">call</span>
+                                </div>
+                                <div>
+                                    <p class="text-[14px] font-bold text-[#111]">Número de teléfono</p>
+                                    <p class="text-[13px] text-[#888] leading-snug">Del propietario particular, directo. Sin intermediarios.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4 p-4 rounded-xl border border-[#e8e8e8] hover:border-[#FFB300] transition-colors">
+                                <div class="w-9 h-9 rounded-xl bg-[#FFF8E1] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <span class="material-symbols-outlined text-[18px] text-[#FFB300]">location_on</span>
+                                </div>
+                                <div>
+                                    <p class="text-[14px] font-bold text-[#111]">Dirección y zona</p>
+                                    <p class="text-[13px] text-[#888] leading-snug">Calle, barrio, municipio. Para que sepas exactamente dónde está.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4 p-4 rounded-xl border border-[#e8e8e8] hover:border-[#FFB300] transition-colors">
+                                <div class="w-9 h-9 rounded-xl bg-[#FFF8E1] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <span class="material-symbols-outlined text-[18px] text-[#FFB300]">payments</span>
+                                </div>
+                                <div>
+                                    <p class="text-[14px] font-bold text-[#111]">Precio y características</p>
+                                    <p class="text-[13px] text-[#888] leading-snug">Precio, metros cuadrados, habitaciones, estado del inmueble.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4 p-4 rounded-xl border border-[#e8e8e8] hover:border-[#FFB300] transition-colors">
+                                <div class="w-9 h-9 rounded-xl bg-[#FFF8E1] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <span class="material-symbols-outlined text-[18px] text-[#FFB300]">link</span>
+                                </div>
+                                <div>
+                                    <p class="text-[14px] font-bold text-[#111]">Enlace al anuncio</p>
+                                    <p class="text-[13px] text-[#888] leading-snug">Acceso directo a la publicación original en el portal.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4 p-4 rounded-xl border border-[#e8e8e8] hover:border-[#FFB300] transition-colors">
+                                <div class="w-9 h-9 rounded-xl bg-[#FFF8E1] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <span class="material-symbols-outlined text-[18px] text-[#FFB300]">calendar_today</span>
+                                </div>
+                                <div>
+                                    <p class="text-[14px] font-bold text-[#111]">Fecha de publicación</p>
+                                    <p class="text-[13px] text-[#888] leading-snug">Para que priorices los anuncios más recientes y llegues el primero.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Configurable -->
+                    <div>
+                        <span class="text-[10px] font-black text-[#bbb] tracking-[0.25em] uppercase mb-4 block">Personalización</span>
+                        <h2 class="text-[2rem] md:text-[2.3rem] font-black text-[#111] leading-tight tracking-tight mb-4">
+                            Lo configuras<br>a tu medida.
+                        </h2>
+                        <p class="text-[16px] text-[#888] leading-relaxed mb-10">
+                            No hay dos agencias iguales. Por eso el Radar se adapta exactamente a lo que necesitas.
+                        </p>
+
+                        <!-- Config cards -->
+                        <div class="bg-[#fafafa] border border-[#e8e8e8] rounded-2xl overflow-hidden">
+
+                            <div class="px-6 py-5 border-b border-[#f0f0f0]">
+                                <div class="flex items-center justify-between mb-3">
+                                    <p class="text-[13px] font-bold text-[#111]">Zona de búsqueda</p>
+                                    <span class="text-[11px] text-[#FFB300] font-semibold bg-[#FFF8E1] px-2.5 py-1 rounded-full">Activo</span>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="text-[12px] bg-[#111] text-white px-3 py-1.5 rounded-full font-medium">Cartagena</span>
+                                    <span class="text-[12px] bg-white border border-[#e0e0e0] text-[#555] px-3 py-1.5 rounded-full font-medium">Murcia capital</span>
+                                    <span class="text-[12px] bg-white border border-[#e0e0e0] text-[#555] px-3 py-1.5 rounded-full font-medium">La Unión</span>
+                                    <span class="text-[12px] bg-white border border-dashed border-[#ccc] text-[#aaa] px-3 py-1.5 rounded-full">+ Añadir zona</span>
+                                </div>
+                            </div>
+
+                            <div class="px-6 py-5 border-b border-[#f0f0f0]">
+                                <div class="flex items-center justify-between mb-3">
+                                    <p class="text-[13px] font-bold text-[#111]">Tipo de anunciante</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="text-[12px] bg-[#FFB300] text-black px-3 py-1.5 rounded-full font-bold">Solo particulares</span>
+                                    <span class="text-[12px] bg-white border border-[#e0e0e0] text-[#555] px-3 py-1.5 rounded-full font-medium">Agencias</span>
+                                    <span class="text-[12px] bg-white border border-[#e0e0e0] text-[#555] px-3 py-1.5 rounded-full font-medium">Todos</span>
+                                </div>
+                            </div>
+
+                            <div class="px-6 py-5 border-b border-[#f0f0f0]">
+                                <div class="flex items-center justify-between mb-3">
+                                    <p class="text-[13px] font-bold text-[#111]">Tipo de inmueble</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="text-[12px] bg-[#111] text-white px-3 py-1.5 rounded-full font-medium">Pisos</span>
+                                    <span class="text-[12px] bg-[#111] text-white px-3 py-1.5 rounded-full font-medium">Locales</span>
+                                    <span class="text-[12px] bg-white border border-[#e0e0e0] text-[#555] px-3 py-1.5 rounded-full font-medium">Chalets</span>
+                                    <span class="text-[12px] bg-white border border-[#e0e0e0] text-[#555] px-3 py-1.5 rounded-full font-medium">Garajes</span>
+                                </div>
+                            </div>
+
+                            <div class="px-6 py-5">
+                                <div class="flex items-center justify-between mb-3">
+                                    <p class="text-[13px] font-bold text-[#111]">Frecuencia de actualización</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="text-[12px] bg-[#111] text-white px-3 py-1.5 rounded-full font-medium">Cada hora</span>
+                                    <span class="text-[12px] bg-white border border-[#e0e0e0] text-[#555] px-3 py-1.5 rounded-full font-medium">Diario</span>
+                                    <span class="text-[12px] bg-white border border-[#e0e0e0] text-[#555] px-3 py-1.5 rounded-full font-medium">Semanal</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <p class="text-[12px] text-[#aaa] mt-4 leading-relaxed">
+                            ¿Necesitas campos adicionales? Cualquier dato que aparezca en el anuncio puede ser extraído y añadido a tu lista.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- PORTALES -->
+        <section class="border-b border-[#e8e8e8] bg-[#fafafa]">
+            <div class="max-w-[1200px] mx-auto px-6 md:px-10 py-16">
+                <p class="text-center text-[10px] font-bold text-[#c0c0c0] tracking-[0.3em] uppercase mb-10">Portales monitorizados</p>
+                <div class="flex flex-wrap items-center justify-center gap-12 md:gap-20">
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="w-16 h-16 rounded-2xl bg-white border border-[#e8e8e8] flex items-center justify-center shadow-sm">
+                            <span class="text-[22px] font-black text-[#D32F2F]">i</span>
+                        </div>
+                        <span class="text-[12px] font-bold text-[#555]">Idealista</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="w-16 h-16 rounded-2xl bg-white border border-[#e8e8e8] flex items-center justify-center shadow-sm">
+                            <span class="text-[22px] font-black text-[#1A73E8]">f</span>
+                        </div>
+                        <span class="text-[12px] font-bold text-[#555]">Fotocasa</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-3 opacity-40">
+                        <div class="w-16 h-16 rounded-2xl bg-white border border-dashed border-[#ccc] flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[22px] text-[#ccc]">add</span>
+                        </div>
+                        <span class="text-[12px] font-medium text-[#bbb]">Más portales</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="bg-[#111]">
+            <div class="max-w-[1200px] mx-auto px-6 md:px-10 py-20 md:py-24 text-center">
+                <span class="text-[10px] font-black text-[#FFB300] tracking-[0.25em] uppercase mb-5 block">Empieza hoy</span>
+                <h2 class="text-[2.2rem] md:text-[3rem] font-black text-white leading-tight tracking-tight mb-5">
+                    Mientras buscas a mano,<br>tu competencia ya tiene<br>el contacto.
+                </h2>
+                <p class="text-[17px] text-[#888] leading-relaxed mb-10 max-w-lg mx-auto">
+                    Dinos qué zona y qué tipo de inmueble te interesa. Nosotros configuramos el Radar y te entregamos los leads.
+                </p>
+                <div class="flex flex-wrap items-center justify-center gap-4">
+                    <a href="consultoria-gratuita.html" class="inline-flex items-center gap-2 bg-[#FFB300] hover:bg-[#E69900] text-black font-bold text-[15px] px-8 py-4 rounded-full transition-colors">
+                        Activar mi Radar <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                    </a>
+                    <a href="contactus.html" class="inline-flex items-center gap-2 border border-[#333] hover:border-[#555] text-white font-medium text-[15px] px-8 py-4 rounded-full transition-colors">
+                        Hablar con el equipo
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-[#e8e8e8] bg-white">
+        <div class="max-w-[1200px] mx-auto px-6 md:px-10 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg overflow-hidden border border-gray-100">
+                    <img src="assets/images/Automanize%20(4).png" alt="Automanize" class="w-full h-full object-cover" />
+                </div>
+                <span class="text-[14px] font-bold text-[#111]">Automanize</span>
+            </div>
+            <p class="text-[12px] text-[#aaa]">© 2025 Automanize. Todos los derechos reservados.</p>
+            <div class="flex items-center gap-5">
+                <a href="privacy.html" class="text-[12px] text-[#999] hover:text-[#111] transition-colors">Privacidad</a>
+                <a href="aviso-legal.html" class="text-[12px] text-[#999] hover:text-[#111] transition-colors">Aviso Legal</a>
+                <a href="contactus.html" class="text-[12px] text-[#999] hover:text-[#111] transition-colors">Contacto</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRM Inmobiliario — Nize by Automanize</title>
+    <meta name="description" content="CRM inmobiliario inteligente. Gestiona propiedades, contratos, inquilinos y pagos desde un único panel automatizado con Nize." />
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ["Spline Sans", "sans-serif"] },
+                    colors: { primary: "#FFB300" }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: "Spline Sans", sans-serif; }
+        .dashboard-shadow { box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 4px 16px rgba(0,0,0,0.08); }
+        .chart-bar { transition: height 0.3s ease; }
+    </style>
+</head>
+<body class="bg-white text-[#111] overflow-x-hidden">
+
+    <!-- NAV -->
+    <header class="sticky top-0 z-50 bg-white border-b border-[#e8e8e8]">
+        <div class="max-w-[1200px] mx-auto px-6 md:px-10 h-16 flex items-center justify-between gap-8">
+            <a href="index.html" class="flex items-center gap-2.5 flex-shrink-0">
+                <div class="w-8 h-8 rounded-lg overflow-hidden border border-gray-100">
+                    <img src="assets/images/Automanize%20(4).png" alt="Automanize" class="w-full h-full object-cover" />
+                </div>
+                <span class="font-bold text-[17px] text-[#111]">Automanize</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-7">
+                <a href="index.html" class="text-[14px] text-[#666] font-medium hover:text-[#111] transition-colors">Inicio</a>
+                <div class="relative group">
+                    <a href="our-services.html" class="flex items-center gap-0.5 text-[14px] text-[#111] font-semibold border-b-2 border-[#FFB300] pb-0.5 hover:text-[#FFB300] transition-colors">
+                        Servicios <span class="material-symbols-outlined text-[16px]">expand_more</span>
+                    </a>
+                    <div class="absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-60 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 ease-out z-50">
+                        <div class="bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-[#e8e8e8] p-2 flex flex-col gap-0.5">
+                            <a href="our-services.html#whatsapp" class="block px-4 py-2.5 text-[13px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-lg transition-colors">Asistente de WhatsApp</a>
+                            <a href="facturacion.html" class="block px-4 py-2.5 text-[13px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-lg transition-colors">Facturación Inteligente</a>
+                            <a href="radar.html" class="block px-4 py-2.5 text-[13px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-lg transition-colors">Radar de Oportunidades</a>
+                            <a href="crm.html" class="block px-4 py-2.5 text-[13px] font-semibold text-[#FFB300] bg-[#FFF8E1] rounded-lg">Control Operativo 360°</a>
+                            <a href="diseno-web.html" class="block px-4 py-2.5 text-[13px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-lg transition-colors">Diseño Web</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="consultoria-gratuita.html" class="text-[14px] text-[#666] font-medium hover:text-[#111] transition-colors">Consultoría</a>
+            </nav>
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <a href="tel:+34617153252" class="hidden lg:flex items-center gap-1.5 text-[13px] font-medium text-[#555] hover:text-[#111] transition-colors">
+                    <span class="material-symbols-outlined text-[16px]">call</span>
+                    +34 617 15 32 52
+                </a>
+                <a href="contactus.html" class="hidden sm:flex items-center justify-center h-9 px-5 bg-[#FFB300] hover:bg-[#E69900] text-black text-[13px] font-bold rounded-full transition-colors">
+                    Contáctanos
+                </a>
+                <button onclick="document.getElementById('mobileMenuCrm').classList.toggle('hidden')" class="md:hidden p-2 rounded-lg hover:bg-[#f5f5f5] transition-colors">
+                    <span class="material-symbols-outlined text-[22px]">menu</span>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenuCrm" class="hidden md:hidden bg-white border-t border-[#f0f0f0]">
+            <div class="px-4 py-3 flex flex-col gap-1">
+                <a href="index.html" class="px-3 py-3 text-[15px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors block">Inicio</a>
+                <div>
+                    <button onclick="this.nextElementSibling.classList.toggle('hidden')" class="w-full flex items-center justify-between px-3 py-3 text-[15px] font-semibold text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">
+                        Servicios <span class="material-symbols-outlined text-[18px]">expand_more</span>
+                    </button>
+                    <div class="hidden pl-3 flex flex-col gap-0.5 pb-1">
+                        <a href="our-services.html#whatsapp" class="block px-3 py-2.5 text-[14px] text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">Asistente de WhatsApp</a>
+                        <a href="facturacion.html" class="block px-3 py-2.5 text-[14px] text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">Facturación Inteligente</a>
+                        <a href="radar.html" class="block px-3 py-2.5 text-[14px] text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">Radar de Oportunidades</a>
+                        <a href="crm.html" class="block px-3 py-2.5 text-[14px] font-semibold text-[#FFB300] bg-[#FFF8E1] rounded-xl">Control Operativo 360°</a>
+                        <a href="diseno-web.html" class="block px-3 py-2.5 text-[14px] text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors">Diseño Web</a>
+                    </div>
+                </div>
+                <a href="consultoria-gratuita.html" class="px-3 py-3 text-[15px] font-medium text-[#555] hover:text-[#111] hover:bg-[#fafafa] rounded-xl transition-colors block">Consultoría</a>
+                <div class="pt-3 mt-1 border-t border-[#f0f0f0]">
+                    <a href="contactus.html" class="flex items-center justify-center h-11 bg-[#FFB300] hover:bg-[#E69900] text-black text-[14px] font-bold rounded-full transition-colors w-full">Contáctanos</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO -->
+        <section class="overflow-hidden">
+            <div class="max-w-[1200px] mx-auto px-6 md:px-10 py-12 md:py-20 lg:py-28">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+
+                    <!-- Left -->
+                    <div>
+                        <span class="text-[11px] font-black text-[#FFB300] tracking-[0.25em] uppercase mb-5 block">Control Operativo 360° — Automanize</span>
+                        <h1 class="text-[2rem] md:text-[2.8rem] lg:text-[3.5rem] font-black text-[#111] leading-[1.05] tracking-tight mb-5">
+                            Todo tu negocio<br>bajo control.<br>Sin esfuerzo.
+                        </h1>
+                        <p class="text-[15px] md:text-[17px] text-[#666] leading-relaxed mb-8 max-w-md">
+                            Centraliza propiedades, contratos, cobros y tareas en un único sistema que trabaja por ti. Menos reuniones, menos errores, más tiempo para lo que importa.
+                        </p>
+                        <div class="flex flex-wrap items-center gap-3 mb-12">
+                            <a href="consultoria-gratuita.html" class="inline-flex items-center gap-2 bg-[#FFB300] hover:bg-[#E69900] text-black font-bold text-[14px] px-6 py-3 rounded-full transition-colors">
+                                Solicitar demo <span class="material-symbols-outlined text-[17px]">arrow_forward</span>
+                            </a>
+                            <a href="#funciona" class="inline-flex items-center gap-2 border border-[#e0e0e0] hover:border-[#ccc] text-[#333] font-medium text-[14px] px-6 py-3 rounded-full transition-colors">
+                                Ver cómo funciona <span class="material-symbols-outlined text-[17px]">play_circle</span>
+                            </a>
+                        </div>
+
+                        <!-- 3 feature points -->
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <div class="w-9 h-9 rounded-xl bg-[#FFF8E1] flex items-center justify-center mb-3">
+                                    <span class="material-symbols-outlined text-[18px] text-[#FFB300]">schedule</span>
+                                </div>
+                                <p class="text-[13px] font-bold text-[#111] mb-1">Ahorra tiempo</p>
+                                <p class="text-[12px] text-[#888] leading-snug">Automatiza tareas repetitivas</p>
+                            </div>
+                            <div>
+                                <div class="w-9 h-9 rounded-xl bg-[#FFF8E1] flex items-center justify-center mb-3">
+                                    <span class="material-symbols-outlined text-[18px] text-[#FFB300]">bar_chart</span>
+                                </div>
+                                <p class="text-[13px] font-bold text-[#111] mb-1">Más eficiencia</p>
+                                <p class="text-[12px] text-[#888] leading-snug">Optimiza procesos y reduce errores</p>
+                            </div>
+                            <div>
+                                <div class="w-9 h-9 rounded-xl bg-[#FFF8E1] flex items-center justify-center mb-3">
+                                    <span class="material-symbols-outlined text-[18px] text-[#FFB300]">security</span>
+                                </div>
+                                <p class="text-[13px] font-bold text-[#111] mb-1">Más control</p>
+                                <p class="text-[12px] text-[#888] leading-snug">Toda tu gestión en un solo lugar</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: House + Dashboard overlay -->
+                    <div class="hidden lg:flex relative justify-center lg:justify-end">
+                        <!-- House image -->
+                        <div class="relative w-full max-w-[520px]">
+                            <div class="w-full h-[320px] md:h-[360px] rounded-2xl overflow-hidden">
+                                <img src="assets/images/hero-house.jpg" alt="Inmueble gestionado con Automanize" class="w-full h-full object-cover" />
+                            </div>
+
+                            <!-- Dashboard mockup overlapping -->
+                            <div class="absolute -bottom-8 -left-4 md:-left-12 w-[320px] md:w-[380px] bg-white rounded-2xl dashboard-shadow border border-[#e8e8e8] overflow-hidden">
+                                <!-- Dashboard header -->
+                                <div class="flex items-center justify-between px-4 py-3 border-b border-[#f0f0f0]">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-5 h-5 rounded overflow-hidden">
+                                            <img src="assets/images/Automanize%20(4).png" alt="" class="w-full h-full object-cover" />
+                                        </div>
+                                        <span class="text-[11px] font-bold text-[#111]">Automanize</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[11px] font-semibold text-[#555]">Resumen general</span>
+                                        <span class="material-symbols-outlined text-[14px] text-[#aaa]">notifications</span>
+                                        <div class="w-5 h-5 rounded-full bg-[#FFB300] flex items-center justify-center">
+                                            <span class="text-[8px] font-black text-black">G</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex">
+                                    <!-- Sidebar -->
+                                    <div class="w-[90px] border-r border-[#f0f0f0] py-2 flex-shrink-0">
+                                        <div class="px-2 py-1.5 bg-[#FFF8E1] rounded-lg mx-1.5 mb-0.5">
+                                            <span class="text-[9px] font-bold text-[#FFB300] flex items-center gap-1"><span class="material-symbols-outlined text-[10px]">dashboard</span>Resumen</span>
+                                        </div>
+                                        <div class="px-2 py-1.5 mx-1.5 mb-0.5">
+                                            <span class="text-[9px] text-[#888] flex items-center gap-1"><span class="material-symbols-outlined text-[10px]">home_work</span>Propiedades</span>
+                                        </div>
+                                        <div class="px-2 py-1.5 mx-1.5 mb-0.5">
+                                            <span class="text-[9px] text-[#888] flex items-center gap-1"><span class="material-symbols-outlined text-[10px]">description</span>Contratos</span>
+                                        </div>
+                                        <div class="px-2 py-1.5 mx-1.5 mb-0.5">
+                                            <span class="text-[9px] text-[#888] flex items-center gap-1"><span class="material-symbols-outlined text-[10px]">group</span>Inquilinos</span>
+                                        </div>
+                                        <div class="px-2 py-1.5 mx-1.5 mb-0.5">
+                                            <span class="text-[9px] text-[#888] flex items-center gap-1"><span class="material-symbols-outlined text-[10px]">payments</span>Pagos</span>
+                                        </div>
+                                        <div class="px-2 py-1.5 mx-1.5 mb-0.5">
+                                            <span class="text-[9px] text-[#888] flex items-center gap-1"><span class="material-symbols-outlined text-[10px]">build</span>Mantenimiento</span>
+                                        </div>
+                                        <div class="px-2 py-1.5 mx-1.5">
+                                            <span class="text-[9px] text-[#888] flex items-center gap-1"><span class="material-symbols-outlined text-[10px]">analytics</span>Reportes</span>
+                                        </div>
+                                    </div>
+                                    <!-- Main content -->
+                                    <div class="flex-1 p-3">
+                                        <!-- Stats row -->
+                                        <div class="grid grid-cols-2 gap-1.5 mb-3">
+                                            <div class="bg-[#fafafa] rounded-lg p-2">
+                                                <p class="text-[8px] text-[#aaa] mb-0.5">Ingresos del mes</p>
+                                                <p class="text-[13px] font-black text-[#111]">32.540€</p>
+                                                <p class="text-[8px] text-[#4caf50] font-bold">↑ 12.3%</p>
+                                            </div>
+                                            <div class="bg-[#fafafa] rounded-lg p-2">
+                                                <p class="text-[8px] text-[#aaa] mb-0.5">Propiedades activas</p>
+                                                <p class="text-[13px] font-black text-[#111]">128</p>
+                                                <p class="text-[8px] text-[#4caf50] font-bold">↑ 8 nuevas</p>
+                                            </div>
+                                            <div class="bg-[#fafafa] rounded-lg p-2">
+                                                <p class="text-[8px] text-[#aaa] mb-0.5">Contratos activos</p>
+                                                <p class="text-[13px] font-black text-[#111]">216</p>
+                                                <p class="text-[8px] text-[#4caf50] font-bold">↑ 15 nuevos</p>
+                                            </div>
+                                            <div class="bg-[#fafafa] rounded-lg p-2">
+                                                <p class="text-[8px] text-[#aaa] mb-0.5">Pagos pendientes</p>
+                                                <p class="text-[13px] font-black text-[#111]">8</p>
+                                                <p class="text-[8px] text-[#f44336] font-bold">↓ 3 vs semana anterior</p>
+                                            </div>
+                                        </div>
+                                        <!-- Mini chart -->
+                                        <div class="bg-[#fafafa] rounded-lg p-2 mb-2">
+                                            <p class="text-[8px] text-[#aaa] mb-2">Ingresos (Últimos 6 meses)</p>
+                                            <div class="flex items-end gap-1 h-[30px]">
+                                                <div class="flex-1 bg-[#FFB300]/20 rounded-sm" style="height:40%"></div>
+                                                <div class="flex-1 bg-[#FFB300]/30 rounded-sm" style="height:55%"></div>
+                                                <div class="flex-1 bg-[#FFB300]/40 rounded-sm" style="height:50%"></div>
+                                                <div class="flex-1 bg-[#FFB300]/50 rounded-sm" style="height:70%"></div>
+                                                <div class="flex-1 bg-[#FFB300]/70 rounded-sm" style="height:85%"></div>
+                                                <div class="flex-1 bg-[#FFB300] rounded-sm" style="height:100%"></div>
+                                            </div>
+                                            <div class="flex justify-between mt-1">
+                                                <span class="text-[7px] text-[#ccc]">Ene</span>
+                                                <span class="text-[7px] text-[#ccc]">Feb</span>
+                                                <span class="text-[7px] text-[#ccc]">Mar</span>
+                                                <span class="text-[7px] text-[#ccc]">Abr</span>
+                                                <span class="text-[7px] text-[#ccc]">May</span>
+                                                <span class="text-[7px] text-[#ccc]">Jun</span>
+                                            </div>
+                                        </div>
+                                        <!-- Tasks -->
+                                        <div class="bg-[#fafafa] rounded-lg p-2">
+                                            <p class="text-[8px] font-bold text-[#111] mb-1.5">Tareas pendientes</p>
+                                            <div class="space-y-1">
+                                                <div class="flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-[#FFB300]"></div><span class="text-[8px] text-[#555]">Revisar 5 contratos</span></div>
+                                                <div class="flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-[#FFB300]"></div><span class="text-[8px] text-[#555]">Confirmar 3 pagos</span></div>
+                                                <div class="flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-[#e0e0e0]"></div><span class="text-[8px] text-[#888]">Responder 2 consultas</span></div>
+                                                <div class="flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-[#e0e0e0]"></div><span class="text-[8px] text-[#888]">Revisión de mantenimiento</span></div>
+                                            </div>
+                                            <p class="text-[8px] text-[#FFB300] font-bold mt-2 cursor-pointer">Ver todas las tareas →</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLIENTS / TRUST -->
+        <section class="border-y border-[#e8e8e8] py-12 mt-16">
+            <div class="max-w-[1200px] mx-auto px-6 md:px-10">
+                <p class="text-center text-[10px] font-bold text-[#c0c0c0] tracking-[0.3em] uppercase mb-10">Empresas que confían en nosotros</p>
+                <div class="flex flex-wrap items-center justify-center gap-10 md:gap-16">
+
+                    <a href="https://biscottocafe.es/" target="_blank" rel="noopener"
+                        class="transition-all duration-300 opacity-40 grayscale hover:opacity-100 hover:grayscale-0">
+                        <img src="assets/images/logoBiscotto.ico" alt="Biscotto" class="h-10 w-auto object-contain" loading="lazy" />
+                    </a>
+
+                    <a href="https://controldeplagastmm.com/" target="_blank" rel="noopener"
+                        class="transition-all duration-300 opacity-40 grayscale hover:opacity-100 hover:grayscale-0">
+                        <img src="assets/images/tmmlogo.ico" alt="TMM Control de Plagas" class="h-10 w-auto object-contain" loading="lazy" />
+                    </a>
+
+                    <a href="https://www.manuelconesa.com/" target="_blank" rel="noopener"
+                        class="transition-all duration-300 opacity-40 grayscale hover:opacity-100 hover:grayscale-0">
+                        <img src="assets/images/logobusc.png" alt="Manuel Conesa" class="h-10 w-auto object-contain" loading="lazy" />
+                    </a>
+
+                    <a href="https://www.instagram.com/invictarent/" target="_blank" rel="noopener"
+                        class="transition-all duration-300 opacity-40 grayscale hover:opacity-100 hover:grayscale-0">
+                        <img src="assets/images/invictarent.jpeg" alt="Invicta Rent" class="h-10 w-auto object-contain rounded-lg" loading="lazy" />
+                    </a>
+
+                    <a href="https://www.azulmarino.com/es-es/agencias-de-viajes/cartagena" target="_blank" rel="noopener"
+                        class="transition-all duration-300 opacity-40 grayscale hover:opacity-100 hover:grayscale-0">
+                        <img src="assets/images/azulmarino-logo.png" alt="Azul Marino" class="h-10 w-auto object-contain" loading="lazy" />
+                    </a>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURES -->
+        <section id="funciona" class="py-20 md:py-28 border-b border-[#e8e8e8]">
+            <div class="max-w-[1200px] mx-auto px-6 md:px-10">
+                <div class="text-center mb-14">
+                    <span class="text-[10px] font-black text-[#FFB300] tracking-[0.25em] uppercase mb-4 block">Todo lo que necesitas, automatizado</span>
+                    <h2 class="text-3xl md:text-4xl font-black text-[#111] leading-tight tracking-tight">
+                        Soluciones que impulsan tu negocio
+                    </h2>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <div class="border border-[#e8e8e8] rounded-2xl p-6 hover:border-[#FFB300] hover:shadow-sm transition-all duration-200">
+                        <div class="w-10 h-10 rounded-xl bg-[#f5f5f5] flex items-center justify-center mb-4">
+                            <span class="material-symbols-outlined text-[20px] text-[#555]">apartment</span>
+                        </div>
+                        <h3 class="text-[15px] font-bold text-[#111] mb-2">Gestión de propiedades</h3>
+                        <p class="text-[13px] text-[#888] leading-relaxed mb-5">Administra todas tus propiedades desde un único panel. Información siempre actualizada.</p>
+                        <a href="#" class="text-[12px] font-bold text-[#111] hover:text-[#FFB300] transition-colors flex items-center gap-1">Saber más <span class="material-symbols-outlined text-[14px]">arrow_forward</span></a>
+                    </div>
+                    <div class="border border-[#e8e8e8] rounded-2xl p-6 hover:border-[#FFB300] hover:shadow-sm transition-all duration-200">
+                        <div class="w-10 h-10 rounded-xl bg-[#f5f5f5] flex items-center justify-center mb-4">
+                            <span class="material-symbols-outlined text-[20px] text-[#555]">contract</span>
+                        </div>
+                        <h3 class="text-[15px] font-bold text-[#111] mb-2">Contratos inteligentes</h3>
+                        <p class="text-[13px] text-[#888] leading-relaxed mb-5">Crea, firma y gestiona contratos de alquiler de forma automática y segura.</p>
+                        <a href="#" class="text-[12px] font-bold text-[#111] hover:text-[#FFB300] transition-colors flex items-center gap-1">Saber más <span class="material-symbols-outlined text-[14px]">arrow_forward</span></a>
+                    </div>
+                    <div class="border border-[#e8e8e8] rounded-2xl p-6 hover:border-[#FFB300] hover:shadow-sm transition-all duration-200">
+                        <div class="w-10 h-10 rounded-xl bg-[#f5f5f5] flex items-center justify-center mb-4">
+                            <span class="material-symbols-outlined text-[20px] text-[#555]">credit_card</span>
+                        </div>
+                        <h3 class="text-[15px] font-bold text-[#111] mb-2">Cobros y pagos</h3>
+                        <p class="text-[13px] text-[#888] leading-relaxed mb-5">Automatiza cobros, recordatorios y conciliación de pagos sin esfuerzo.</p>
+                        <a href="#" class="text-[12px] font-bold text-[#111] hover:text-[#FFB300] transition-colors flex items-center gap-1">Saber más <span class="material-symbols-outlined text-[14px]">arrow_forward</span></a>
+                    </div>
+                    <div class="border border-[#e8e8e8] rounded-2xl p-6 hover:border-[#FFB300] hover:shadow-sm transition-all duration-200">
+                        <div class="w-10 h-10 rounded-xl bg-[#f5f5f5] flex items-center justify-center mb-4">
+                            <span class="material-symbols-outlined text-[20px] text-[#555]">build</span>
+                        </div>
+                        <h3 class="text-[15px] font-bold text-[#111] mb-2">Mantenimiento</h3>
+                        <p class="text-[13px] text-[#888] leading-relaxed mb-5">Gestiona incidencias y mantenimientos de forma rápida y organizada.</p>
+                        <a href="#" class="text-[12px] font-bold text-[#111] hover:text-[#FFB300] transition-colors flex items-center gap-1">Saber más <span class="material-symbols-outlined text-[14px]">arrow_forward</span></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA DARK -->
+        <section>
+            <div class="max-w-[1200px] mx-auto px-6 md:px-10 py-20 md:py-24">
+                <div class="rounded-3xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 min-h-[400px]">
+                    <!-- Image left -->
+                    <div class="relative min-h-[280px]">
+                        <img src="assets/images/services-hero.jpg" alt="Gestión inmobiliaria Automanize" class="absolute inset-0 w-full h-full object-cover" />
+                        <div class="absolute inset-0 bg-black/20"></div>
+                    </div>
+                    <!-- Text right (dark) -->
+                    <div class="bg-[#111] p-10 md:p-14 flex flex-col justify-center">
+                        <h2 class="text-2xl md:text-3xl font-black text-white leading-tight mb-4">
+                            ¿Listo para llevar tu gestión inmobiliaria al siguiente nivel?
+                        </h2>
+                        <p class="text-[#888] text-[15px] leading-relaxed mb-8">
+                            Solicita una demo gratuita y descubre cómo podemos ayudarte a ahorrar tiempo y aumentar tus resultados.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <a href="consultoria-gratuita.html" class="inline-flex items-center justify-center gap-2 bg-[#FFB300] hover:bg-[#E69900] text-black font-bold text-[14px] px-6 py-3 rounded-full transition-colors">
+                                Solicitar demo gratuita <span class="material-symbols-outlined text-[17px]">arrow_forward</span>
+                            </a>
+                            <a href="tel:+34617153252" class="inline-flex items-center justify-center gap-2 border border-[#333] hover:border-[#555] text-white font-medium text-[14px] px-6 py-3 rounded-full transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">call</span>
+                                Hablar con un experto
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STATS -->
+        <section class="border-t border-[#e8e8e8] py-12">
+            <div class="max-w-[1200px] mx-auto px-6 md:px-10">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x divide-[#e8e8e8]">
+                    <div class="flex items-center gap-3 md:px-8">
+                        <span class="material-symbols-outlined text-[28px] text-[#FFB300]">home_work</span>
+                        <div>
+                            <p class="text-[17px] font-black text-[#111]">+200</p>
+                            <p class="text-[12px] text-[#888]">Agencias confían en nosotros</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 md:px-8">
+                        <span class="material-symbols-outlined text-[28px] text-[#FFB300]">villa</span>
+                        <div>
+                            <p class="text-[17px] font-black text-[#111]">+50.000</p>
+                            <p class="text-[12px] text-[#888]">Propiedades gestionadas</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 md:px-8">
+                        <span class="material-symbols-outlined text-[28px] text-[#FFB300]">star</span>
+                        <div>
+                            <p class="text-[17px] font-black text-[#111]">99%</p>
+                            <p class="text-[12px] text-[#888]">Satisfacción del cliente</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 md:px-8">
+                        <span class="material-symbols-outlined text-[28px] text-[#FFB300]">support_agent</span>
+                        <div>
+                            <p class="text-[17px] font-black text-[#111]">24/7</p>
+                            <p class="text-[12px] text-[#888]">Soporte especializado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-[#e8e8e8]">
+        <div class="max-w-[1200px] mx-auto px-6 md:px-10 py-12">
+            <div class="flex flex-col md:flex-row md:justify-between gap-10">
+                <div class="max-w-xs">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="size-8 rounded-md overflow-hidden border border-gray-100">
+                            <img src="assets/images/Automanize%20(4).png" alt="Automanize" class="w-full h-full object-cover" />
+                        </div>
+                        <span class="text-base font-bold text-[#111]">Automanize</span>
+                    </div>
+                    <p class="text-sm text-[#888] leading-relaxed">Automatización inteligente para el sector inmobiliario.</p>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-[#999] tracking-[0.15em] uppercase mb-4">Contacto</p>
+                    <ul class="space-y-2.5">
+                        <li><a href="mailto:automanize@gmail.com" class="text-sm text-[#555] hover:text-[#111] transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-[15px] text-[#ccc]">mail</span>automanize@gmail.com</a></li>
+                        <li><a href="tel:+34617153252" class="text-sm text-[#555] hover:text-[#111] transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-[15px] text-[#ccc]">call</span>+34 617 15 32 52</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-[#999] tracking-[0.15em] uppercase mb-4">Legal</p>
+                    <ul class="space-y-2.5">
+                        <li><a href="aviso-legal.html" class="text-sm text-[#555] hover:text-[#111] transition-colors">Aviso legal</a></li>
+                        <li><a href="privacy.html" class="text-sm text-[#555] hover:text-[#111] transition-colors">Privacidad</a></li>
+                        <li><a href="cookies.html" class="text-sm text-[#555] hover:text-[#111] transition-colors">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-12 pt-6 border-t border-[#e8e8e8] flex flex-col sm:flex-row sm:justify-between gap-2">
+                <p class="text-xs text-[#ccc]">© 2026 Automanize. Todos los derechos reservados.</p>
+                <p class="text-xs text-[#ccc]">Hecho en España</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
