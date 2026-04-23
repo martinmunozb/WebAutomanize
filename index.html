@@ -560,216 +560,40 @@
             border-color: rgba(255, 255, 255, 0.08);
         }
 
-        /* Success Case Section - Professional & Clean Design */
-        .success-case-section {
-            background: linear-gradient(to bottom, transparent 0%, #fafafa 50%, transparent 100%);
-            padding: 6rem 2rem;
-            margin: 5rem 0;
+        /* ===== MOBILE POLISH ===== */
+        @keyframes mobileFadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes mobileFadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
         }
 
-        .success-case-container {
-            max-width: 900px;
-            margin: 0 auto;
+        /* Fade-in sections on scroll for older browsers */
+        @supports not (animation-timeline: view()) {
+            .scroll-reveal { animation-name: mobileFadeUp; animation-duration: 0.7s; animation-fill-mode: both; opacity: 0; }
         }
 
-        .success-header {
-            text-align: center;
-            margin-bottom: 4rem;
+        /* Hero mobile: reduce image height so text is reachable fast */
+        @media (max-width: 1023px) {
+            .hero-left { min-height: 240px !important; }
         }
 
-        .success-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #FFAB00 0%, #E69900 100%);
-            color: #181811;
-            padding: 0.6rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 15px rgba(255, 171, 0, 0.4);
-            animation: pulse-badge 2s ease-in-out infinite;
+        /* Glass cards: remove hard offsets on mobile */
+        @media (max-width: 639px) {
+            .glass-card { transform: none !important; }
+            .glass-card p br { display: none; }
         }
 
-        @keyframes pulse-badge {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
+        /* Nize image: ensure full visibility on mobile */
+        @media (max-width: 767px) {
+            #nize .nize-mobile-img { min-height: 280px; }
         }
 
-        .success-case-title {
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: #181811;
-            margin: 1rem 0;
-            text-align: center;
-        }
-
-        .success-case-subtitle {
-            font-size: 1.1rem;
-            color: #666;
-            text-align: center;
-            margin-bottom: 2.5rem;
-            font-style: italic;
-        }
-
-        .success-showcase {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .success-content-card {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: min(100%, 360px);
-            min-height: 150px;
-            padding: 1.25rem 1.5rem;
-            border-radius: 22px;
-            background: linear-gradient(160deg, rgba(255, 255, 255, 0.95) 0%, rgba(247, 247, 244, 0.9) 100%);
-            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            backdrop-filter: blur(2px);
-        }
-
-        .success-content-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.12);
-        }
-
-        .client-logo-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            text-align: center;
-            padding: 0;
-        }
-
-        .client-logo-img {
-            width: auto;
-            height: auto;
-            max-width: 100%;
-            object-fit: contain;
-            display: inline-block;
-            opacity: 0.98;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            image-rendering: auto;
-            filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.08));
-        }
-
-        .logo-biscotto {
-            max-height: 88px;
-        }
-
-        .logo-tmm {
-            max-height: 62px;
-        }
-
-        .logo-manuelconesa {
-            max-height: 72px;
-        }
-
-        .logo-invicta {
-            max-height: 80px;
-            border-radius: 8px;
-        }
-
-        .client-logo-img:hover {
-            opacity: 1;
-        }
-
-        .success-quote {
-            text-align: center;
-            font-size: 1.125rem;
-            line-height: 1.8;
-            color: #4a4a4a;
-            margin: 0 auto 3rem auto;
-            max-width: 650px;
-            font-weight: 400;
-        }
-
-        .success-metrics {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid #f0f0f0;
-        }
-
-        .metric-item {
-            text-align: center;
-        }
-
-        .metric-value {
-            display: block;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #FFAB00;
-            line-height: 1;
-            margin-bottom: 0.5rem;
-        }
-
-        .metric-label {
-            display: block;
-            font-size: 0.875rem;
-            color: #6b6b6b;
-            font-weight: 500;
-            letter-spacing: 0.02em;
-        }
-
-        @media (max-width: 768px) {
-            .success-case-section {
-                padding: 4rem 1rem;
-                margin: 3rem 0;
-            }
-
-            .success-header {
-                margin-bottom: 2.5rem;
-            }
-
-            .success-case-title {
-                font-size: 1.75rem;
-            }
-
-            .client-logo-img {
-                max-width: 220px;
-            }
-
-            .logo-biscotto {
-                max-height: 76px;
-            }
-
-            .logo-tmm {
-                max-height: 56px;
-            }
-
-            .success-quote {
-                font-size: 1rem;
-                margin-bottom: 2rem;
-            }
-
-            .success-metrics {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .metric-value {
-                font-size: 2rem;
-            }
+        /* Ensure dropdown in hero doesn't overflow on small screens */
+        @media (max-width: 480px) {
+            .hero-dropdown { left: 0 !important; right: auto !important; width: 92vw !important; }
         }
     </style>
 </head>
@@ -889,14 +713,35 @@
                             ¿Pierdes horas al teléfono intentando alquilar o vender tus pisos? <strong class="text-text-main dark:text-white">Nize</strong>, nuestro agente IA, se conecta a tu WhatsApp y se encarga de todo: responde dudas, envía fichas, agenda visitas, gestiona inquilinos, incidencias y pagos.
                         </p>
                         <div class="flex flex-wrap gap-4 stagger-3">
-                            <a href="consultoria-gratuita.html"
-                                class="h-12 px-8 bg-primary hover:bg-primary-hover text-black text-base font-bold rounded-full transition-all hover:shadow-lg hover:-translate-y-1 shadow-orange-500/20 flex items-center justify-center glow">
+                            <a href="our-services.html#whatsapp"
+                                class="h-12 px-8 bg-[#FFF8E1] hover:bg-[#FFE082] border border-[#FFE082] text-[#111] text-base font-bold rounded-full transition-all hover:-translate-y-0.5 flex items-center justify-center">
                                 Quiero ver cómo funciona →
                             </a>
-                            <a href="our-services.html"
-                                class="h-12 px-8 bg-surface-light dark:bg-surface-dark border border-[#e6e6db] dark:border-[#262626] text-text-main dark:text-white text-base font-bold rounded-full hover:bg-gray-100 dark:hover:bg-[#262626] transition-colors flex items-center justify-center">
-                                Ver qué incluye
-                            </a>
+                            <!-- Dropdown Ver qué incluye -->
+                            <div class="relative group">
+                                <button class="h-12 px-8 bg-surface-light dark:bg-surface-dark border border-[#e6e6db] dark:border-[#262626] text-text-main dark:text-white text-base font-bold rounded-full hover:bg-gray-100 dark:hover:bg-[#262626] transition-colors flex items-center gap-1.5">
+                                    Ver qué incluye <span class="material-symbols-outlined text-[18px]">expand_more</span>
+                                </button>
+                                <div class="hero-dropdown absolute bottom-[calc(100%+10px)] left-0 w-64 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 ease-out z-50">
+                                    <div class="bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.12)] border border-[#e8e8e8] dark:border-[#262626] p-2 flex flex-col gap-0.5">
+                                        <a href="our-services.html#whatsapp" class="flex items-center gap-3 px-4 py-2.5 text-[13px] font-medium text-[#555] dark:text-[#aaa] hover:text-[#111] dark:hover:text-white hover:bg-[#fafafa] dark:hover:bg-[#222] rounded-xl transition-colors">
+                                            <span class="material-symbols-outlined text-[16px] text-[#FFB300]">smart_toy</span> Asistente WhatsApp
+                                        </a>
+                                        <a href="facturacion.html" class="flex items-center gap-3 px-4 py-2.5 text-[13px] font-medium text-[#555] dark:text-[#aaa] hover:text-[#111] dark:hover:text-white hover:bg-[#fafafa] dark:hover:bg-[#222] rounded-xl transition-colors">
+                                            <span class="material-symbols-outlined text-[16px] text-[#FFB300]">mic</span> Facturación Inteligente
+                                        </a>
+                                        <a href="radar.html" class="flex items-center gap-3 px-4 py-2.5 text-[13px] font-medium text-[#555] dark:text-[#aaa] hover:text-[#111] dark:hover:text-white hover:bg-[#fafafa] dark:hover:bg-[#222] rounded-xl transition-colors">
+                                            <span class="material-symbols-outlined text-[16px] text-[#FFB300]">travel_explore</span> Captador de Clientes
+                                        </a>
+                                        <a href="crm.html" class="flex items-center gap-3 px-4 py-2.5 text-[13px] font-medium text-[#555] dark:text-[#aaa] hover:text-[#111] dark:hover:text-white hover:bg-[#fafafa] dark:hover:bg-[#222] rounded-xl transition-colors">
+                                            <span class="material-symbols-outlined text-[16px] text-[#FFB300]">dashboard</span> Centraliza tu empresa
+                                        </a>
+                                        <a href="diseno-web.html" class="flex items-center gap-3 px-4 py-2.5 text-[13px] font-medium text-[#555] dark:text-[#aaa] hover:text-[#111] dark:hover:text-white hover:bg-[#fafafa] dark:hover:bg-[#222] rounded-xl transition-colors">
+                                            <span class="material-symbols-outlined text-[16px] text-[#FFB300]">web</span> Diseño Web
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -949,104 +794,54 @@
                         </div>
                     </div>
                     
-                    <!-- Lado derecho: Imagen de fondo a color difuminada -->
-                    <div class="relative w-full md:absolute md:top-0 md:right-0 md:bottom-0 md:w-1/2 min-h-[350px]">
-                        <!-- Degradado horizontal (desktop) para mezclar caja de texto con imagen -->
-                        <div class="hidden md:block absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-surface-light dark:from-surface-dark to-transparent z-10"></div>
-                        <!-- Degradado vertical (mobile) para la separación -->
-                        <div class="md:hidden absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-surface-light dark:from-surface-dark to-transparent z-10"></div>
-                        
-                        <img 
-                            src="assets/images/nize-assistant-phone.jpg" 
-                            alt="Nize asistente virtual en smartphone" 
-                            class="absolute inset-0 w-full h-full object-cover object-center md:object-left"
+                    <!-- Lado derecho: Imagen -->
+                    <div class="nize-mobile-img relative w-full md:absolute md:top-0 md:right-0 md:bottom-0 md:w-1/2 min-h-[300px] md:min-h-0">
+                        <!-- Degradado horizontal (desktop) -->
+                        <div class="hidden md:block absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-surface-light dark:from-surface-dark to-transparent z-10"></div>
+                        <!-- Degradado vertical inferior (mobile) — funde hacia el contenido -->
+                        <div class="md:hidden absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-surface-light dark:from-surface-dark to-transparent z-10"></div>
+                        <img
+                            src="assets/images/nize-assistant-phone.jpg"
+                            alt="Nize asistente virtual en smartphone"
+                            class="absolute inset-0 w-full h-full object-cover object-center md:object-right"
                             loading="lazy"
                         />
                     </div>
                 </div>
             </section>
 
-            <section class="success-case-section">
-                <div class="success-case-container">
-                    <div class="success-header">
-                        <span class="success-badge">
-                             Casos de Éxito
-                        </span>
-                        <h2 class="success-case-title">Empresas que Confían en Nosotros</h2>
-                    </div>
+            <!-- Clientes -->
+            <section class="border-t border-b border-[#f0f0ec] dark:border-[#1e1e1e] py-16 md:py-20">
+                <div class="max-w-[1200px] mx-auto px-4 md:px-10">
 
-                    <div class="flex flex-wrap items-center justify-center gap-6 md:gap-10">
-                        <!-- Biscotto Card -->
-                        <a href="https://biscottocafe.es/" target="_blank" aria-label="Biscotto"
-                            class="success-content-card group transition-all duration-300 transform hover:-translate-y-1">
-                            <div class="client-logo-wrapper">
-                                <img src="assets/images/logoBiscotto.ico" alt="BISCOTTO"
-                                    class="client-logo-img logo-biscotto group-hover:scale-105 transition-transform duration-300"
-                                    loading="lazy" />
-                            </div>
+                    <p class="text-center text-[11px] font-bold text-[#bbb] dark:text-[#555] tracking-[0.3em] uppercase mb-12">
+                        Empresas que confían en Automanize
+                    </p>
+
+                    <!-- Logos -->
+                    <div class="flex flex-wrap items-center justify-center gap-6 sm:gap-10 md:gap-16">
+                        <a href="https://biscottocafe.es/" target="_blank" rel="noopener" aria-label="Biscotto Café">
+                            <img src="assets/images/logoBiscotto.ico" alt="Biscotto Café" loading="lazy"
+                                class="h-9 w-auto object-contain transition-transform duration-300 hover:scale-110" />
                         </a>
-
-                        <!-- TMM Card -->
-                        <a href="https://controldeplagastmm.com/" target="_blank" aria-label="TMM Control de Plagas"
-                            class="success-content-card group transition-all duration-300 transform hover:-translate-y-1">
-                            <div class="client-logo-wrapper">
-                                <img src="assets/images/tmmlogo.ico" alt="TMM Control de Plagas"
-                                    class="client-logo-img logo-tmm group-hover:scale-105 transition-transform duration-300"
-                                    loading="lazy" />
-                            </div>
+                        <a href="https://controldeplagastmm.com/" target="_blank" rel="noopener" aria-label="TMM Control de Plagas">
+                            <img src="assets/images/tmmlogo.ico" alt="TMM Control de Plagas" loading="lazy"
+                                class="h-8 w-auto object-contain transition-transform duration-300 hover:scale-110" />
                         </a>
-
-                        <!-- Manuel Conesa Card -->
-                        <a href="https://www.manuelconesa.com/" target="_blank" aria-label="Manuel Conesa"
-                            class="success-content-card group transition-all duration-300 transform hover:-translate-y-1">
-                            <div class="client-logo-wrapper">
-                                <img src="assets/images/logobusc.png" alt="Manuel Conesa"
-                                    class="client-logo-img logo-manuelconesa group-hover:scale-105 transition-transform duration-300"
-                                    loading="lazy" />
-                            </div>
+                        <a href="https://www.manuelconesa.com/" target="_blank" rel="noopener" aria-label="Manuel Conesa">
+                            <img src="assets/images/logobusc.png" alt="Manuel Conesa" loading="lazy"
+                                class="h-9 w-auto object-contain transition-transform duration-300 hover:scale-110" />
                         </a>
-
-                        <!-- Invicta Rent Card -->
-                        <a href="https://www.instagram.com/invictarent/" target="_blank" aria-label="Invicta Rent"
-                            class="success-content-card group transition-all duration-300 transform hover:-translate-y-1">
-                            <div class="client-logo-wrapper">
-                                <img src="assets/images/invictarent.jpeg" alt="Invicta Rent"
-                                    class="client-logo-img logo-invicta group-hover:scale-105 transition-transform duration-300"
-                                    loading="lazy" />
-                            </div>
+                        <a href="https://www.instagram.com/invictarent/" target="_blank" rel="noopener" aria-label="Invicta Rent">
+                            <img src="assets/images/invictarent.jpeg" alt="Invicta Rent" loading="lazy"
+                                class="h-9 w-auto object-contain rounded-lg transition-transform duration-300 hover:scale-110" />
                         </a>
-
-                        <!-- Azul Marino Card -->
-                        <a href="https://www.azulmarino.com/es-es/agencias-de-viajes/cartagena" target="_blank" aria-label="Azul Marino"
-                            class="success-content-card group transition-all duration-300 transform hover:-translate-y-1">
-                            <div class="client-logo-wrapper">
-                                <img src="assets/images/azulmarino-logo.png" alt="Azul Marino"
-                                    class="client-logo-img logo-azulmarino group-hover:scale-105 transition-transform duration-300"
-                                    loading="lazy" />
-                            </div>
+                        <a href="https://www.azulmarino.com/es-es/agencias-de-viajes/cartagena" target="_blank" rel="noopener" aria-label="Azul Marino">
+                            <img src="assets/images/azulmarino-logo.png" alt="Azul Marino" loading="lazy"
+                                class="h-9 w-auto object-contain transition-transform duration-300 hover:scale-110" />
                         </a>
                     </div>
 
-                    <div class="mt-12 text-center">
-                        <p class="success-quote">
-                            "Una experiencia excepcional que transformó nuestra manera de trabajar.
-                            Profesionalismo, dedicación y resultados que superaron todas nuestras expectativas."
-                        </p>
-                        <div class="success-metrics justify-center">
-                            <div class="metric-item">
-                                <span class="stat-number">100%</span>
-                                <span class="stat-label">Satisfacción</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="stat-number">1+</span>
-                                <span class="stat-label">Año Juntos</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="stat-number">∞</span>
-                                <span class="stat-label">Confianza</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </section>
 
@@ -1076,45 +871,32 @@
                     </div>
 
                     <!-- Glassmorphism Cards Grid -->
-                    <div class="grid grid-cols-2 gap-4 lg:order-1 scroll-reveal reveal-left">
-                        <div class="glass-card flex flex-col gap-4 p-6 rounded-3xl hover-lift transform translate-y-8">
-                            <span class="material-symbols-outlined text-4xl text-primary drop-shadow-md">hub</span>
-                            <h3 class="text-text-main dark:text-white font-bold text-lg">Respuestas automáticas a
-                                preguntas frecuentes</h3>
-                            <p class="text-sm text-text-muted dark:text-gray-400">Envío de fichas, fotos y vídeos del
-                                inmueble<br />Agenda de visitas con Calendly<br />Reagendado y cancelaciones
-                                automáticas</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:order-1 scroll-reveal reveal-left">
+                        <div class="glass-card flex flex-col gap-3 p-5 sm:p-6 rounded-3xl hover-lift sm:translate-y-8">
+                            <span class="material-symbols-outlined text-3xl sm:text-4xl text-primary drop-shadow-md">hub</span>
+                            <h3 class="text-text-main dark:text-white font-bold text-base sm:text-lg">Respuestas automáticas a preguntas frecuentes</h3>
+                            <p class="text-sm text-text-muted dark:text-gray-400">Envío de fichas, fotos y vídeos del inmueble. Agenda de visitas con Calendly. Reagendado y cancelaciones automáticas.</p>
                         </div>
-                        <div
-                            class="glass-card flex flex-col gap-4 p-6 rounded-3xl hover-lift shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
-                            <span
-                                class="material-symbols-outlined text-4xl text-primary drop-shadow-md">data_exploration</span>
-                            <h3 class="text-text-main dark:text-white font-bold text-lg">Filtrado y seguimiento de
-                                leads</h3>
-                            <p class="text-sm text-text-muted dark:text-gray-400">Estado de propiedades en tiempo
-                                real<br />Envío de contratos para firma digital<br />Recordatorios de vencimiento de
-                                contrato</p>
+                        <div class="glass-card flex flex-col gap-3 p-5 sm:p-6 rounded-3xl hover-lift shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
+                            <span class="material-symbols-outlined text-3xl sm:text-4xl text-primary drop-shadow-md">data_exploration</span>
+                            <h3 class="text-text-main dark:text-white font-bold text-base sm:text-lg">Filtrado y seguimiento de leads</h3>
+                            <p class="text-sm text-text-muted dark:text-gray-400">Estado de propiedades en tiempo real. Envío de contratos para firma digital. Recordatorios de vencimiento de contrato.</p>
                         </div>
-                        <div
-                            class="glass-card flex flex-col gap-4 p-6 rounded-3xl hover-lift shadow-[0_8px_30px_rgb(0,0,0,0.12)] transform translate-y-8">
-                            <span class="material-symbols-outlined text-4xl text-primary drop-shadow-md">memory</span>
-                            <h3 class="text-text-main dark:text-white font-bold text-lg">Gestión de incidencias con
-                                seguimiento</h3>
-                            <p class="text-sm text-text-muted dark:text-gray-400">Recordatorios de pago y registro de
-                                cobros<br />Alertas de impago<br />Solicitud de documentación al inquilino</p>
+                        <div class="glass-card flex flex-col gap-3 p-5 sm:p-6 rounded-3xl hover-lift shadow-[0_8px_30px_rgb(0,0,0,0.12)] sm:translate-y-8">
+                            <span class="material-symbols-outlined text-3xl sm:text-4xl text-primary drop-shadow-md">memory</span>
+                            <h3 class="text-text-main dark:text-white font-bold text-base sm:text-lg">Gestión de incidencias con seguimiento</h3>
+                            <p class="text-sm text-text-muted dark:text-gray-400">Recordatorios de pago y registro de cobros. Alertas de impago. Solicitud de documentación al inquilino.</p>
                         </div>
-                        <div class="glass-card flex flex-col gap-4 p-6 rounded-3xl hover-lift">
-                            <span class="material-symbols-outlined text-4xl text-primary drop-shadow-md">security</span>
-                            <h3 class="text-text-main dark:text-white font-bold text-lg">Informes semanales de
-                                actividad</h3>
-                            <p class="text-sm text-text-muted dark:text-gray-400">App de escritorio para gestionar
-                                todo</p>
+                        <div class="glass-card flex flex-col gap-3 p-5 sm:p-6 rounded-3xl hover-lift">
+                            <span class="material-symbols-outlined text-3xl sm:text-4xl text-primary drop-shadow-md">security</span>
+                            <h3 class="text-text-main dark:text-white font-bold text-base sm:text-lg">Informes semanales de actividad</h3>
+                            <p class="text-sm text-text-muted dark:text-gray-400">Panel de control centralizado. App de escritorio para gestionar todo desde un solo lugar.</p>
                         </div>
                     </div>
                 </div>
             </section>
             <section
-                class="max-w-[1200px] mx-auto px-4 md:px-10 rounded-2xl overflow-hidden relative bg-black p-8 md:p-16 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-8 group border border-[#262626] scroll-reveal reveal-up mb-20">
+                class="max-w-[1200px] mx-auto px-4 md:px-10 rounded-2xl overflow-hidden relative bg-black p-8 md:p-14 lg:p-16 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 group border border-[#262626] scroll-reveal reveal-up mb-20">
                 <div class="absolute inset-0 opacity-20 bg-[url('assets/images/cubes.png')]">
                 </div>
                 <div class="absolute -right-20 -top-20 size-64 bg-primary rounded-full blur-[100px] opacity-20"></div>
@@ -1126,7 +908,7 @@
                 </div>
                 <div class="relative z-10 shrink-0">
                     <a href="consultoria-gratuita.html"
-                        class="h-14 px-8 bg-primary hover:bg-white text-black text-lg font-bold rounded-full transition-colors flex items-center gap-2 glow">
+                        class="h-14 w-full md:w-auto px-8 bg-primary hover:bg-white text-black text-base md:text-lg font-bold rounded-full transition-colors flex items-center justify-center gap-2 glow">
                         <span>Quiero mi asistente</span>
                         <span class="material-symbols-outlined">arrow_forward</span>
                     </a>
