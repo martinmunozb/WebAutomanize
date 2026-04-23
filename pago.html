@@ -29,21 +29,27 @@
       font-family: 'DM Sans', sans-serif;
       font-size: 16px;
       line-height: 1.6;
+      -webkit-text-size-adjust: 100%;
     }
 
     body {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px 16px;
+      gap: 20px;
+      padding:
+        max(24px, env(safe-area-inset-top))
+        max(16px, env(safe-area-inset-right))
+        max(24px, env(safe-area-inset-bottom))
+        max(16px, env(safe-area-inset-left));
       background-image:
         radial-gradient(ellipse 60% 40% at 80% 10%, #00e67610 0%, transparent 60%),
         radial-gradient(ellipse 40% 60% at 10% 80%, #00e67608 0%, transparent 60%);
     }
 
     .card {
-      width: 100%;
-      max-width: 480px;
+      width: min(100%, 560px);
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 24px;
@@ -66,6 +72,7 @@
     .logo-row {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 20px;
     }
@@ -91,6 +98,7 @@
       letter-spacing: 0.08em;
       color: var(--text-muted);
       text-transform: uppercase;
+      overflow-wrap: anywhere;
     }
 
     .header h1 {
@@ -164,8 +172,11 @@
       margin-bottom: 24px;
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 10px;
     }
+
+    .inquilino-info > div { min-width: 0; }
 
     .inquilino-info .icon { font-size: 18px; }
 
@@ -173,11 +184,13 @@
       font-weight: 500;
       font-size: 14px;
       color: var(--green);
+      overflow-wrap: anywhere;
     }
 
     .inquilino-info .sub {
       font-size: 12px;
       color: var(--text-muted);
+      overflow-wrap: anywhere;
     }
 
     .field { margin-bottom: 20px; }
@@ -196,12 +209,14 @@
     .meses-grid {
       display: grid;
       gap: 8px;
+      grid-template-columns: 1fr;
     }
 
     .mes-option {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
       padding: 14px 16px;
       background: var(--surface2);
       border: 1.5px solid var(--border);
@@ -210,6 +225,7 @@
       transition: all 0.2s;
       position: relative;
       overflow: hidden;
+      min-width: 0;
     }
 
     .mes-option:hover {
@@ -234,12 +250,15 @@
       font-family: 'Syne', sans-serif;
       font-weight: 600;
       font-size: 15px;
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
 
     .mes-right {
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-shrink: 0;
     }
 
     .mes-importe {
@@ -280,7 +299,7 @@
     .file-drop {
       border: 2px dashed var(--border);
       border-radius: 12px;
-      padding: 28px 20px;
+      padding: clamp(22px, 4vw, 28px) clamp(16px, 4vw, 20px);
       text-align: center;
       cursor: pointer;
       transition: all 0.25s;
@@ -318,6 +337,7 @@
     .file-selected {
       display: none;
       align-items: center;
+      flex-wrap: wrap;
       gap: 12px;
       padding: 14px 16px;
       background: var(--green-dim);
@@ -332,9 +352,8 @@
       font-size: 13px;
       font-weight: 500;
       flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
 
     .file-remove {
@@ -353,6 +372,7 @@
     /* Submit */
     .btn-submit {
       width: 100%;
+      min-height: 56px;
       padding: 16px;
       background: var(--green);
       color: #000;
@@ -436,14 +456,90 @@
       text-align: center;
       font-size: 12px;
       color: #44445a;
-      margin-top: 20px;
+      padding-inline: 16px;
     }
 
     .footer-note a { color: #55556a; text-decoration: none; }
 
+    @media (min-width: 768px) {
+      .card { width: min(100%, 620px); }
+      .header { padding: 36px 40px 28px; }
+      .body { padding: 32px 40px 36px; }
+      .header h1 { font-size: 32px; }
+      .meses-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px), (max-height: 760px) {
+      body {
+        align-items: stretch;
+        justify-content: flex-start;
+      }
+
+      .card { width: 100%; }
+
+      .header, .body {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+    }
+
     @media (max-width: 480px) {
-      .header, .body { padding-left: 20px; padding-right: 20px; }
-      .header h1 { font-size: 22px; }
+      body {
+        padding:
+          max(12px, env(safe-area-inset-top))
+          max(12px, env(safe-area-inset-right))
+          max(16px, env(safe-area-inset-bottom))
+          max(12px, env(safe-area-inset-left));
+      }
+
+      .card { border-radius: 20px; }
+
+      .header, .body {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .header { padding-top: 24px; }
+
+      .header h1 { font-size: clamp(22px, 8vw, 28px); }
+
+      .mes-option {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .mes-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .file-selected { gap: 10px; }
+
+      .file-remove { margin-left: auto; }
+    }
+
+    @media (max-width: 360px) {
+      .header, .body {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .logo-text {
+        font-size: 13px;
+        letter-spacing: 0.06em;
+      }
+
+      .mes-option,
+      .file-selected,
+      .inquilino-info {
+        padding: 12px 14px;
+      }
+
+      .mes-importe,
+      .mes-nombre,
+      .btn-submit {
+        font-size: 15px;
+      }
     }
   </style>
 </head>
