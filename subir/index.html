@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Subir justificante · Invicta Rent</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #F2F0EB;
+      --surface:      #FFFFFF;
+      --border:       #E0DDD6;
+      --border-dash:  #C8C5BE;
+      --accent:       #F0C000;
+      --accent-hover: #D9AC00;
+      --accent-dim:   rgba(240,192,0,0.08);
+      --accent-ring:  rgba(240,192,0,0.25);
+      --text:         #1A1918;
+      --text-muted:   #6B6866;
+      --text-light:   #A8A5A0;
+      --error:        #D94848;
+    }
+
+    html, body { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 16px; }
+    body { display: flex; flex-direction: column; }
+
+    /* ── NAV ── */
+    .navbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      height: 56px;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-link {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding-bottom: 3px;
+    }
+    .nav-link.active {
+      color: var(--text);
+      font-weight: 500;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    /* ── STEPPER ── */
+    .stepper-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 28px 40px 0;
+    }
+    .stepper {
+      display: flex;
+      align-items: flex-start;
+      width: 100%;
+      max-width: 460px;
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.3s;
+    }
+    .step.active .step-dot,
+    .step.done   .step-dot { background: var(--accent); }
+    .step-label {
+      font-size: 11px;
+      color: var(--text-light);
+      white-space: nowrap;
+    }
+    .step.active .step-label,
+    .step.done   .step-label { color: var(--text); font-weight: 500; }
+    .step-line {
+      flex: 1;
+      height: 1.5px;
+      background: var(--border);
+      margin-top: 4px;
+      transition: background 0.3s;
+    }
+    .step-line.done { background: var(--accent); }
+
+    /* ── MAIN ── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 28px 16px 40px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      width: 100%;
+      max-width: 560px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 40px;
+    }
+    .card-title {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+    .card-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 28px;
+    }
+
+    /* ── LOADING ── */
+    .loading-state { text-align: center; padding: 48px 0; }
+    .spinner {
+      width: 30px; height: 30px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 14px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-state p { font-size: 14px; color: var(--text-muted); }
+
+    /* ── ERROR ── */
+    .error-state { display: none; text-align: center; padding: 48px 0; }
+    .error-icon  { font-size: 40px; margin-bottom: 16px; }
+    .error-state h2 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .error-state p { font-size: 14px; color: var(--text-muted); }
+
+    /* ── FORM ── */
+    .form-state { display: none; }
+
+    .inquilino-info {
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-ring);
+      border-radius: 4px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .inquilino-info .icon { font-size: 16px; }
+    .inquilino-info .name { font-size: 14px; font-weight: 500; }
+    .inquilino-info .sub  { font-size: 12px; color: var(--text-muted); }
+
+    /* file drop */
+    .file-drop {
+      border: 1.5px dashed var(--border-dash);
+      border-radius: 4px;
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      background: #FAFAF8;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      margin-bottom: 8px;
+    }
+    .file-drop:hover,
+    .file-drop.dragover {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+    .file-drop input[type="file"] {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer;
+      width: 100%; height: 100%;
+    }
+    .upload-icon {
+      width: 48px; height: 48px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .upload-icon svg { width: 24px; height: 24px; fill: #fff; }
+    .file-drop p { font-size: 14px; color: var(--text); margin-bottom: 4px; }
+    .file-drop .file-hint { font-size: 12px; color: var(--text-muted); }
+
+    .file-selected {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-ring);
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    .file-selected.show { display: flex; }
+    .file-selected .file-name {
+      font-size: 13px; font-weight: 500;
+      flex: 1; overflow: hidden;
+      text-overflow: ellipsis; white-space: nowrap;
+    }
+    .file-remove {
+      background: none; border: none;
+      color: var(--text-muted); cursor: pointer;
+      font-size: 16px; padding: 0; line-height: 1;
+    }
+    .file-remove:hover { color: var(--error); }
+
+    /* fields */
+    .fields-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+      margin-top: 20px;
+    }
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .field-select,
+    .field-input {
+      width: 100%;
+      padding: 11px 14px;
+      background: #FAFAF8;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field-select:focus,
+    .field-input:focus { border-color: var(--accent); }
+    .select-wrapper { position: relative; }
+    .select-wrapper::after {
+      content: '▾';
+      position: absolute;
+      right: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+      font-size: 12px;
+    }
+    .field-input[type="number"]::-webkit-inner-spin-button,
+    .field-input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .input-prefix-wrapper { position: relative; }
+    .input-prefix {
+      position: absolute;
+      left: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted); font-size: 14px;
+      pointer-events: none;
+    }
+    .input-prefix-wrapper .field-input { padding-left: 24px; }
+
+    /* submit */
+    .btn-submit {
+      width: 100%;
+      padding: 13px;
+      background: var(--accent);
+      color: #000;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover:not(:disabled) { background: var(--accent-hover); }
+    .btn-submit:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-submit.loading { position: relative; color: transparent; }
+    .btn-submit.loading::after {
+      content: '';
+      position: absolute;
+      width: 16px; height: 16px;
+      border: 2px solid #000;
+      border-top-color: transparent;
+      border-radius: 50%;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: spin 0.7s linear infinite;
+    }
+
+    /* success */
+    .success-state { display: none; text-align: center; padding: 48px 0; }
+    .success-icon {
+      width: 64px; height: 64px;
+      background: var(--accent-dim);
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 20px;
+    }
+    .success-state h2 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 22px; margin-bottom: 10px;
+    }
+    .success-state p { font-size: 14px; color: var(--text-muted); max-width: 300px; margin: 0 auto; }
+
+    /* badges */
+    .badges {
+      display: flex; align-items: center; justify-content: center;
+      gap: 40px; margin-top: 20px;
+    }
+    .badge { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-light); }
+    .badge svg { width: 13px; height: 13px; fill: var(--text-light); flex-shrink: 0; }
+
+    /* footer */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 14px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+    }
+    .footer-left { font-size: 12px; color: var(--text-light); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-size: 12px; color: var(--text-light); text-decoration: none; }
+    .footer-links a:hover { color: var(--text-muted); }
+
+    @media (max-width: 600px) {
+      .navbar { padding: 0 16px; }
+      .card { padding: 24px 20px; }
+      .fields-row { grid-template-columns: 1fr; }
+      .badges { flex-direction: column; gap: 10px; }
+      .footer { flex-direction: column; gap: 10px; text-align: center; }
+      .footer-links { flex-wrap: wrap; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <span class="nav-logo">Invicta Rent · Pagos</span>
+  <div class="nav-links">
+    <a class="nav-link active" href="#">Subir Justificante</a>
+    <a class="nav-link" href="#">Historial</a>
+  </div>
+</nav>
+
+<div class="stepper-wrap">
+  <div class="stepper">
+    <div class="step done" id="step1">
+      <div class="step-dot"></div>
+      <span class="step-label">Identificación</span>
+    </div>
+    <div class="step-line" id="line1"></div>
+    <div class="step active" id="step2">
+      <div class="step-dot"></div>
+      <span class="step-label">Carga</span>
+    </div>
+    <div class="step-line" id="line2"></div>
+    <div class="step" id="step3">
+      <div class="step-dot"></div>
+      <span class="step-label">Confirmación</span>
+    </div>
+  </div>
+</div>
+
+<main class="main">
+  <div class="card">
+
+    <p class="card-title" id="cardTitle">Subir justificante</p>
+    <p class="card-sub">Adjunta el comprobante de pago para que quede registrado en nuestro sistema de facturación.</p>
+
+    <!-- LOADING -->
+    <div class="loading-state" id="loadingState">
+      <div class="spinner"></div>
+      <p>Cargando tu información...</p>
+    </div>
+
+    <!-- ERROR -->
+    <div class="error-state" id="errorState">
+      <div class="error-icon">🔒</div>
+      <h2>Acceso no válido</h2>
+      <p>Este enlace no es válido o ha expirado. Solicita uno nuevo por WhatsApp.</p>
+    </div>
+
+    <!-- FORMULARIO -->
+    <div class="form-state" id="formState">
+
+      <div class="inquilino-info">
+        <span class="icon">👤</span>
+        <div>
+          <div class="name" id="inquilinoNombre">—</div>
+          <div class="sub"  id="inquilinoRef">—</div>
+        </div>
+      </div>
+
+      <div class="file-drop" id="fileDrop">
+        <input type="file" id="fileInput" accept="image/*,.pdf,application/pdf" />
+        <div class="upload-icon">
+          <svg viewBox="0 0 24 24"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+        </div>
+        <p>Haz clic o arrastra un archivo</p>
+        <span class="file-hint">Formatos soportados: PDF, PNG, JPG (Máx. 10MB)</span>
+      </div>
+
+      <div class="file-selected" id="fileSelected">
+        <span>📄</span>
+        <span class="file-name" id="fileName"></span>
+        <button class="file-remove" id="fileRemove">✕</button>
+      </div>
+
+      <div class="fields-row">
+        <div>
+          <label for="periodoSelect">Período</label>
+          <div class="select-wrapper">
+            <select class="field-select" id="periodoSelect">
+              <option value="">— Seleccionar —</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label for="importeInput">Importe (€)</label>
+          <div class="input-prefix-wrapper">
+            <span class="input-prefix">€</span>
+            <input class="field-input" type="number" id="importeInput" placeholder="0.00" min="0" step="0.01" />
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-submit" id="btnSubmit" disabled>Finalizar carga</button>
+    </div>
+
+    <!-- ÉXITO -->
+    <div class="success-state" id="successState">
+      <div class="success-icon">✓</div>
+      <h2>¡Justificante enviado!</h2>
+      <p>Lo revisaremos y recibirás confirmación por WhatsApp en breve. ¡Gracias!</p>
+    </div>
+
+  </div>
+
+  <div class="badges">
+    <div class="badge">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+      Conexión cifrada SSL 256-bit
+    </div>
+    <div class="badge">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+      GDPR Compliance
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <span class="footer-left">Gestionado por Automanize · Nize IA</span>
+  <div class="footer-links">
+    <a href="#">Términos de servicio</a>
+    <a href="#">Política de privacidad</a>
+    <a href="#">Soporte técnico</a>
+  </div>
+</footer>
+
+<script>
+  const WEBHOOK_GET  = 'https://n8n.automanize.com/webhook/gastos-datos';
+  const WEBHOOK_POST = 'https://n8n.automanize.com/webhook/gastos-submit';
+
+  const TIPOS_PAGO = {
+    hipoteca:        { nombre: 'Hipoteca'             },
+    'seguro-vida':   { nombre: 'Seguro de Vida'       },
+    'seguro-hogar':  { nombre: 'Seguro Hogar'         },
+    'seguro-impago': { nombre: 'Seguro Impago'        },
+    comunidad:       { nombre: 'Comunidad'            },
+    derramas:        { nombre: 'Derramas'             },
+    ibi:             { nombre: 'IBI'                  },
+    agua:            { nombre: 'Agua'                 },
+    luz:             { nombre: 'Luz'                  },
+    limpieza:        { nombre: 'Servicio de Limpieza' },
+    alarma:          { nombre: 'Alarma'               },
+    wifi:            { nombre: 'Wifi'                 },
+  };
+
+  const MESES_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  const params  = new URLSearchParams(window.location.search);
+  const token   = params.get('token');
+  const tipo    = params.get('tipo');
+  const config  = TIPOS_PAGO[tipo];
+
+  const loadingState  = document.getElementById('loadingState');
+  const errorState    = document.getElementById('errorState');
+  const formState     = document.getElementById('formState');
+  const successState  = document.getElementById('successState');
+  const fileDrop      = document.getElementById('fileDrop');
+  const fileInput     = document.getElementById('fileInput');
+  const fileSelected  = document.getElementById('fileSelected');
+  const fileName      = document.getElementById('fileName');
+  const fileRemove    = document.getElementById('fileRemove');
+  const btnSubmit     = document.getElementById('btnSubmit');
+  const periodoSelect = document.getElementById('periodoSelect');
+  const importeInput  = document.getElementById('importeInput');
+
+  let selectedFile = null;
+
+  if (config) {
+    document.getElementById('cardTitle').textContent = config.nombre + ' · Justificante';
+    document.title = `${config.nombre} · Justificante · Invicta Rent`;
+  }
+
+  (function poblarMeses() {
+    const hoy = new Date();
+    for (let i = 0; i < 12; i++) {
+      const d   = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1);
+      const opt = document.createElement('option');
+      opt.value       = `${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
+      opt.textContent = `${MESES_ES[d.getMonth()]} ${d.getFullYear()}`;
+      periodoSelect.appendChild(opt);
+    }
+  })();
+
+  function setStep(n) {
+    [1,2,3].forEach(i => {
+      document.getElementById(`step${i}`).className =
+        'step' + (i < n ? ' done' : i === n ? ' active' : '');
+    });
+    [1,2].forEach(i => {
+      document.getElementById(`line${i}`).className =
+        'step-line' + (i < n ? ' done' : '');
+    });
+  }
+
+  if (!token || !config) {
+    loadingState.style.display = 'none';
+    errorState.style.display   = 'block';
+    setStep(1);
+  } else {
+    setStep(2);
+    cargarDatos();
+  }
+
+  async function cargarDatos() {
+    try {
+      const res  = await fetch(`${WEBHOOK_GET}?token=${encodeURIComponent(token)}&tipo=${encodeURIComponent(tipo)}`);
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error();
+
+      document.getElementById('inquilinoNombre').textContent = data.nombre     || 'Inquilino';
+      document.getElementById('inquilinoRef').textContent    = data.referencia || data.habitacion || '';
+
+      loadingState.style.display = 'none';
+      formState.style.display    = 'block';
+    } catch {
+      loadingState.style.display = 'none';
+      errorState.style.display   = 'block';
+      setStep(1);
+    }
+  }
+
+  fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
+  fileDrop.addEventListener('dragover',  e => { e.preventDefault(); fileDrop.classList.add('dragover'); });
+  fileDrop.addEventListener('dragleave', ()  => fileDrop.classList.remove('dragover'));
+  fileDrop.addEventListener('drop', e => {
+    e.preventDefault(); fileDrop.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 1) { alert('Solo puedes subir un archivo.'); return; }
+    if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+  });
+
+  function setFile(f) {
+    const ok = f.type.startsWith('image/') || f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
+    if (!ok)                       { alert('Solo se permiten imágenes o PDF.'); fileInput.value = ''; return; }
+    if (f.size > 10*1024*1024)    { alert('El archivo supera los 10 MB.');     return; }
+    selectedFile = f;
+    fileName.textContent = f.name;
+    fileSelected.classList.add('show');
+    validarFormulario();
+  }
+
+  fileRemove.addEventListener('click', () => {
+    selectedFile = null; fileInput.value = '';
+    fileSelected.classList.remove('show');
+    validarFormulario();
+  });
+
+  periodoSelect.addEventListener('change', validarFormulario);
+  importeInput.addEventListener('input',   validarFormulario);
+
+  function validarFormulario() {
+    btnSubmit.disabled = !(periodoSelect.value && parseFloat(importeInput.value) > 0 && selectedFile);
+  }
+
+  btnSubmit.addEventListener('click', async () => {
+    if (btnSubmit.disabled) return;
+    btnSubmit.classList.add('loading'); btnSubmit.disabled = true;
+
+    const form = new FormData();
+    form.append('token',   token);
+    form.append('tipo',    tipo);
+    form.append('periodo', periodoSelect.value);
+    form.append('importe', importeInput.value);
+    form.append('archivo', selectedFile, selectedFile.name);
+
+    try {
+      const res = await fetch(WEBHOOK_POST, { method: 'POST', body: form });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      formState.style.display    = 'none';
+      successState.style.display = 'block';
+      setStep(3);
+    } catch {
+      btnSubmit.classList.remove('loading'); btnSubmit.disabled = false;
+      alert('Hubo un error al enviar. Inténtalo de nuevo o escríbenos por WhatsApp.');
+    }
+  });
+</script>
+</body>
+</html>

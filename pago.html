@@ -9,457 +9,260 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0a0a0f;
-      --surface: #111118;
-      --surface2: #18181f;
-      --border: #2a2a35;
-      --green: #00e676;
-      --green-dim: #00e67620;
-      --green-glow: #00e67640;
-      --text: #f0f0f5;
-      --text-muted: #888899;
-      --error: #ff4d6d;
-      --radius: 16px;
+      --bg:           #F2F0EB;
+      --surface:      #FFFFFF;
+      --border:       #E0DDD6;
+      --border-dash:  #C8C5BE;
+      --accent:       #F0C000;
+      --accent-hover: #D9AC00;
+      --accent-dim:   rgba(240,192,0,0.08);
+      --accent-ring:  rgba(240,192,0,0.25);
+      --text:         #1A1918;
+      --text-muted:   #6B6866;
+      --text-light:   #A8A5A0;
+      --error:        #D94848;
     }
 
-    html, body {
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      line-height: 1.6;
-    }
+    html, body { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 16px; }
+    body { display: flex; flex-direction: column; }
 
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
-      background-image:
-        radial-gradient(ellipse 60% 40% at 80% 10%, #00e67610 0%, transparent 60%),
-        radial-gradient(ellipse 40% 60% at 10% 80%, #00e67608 0%, transparent 60%);
-    }
-
-    .card {
-      width: 100%;
-      max-width: 480px;
+    /* ── NAV ── */
+    .navbar {
       background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 40px 80px #00000080, 0 0 0 1px #ffffff08;
-      animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) both;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .header {
-      padding: 32px 32px 24px;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(135deg, var(--surface2) 0%, var(--surface) 100%);
+      height: 56px; padding: 0 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 10;
     }
-
-    .logo-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .logo-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 12px var(--green);
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(0.85); }
-    }
-
-    .logo-text {
+    .nav-logo {
       font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 15px;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      text-transform: uppercase;
+      font-weight: 800; font-size: 13px;
+      letter-spacing: 0.12em; text-transform: uppercase;
     }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-link { font-size: 13px; color: var(--text-muted); text-decoration: none; padding-bottom: 3px; }
+    .nav-link.active { color: var(--text); font-weight: 500; border-bottom: 2px solid var(--accent); }
 
-    .header h1 {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 26px;
-      line-height: 1.2;
-      margin-bottom: 8px;
+    /* ── STEPPER ── */
+    .stepper-wrap { display: flex; justify-content: center; padding: 28px 40px 0; }
+    .stepper { display: flex; align-items: flex-start; width: 100%; max-width: 460px; }
+    .step { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .step-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--border); transition: background 0.3s;
     }
+    .step.active .step-dot,
+    .step.done   .step-dot { background: var(--accent); }
+    .step-label { font-size: 11px; color: var(--text-light); white-space: nowrap; }
+    .step.active .step-label,
+    .step.done   .step-label { color: var(--text); font-weight: 500; }
+    .step-line { flex: 1; height: 1.5px; background: var(--border); margin-top: 4px; transition: background 0.3s; }
+    .step-line.done { background: var(--accent); }
 
-    .header h1 span { color: var(--green); }
+    /* ── MAIN ── */
+    .main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 28px 16px 40px; }
 
-    .header p {
-      font-size: 14px;
-      color: var(--text-muted);
+    /* ── CARD ── */
+    .card {
+      width: 100%; max-width: 560px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 4px; padding: 40px;
     }
+    .card-title { font-family: 'DM Sans', sans-serif; font-weight: 400; font-size: 18px; margin-bottom: 6px; }
+    .card-sub   { font-size: 14px; color: var(--text-muted); line-height: 1.55; margin-bottom: 28px; }
 
-    .body {
-      padding: 28px 32px 32px;
-    }
-
-    /* Loading */
-    .loading-state {
-      text-align: center;
-      padding: 40px 0;
-    }
-
+    /* ── LOADING ── */
+    .loading-state { text-align: center; padding: 48px 0; }
     .spinner {
-      width: 36px;
-      height: 36px;
-      border: 2px solid var(--border);
-      border-top-color: var(--green);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 16px;
+      width: 30px; height: 30px;
+      border: 2px solid var(--border); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-state p { font-size: 14px; color: var(--text-muted); }
 
-    .loading-state p { color: var(--text-muted); font-size: 14px; }
+    /* ── ERROR ── */
+    .error-state { display: none; text-align: center; padding: 48px 0; }
+    .error-icon  { font-size: 40px; margin-bottom: 16px; }
+    .error-state h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 8px; }
+    .error-state p  { font-size: 14px; color: var(--text-muted); }
 
-    /* Error / Access denied */
-    .error-state {
-      text-align: center;
-      padding: 32px 0;
-      display: none;
-    }
-
-    .error-icon {
-      font-size: 40px;
-      margin-bottom: 12px;
-    }
-
-    .error-state h2 {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 20px;
-      margin-bottom: 8px;
-    }
-
-    .error-state p { color: var(--text-muted); font-size: 14px; }
-
-    /* Form */
+    /* ── FORM ── */
     .form-state { display: none; }
 
     .inquilino-info {
-      background: var(--green-dim);
-      border: 1px solid #00e67630;
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-ring);
+      border-radius: 4px; padding: 12px 16px; margin-bottom: 24px;
+      display: flex; align-items: center; gap: 10px;
     }
-
-    .inquilino-info .icon { font-size: 18px; }
-
-    .inquilino-info .name {
-      font-weight: 500;
-      font-size: 14px;
-      color: var(--green);
-    }
-
-    .inquilino-info .sub {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .field { margin-bottom: 20px; }
+    .inquilino-info .icon { font-size: 16px; }
+    .inquilino-info .name { font-size: 14px; font-weight: 500; }
+    .inquilino-info .sub  { font-size: 12px; color: var(--text-muted); }
 
     label {
-      display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+      display: block; font-size: 11px; font-weight: 500;
+      color: var(--text-muted); margin-bottom: 8px;
+      text-transform: uppercase; letter-spacing: 0.08em;
     }
 
-    /* Mes selector */
-    .meses-grid {
-      display: grid;
-      gap: 8px;
-    }
+    /* ── MES GRID ── */
+    .field { margin-bottom: 24px; }
+    .meses-grid { display: grid; gap: 8px; }
 
     .mes-option {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       padding: 14px 16px;
-      background: var(--surface2);
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
+      background: #FAFAF8;
+      border: 1px solid var(--border);
+      border-radius: 4px;
       cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-      overflow: hidden;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative; overflow: hidden;
     }
+    .mes-option:hover { border-color: var(--accent); background: var(--accent-dim); }
+    .mes-option.selected { border-color: var(--accent); background: var(--accent-dim); }
 
-    .mes-option:hover {
-      border-color: #00e67650;
-      background: #00e67608;
-    }
-
-    .mes-option.selected {
-      border-color: var(--green);
-      background: var(--green-dim);
-    }
-
-    .mes-option.selected::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, var(--green-glow), transparent);
-      pointer-events: none;
-    }
-
-    .mes-nombre {
-      font-family: 'Syne', sans-serif;
-      font-weight: 600;
-      font-size: 15px;
-    }
-
-    .mes-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .mes-importe {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 16px;
-      color: var(--green);
-    }
+    .mes-nombre { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; }
+    .mes-right  { display: flex; align-items: center; gap: 10px; }
+    .mes-importe { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; }
 
     .mes-check {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
+      width: 18px; height: 18px; border-radius: 50%;
       border: 1.5px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; flex-shrink: 0;
     }
-
-    .mes-option.selected .mes-check {
-      background: var(--green);
-      border-color: var(--green);
-    }
-
-    .mes-check::after {
-      content: '✓';
-      font-size: 11px;
-      color: #000;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
+    .mes-option.selected .mes-check { background: var(--accent); border-color: var(--accent); }
+    .mes-check::after { content: '✓'; font-size: 10px; color: #000; opacity: 0; transition: opacity 0.2s; }
     .mes-option.selected .mes-check::after { opacity: 1; }
 
-    /* File upload */
+    /* ── FILE DROP ── */
     .file-drop {
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 28px 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.25s;
-      background: var(--surface2);
-      position: relative;
+      border: 1.5px dashed var(--border-dash); border-radius: 4px;
+      padding: 40px 20px; text-align: center; cursor: pointer;
+      background: #FAFAF8; transition: border-color 0.2s, background 0.2s;
+      position: relative; margin-bottom: 8px;
     }
-
-    .file-drop:hover, .file-drop.dragover {
-      border-color: #00e67650;
-      background: #00e67608;
-    }
-
+    .file-drop:hover, .file-drop.dragover { border-color: var(--accent); background: var(--accent-dim); }
     .file-drop input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
     }
-
-    .file-icon { font-size: 32px; margin-bottom: 8px; }
-
-    .file-drop p {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
+    .upload-icon {
+      width: 48px; height: 48px; background: var(--accent); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
     }
-
-    .file-drop .file-hint {
-      font-size: 12px;
-      color: #55556a;
-    }
+    .upload-icon svg { width: 24px; height: 24px; fill: #fff; }
+    .file-drop p       { font-size: 14px; color: var(--text); margin-bottom: 4px; }
+    .file-drop .file-hint { font-size: 12px; color: var(--text-muted); }
 
     .file-selected {
-      display: none;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 16px;
-      background: var(--green-dim);
-      border: 1.5px solid #00e67630;
-      border-radius: 12px;
-      margin-top: 10px;
+      display: none; align-items: center; gap: 12px;
+      padding: 12px 16px; background: var(--accent-dim);
+      border: 1px solid var(--accent-ring); border-radius: 4px;
+      margin-top: 8px;
     }
-
     .file-selected.show { display: flex; }
-
     .file-selected .file-name {
-      font-size: 13px;
-      font-weight: 500;
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      font-size: 13px; font-weight: 500; flex: 1;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
-
     .file-remove {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 18px;
-      padding: 0;
-      line-height: 1;
-      flex-shrink: 0;
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 16px; padding: 0; line-height: 1;
     }
-
     .file-remove:hover { color: var(--error); }
 
-    /* Submit */
+    /* ── SUBMIT ── */
     .btn-submit {
-      width: 100%;
-      padding: 16px;
-      background: var(--green);
-      color: #000;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 16px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 8px;
-      letter-spacing: 0.02em;
+      width: 100%; padding: 13px; margin-top: 24px;
+      background: var(--accent); color: #000;
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+      border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;
     }
-
-    .btn-submit:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px var(--green-glow);
-    }
-
-    .btn-submit:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    .btn-submit.loading {
-      position: relative;
-      color: transparent;
-    }
-
+    .btn-submit:hover:not(:disabled) { background: var(--accent-hover); }
+    .btn-submit:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-submit.loading { position: relative; color: transparent; }
     .btn-submit.loading::after {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #000;
-      border-top-color: transparent;
-      border-radius: 50%;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      content: ''; position: absolute;
+      width: 16px; height: 16px;
+      border: 2px solid #000; border-top-color: transparent;
+      border-radius: 50%; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
       animation: spin 0.7s linear infinite;
     }
 
-    /* Success */
-    .success-state {
-      display: none;
-      text-align: center;
-      padding: 20px 0 8px;
-      animation: fadeUp 0.4s cubic-bezier(0.16,1,0.3,1) both;
-    }
-
+    /* ── SUCCESS ── */
+    .success-state { display: none; text-align: center; padding: 48px 0; }
     .success-icon {
-      width: 64px;
-      height: 64px;
-      background: var(--green-dim);
-      border: 2px solid var(--green);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      margin: 0 auto 20px;
-      box-shadow: 0 0 32px var(--green-glow);
+      width: 64px; height: 64px; background: var(--accent-dim);
+      border: 2px solid var(--accent); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; margin: 0 auto 20px;
     }
+    .success-state h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; margin-bottom: 10px; }
+    .success-state p  { font-size: 14px; color: var(--text-muted); max-width: 300px; margin: 0 auto; }
 
-    .success-state h2 {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 22px;
-      margin-bottom: 10px;
+    /* ── BADGES ── */
+    .badges { display: flex; align-items: center; justify-content: center; gap: 40px; margin-top: 20px; }
+    .badge  { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-light); }
+    .badge svg { width: 13px; height: 13px; fill: var(--text-light); flex-shrink: 0; }
+
+    /* ── FOOTER ── */
+    .footer {
+      border-top: 1px solid var(--border); padding: 14px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface);
     }
+    .footer-left { font-size: 12px; color: var(--text-light); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-size: 12px; color: var(--text-light); text-decoration: none; }
+    .footer-links a:hover { color: var(--text-muted); }
 
-    .success-state p {
-      color: var(--text-muted);
-      font-size: 14px;
-      max-width: 300px;
-      margin: 0 auto;
-    }
-
-    .footer-note {
-      text-align: center;
-      font-size: 12px;
-      color: #44445a;
-      margin-top: 20px;
-    }
-
-    .footer-note a { color: #55556a; text-decoration: none; }
-
-    @media (max-width: 480px) {
-      .header, .body { padding-left: 20px; padding-right: 20px; }
-      .header h1 { font-size: 22px; }
+    @media (max-width: 600px) {
+      .navbar { padding: 0 16px; }
+      .card   { padding: 24px 20px; }
+      .badges { flex-direction: column; gap: 10px; }
+      .footer { flex-direction: column; gap: 10px; text-align: center; }
+      .footer-links { flex-wrap: wrap; justify-content: center; }
     }
   </style>
 </head>
 <body>
 
-<div class="card">
-  <div class="header">
-    <div class="logo-row">
-      <div class="logo-dot"></div>
-      <span class="logo-text">Invicta Rent · Pagos</span>
-    </div>
-    <h1>Sube tu <span>justificante</span><br>de pago</h1>
-    <p>Selecciona el mes y adjunta el comprobante de transferencia.</p>
+<nav class="navbar">
+  <span class="nav-logo">Invicta Rent · Pagos</span>
+  <div class="nav-links">
+    <a class="nav-link active" href="#">Subir Justificante</a>
+    <a class="nav-link" href="#">Historial</a>
   </div>
+</nav>
 
-  <div class="body">
+<div class="stepper-wrap">
+  <div class="stepper">
+    <div class="step done" id="step1">
+      <div class="step-dot"></div>
+      <span class="step-label">Identificación</span>
+    </div>
+    <div class="step-line" id="line1"></div>
+    <div class="step active" id="step2">
+      <div class="step-dot"></div>
+      <span class="step-label">Carga</span>
+    </div>
+    <div class="step-line" id="line2"></div>
+    <div class="step" id="step3">
+      <div class="step-dot"></div>
+      <span class="step-label">Confirmación</span>
+    </div>
+  </div>
+</div>
+
+<main class="main">
+  <div class="card">
+
+    <p class="card-title">Sube tu justificante de pago</p>
+    <p class="card-sub">Selecciona el mes y adjunta el comprobante de transferencia.</p>
 
     <!-- LOADING -->
     <div class="loading-state" id="loadingState">
@@ -467,7 +270,7 @@
       <p>Cargando tu información...</p>
     </div>
 
-    <!-- ERROR / ACCESO DENEGADO -->
+    <!-- ERROR -->
     <div class="error-state" id="errorState">
       <div class="error-icon">🔒</div>
       <h2>Acceso no válido</h2>
@@ -481,7 +284,7 @@
         <span class="icon">👤</span>
         <div>
           <div class="name" id="inquilinoNombre">—</div>
-          <div class="sub" id="inquilinoHabitacion">—</div>
+          <div class="sub"  id="inquilinoHabitacion">—</div>
         </div>
       </div>
 
@@ -496,9 +299,11 @@
         <label>Justificante de pago</label>
         <div class="file-drop" id="fileDrop">
           <input type="file" id="fileInput" accept="image/*,.pdf,application/pdf" />
-          <div class="file-icon">📎</div>
-          <p>Arrastra aquí o pulsa para seleccionar</p>
-          <span class="file-hint">Cualquier imagen o PDF · Máx. 10 MB</span>
+          <div class="upload-icon">
+            <svg viewBox="0 0 24 24"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+          </div>
+          <p>Haz clic o arrastra un archivo</p>
+          <span class="file-hint">Formatos soportados: PDF, PNG, JPG (Máx. 10MB)</span>
         </div>
         <div class="file-selected" id="fileSelected">
           <span>📄</span>
@@ -518,61 +323,79 @@
     </div>
 
   </div>
-</div>
 
-<p class="footer-note">
-  Gestionado por <a href="https://automanize.com" target="_blank">Automanize</a> · Nize IA
-</p>
+  <div class="badges">
+    <div class="badge">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+      Conexión cifrada SSL 256-bit
+    </div>
+    <div class="badge">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+      GDPR Compliance
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <span class="footer-left">Gestionado por Automanize · Nize IA</span>
+  <div class="footer-links">
+    <a href="#">Términos de servicio</a>
+    <a href="#">Política de privacidad</a>
+    <a href="#">Soporte técnico</a>
+  </div>
+</footer>
 
 <script>
-  // ─── CONFIGURACIÓN ───────────────────────────────────────────────
-  // Cambia esta URL por la de tu webhook de n8n (GET — devuelve datos del inquilino)
   const WEBHOOK_GET  = 'https://n8n.automanize.com/webhook/pago-datos';
-  // Cambia esta URL por la de tu webhook de n8n (POST — recibe el formulario)
   const WEBHOOK_POST = 'https://n8n.automanize.com/webhook/pago-submit';
-  // ─────────────────────────────────────────────────────────────────
 
   const params = new URLSearchParams(window.location.search);
   const token  = params.get('token');
 
-  const loadingState  = document.getElementById('loadingState');
-  const errorState    = document.getElementById('errorState');
-  const formState     = document.getElementById('formState');
-  const successState  = document.getElementById('successState');
-  const mesesGrid     = document.getElementById('mesesGrid');
-  const fileDrop      = document.getElementById('fileDrop');
-  const fileInput     = document.getElementById('fileInput');
-  const fileSelected  = document.getElementById('fileSelected');
-  const fileName      = document.getElementById('fileName');
-  const fileRemove    = document.getElementById('fileRemove');
-  const btnSubmit     = document.getElementById('btnSubmit');
+  const loadingState = document.getElementById('loadingState');
+  const errorState   = document.getElementById('errorState');
+  const formState    = document.getElementById('formState');
+  const successState = document.getElementById('successState');
+  const mesesGrid    = document.getElementById('mesesGrid');
+  const fileDrop     = document.getElementById('fileDrop');
+  const fileInput    = document.getElementById('fileInput');
+  const fileSelected = document.getElementById('fileSelected');
+  const fileName     = document.getElementById('fileName');
+  const fileRemove   = document.getElementById('fileRemove');
+  const btnSubmit    = document.getElementById('btnSubmit');
 
-  let selectedMes     = null;
-  let selectedFile    = null;
-  let inquilinoData   = null;
+  let selectedMes  = null;
+  let selectedFile = null;
 
-  // ─── ACCESO SIN TOKEN ────────────────────────────────────────────
+  function setStep(n) {
+    [1,2,3].forEach(i => {
+      document.getElementById(`step${i}`).className =
+        'step' + (i < n ? ' done' : i === n ? ' active' : '');
+    });
+    [1,2].forEach(i => {
+      document.getElementById(`line${i}`).className =
+        'step-line' + (i < n ? ' done' : '');
+    });
+  }
+
   if (!token) {
     loadingState.style.display = 'none';
     errorState.style.display   = 'block';
+    setStep(1);
   } else {
+    setStep(2);
     cargarDatos();
   }
 
-  // ─── CARGAR DATOS DEL INQUILINO ──────────────────────────────────
   async function cargarDatos() {
     try {
       const res  = await fetch(`${WEBHOOK_GET}?token=${token}`);
       const data = await res.json();
-
       if (!res.ok || data.error) throw new Error('invalid');
 
-      inquilinoData = data;
-
-      document.getElementById('inquilinoNombre').textContent    = data.nombre || 'Inquilino';
+      document.getElementById('inquilinoNombre').textContent    = data.nombre    || 'Inquilino';
       document.getElementById('inquilinoHabitacion').textContent = data.habitacion || '';
 
-      // Renderizar meses pendientes
       if (!data.meses || data.meses.length === 0) {
         mesesGrid.innerHTML = '<p style="color:var(--text-muted);font-size:14px">No tienes pagos pendientes en este momento.</p>';
       } else {
@@ -596,13 +419,13 @@
       loadingState.style.display = 'none';
       formState.style.display    = 'block';
 
-    } catch (e) {
+    } catch {
       loadingState.style.display = 'none';
       errorState.style.display   = 'block';
+      setStep(1);
     }
   }
 
-  // ─── SELECCIÓN DE MES ────────────────────────────────────────────
   function seleccionarMes(el, mes) {
     document.querySelectorAll('.mes-option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
@@ -610,40 +433,19 @@
     validarFormulario();
   }
 
-  // ─── ARCHIVO ─────────────────────────────────────────────────────
-  fileInput.addEventListener('change', () => {
-    if (fileInput.files.length > 1) {
-      alert('Solo puedes subir un archivo.');
-      fileInput.value = '';
-      return;
-    }
-
-    if (fileInput.files[0]) setFile(fileInput.files[0]);
-  });
-
-  fileDrop.addEventListener('dragover', e => { e.preventDefault(); fileDrop.classList.add('dragover'); });
-  fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('dragover'));
+  fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
+  fileDrop.addEventListener('dragover',  e => { e.preventDefault(); fileDrop.classList.add('dragover'); });
+  fileDrop.addEventListener('dragleave', ()  => fileDrop.classList.remove('dragover'));
   fileDrop.addEventListener('drop', e => {
-    e.preventDefault();
-    fileDrop.classList.remove('dragover');
-    if (e.dataTransfer.files.length > 1) {
-      alert('Solo puedes subir un archivo.');
-      return;
-    }
+    e.preventDefault(); fileDrop.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 1) { alert('Solo puedes subir un archivo.'); return; }
     if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
   });
 
   function setFile(f) {
-    const isImage = f.type.startsWith('image/');
-    const isPdf = f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
-
-    if (!isImage && !isPdf) {
-      alert('Solo se permiten archivos de imagen o PDF.');
-      fileInput.value = '';
-      return;
-    }
-
-    if (f.size > 10 * 1024 * 1024) { alert('El archivo supera los 10 MB.'); return; }
+    const ok = f.type.startsWith('image/') || f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
+    if (!ok)                     { alert('Solo se permiten imágenes o PDF.'); fileInput.value = ''; return; }
+    if (f.size > 10*1024*1024)   { alert('El archivo supera los 10 MB.');     return; }
     selectedFile = f;
     fileName.textContent = f.name;
     fileSelected.classList.add('show');
@@ -651,44 +453,34 @@
   }
 
   fileRemove.addEventListener('click', () => {
-    selectedFile = null;
-    fileInput.value = '';
+    selectedFile = null; fileInput.value = '';
     fileSelected.classList.remove('show');
     validarFormulario();
   });
 
-  // ─── VALIDACIÓN ──────────────────────────────────────────────────
   function validarFormulario() {
     btnSubmit.disabled = !(selectedMes && selectedFile);
   }
 
-  // ─── ENVÍO ───────────────────────────────────────────────────────
   btnSubmit.addEventListener('click', async () => {
     if (!selectedMes || !selectedFile) return;
-
-    btnSubmit.classList.add('loading');
-    btnSubmit.disabled = true;
+    btnSubmit.classList.add('loading'); btnSubmit.disabled = true;
 
     const form = new FormData();
-    form.append('token',    token);
-    form.append('pago_id',  selectedMes.id);
-    form.append('mes',      selectedMes.etiqueta);
-    form.append('importe',  selectedMes.importe);
-    form.append('archivo',  selectedFile, selectedFile.name);
+    form.append('token',   token);
+    form.append('pago_id', selectedMes.id);
+    form.append('mes',     selectedMes.etiqueta);
+    form.append('importe', selectedMes.importe);
+    form.append('archivo', selectedFile, selectedFile.name);
 
     try {
       const res = await fetch(WEBHOOK_POST, { method: 'POST', body: form });
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText || `HTTP ${res.status}`);
-      }
-
-      formState.style.display   = 'none';
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      formState.style.display    = 'none';
       successState.style.display = 'block';
-    } catch (e) {
-      console.error('Error al enviar justificante:', e);
-      btnSubmit.classList.remove('loading');
-      btnSubmit.disabled = false;
+      setStep(3);
+    } catch {
+      btnSubmit.classList.remove('loading'); btnSubmit.disabled = false;
       alert('Hubo un error al enviar. Inténtalo de nuevo o escríbenos por WhatsApp.');
     }
   });
