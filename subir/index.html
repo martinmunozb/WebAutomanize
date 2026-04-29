@@ -160,7 +160,7 @@
     /* ── FORM ── */
     .form-state { display: none; }
 
-    .inquilino-info {
+    .gestor-info {
       background: var(--accent-dim);
       border: 1px solid var(--accent-ring);
       border-radius: 4px;
@@ -170,9 +170,23 @@
       align-items: center;
       gap: 10px;
     }
-    .inquilino-info .icon { font-size: 16px; }
-    .inquilino-info .name { font-size: 14px; font-weight: 500; }
-    .inquilino-info .sub  { font-size: 12px; color: var(--text-muted); }
+    .gestor-info .icon { font-size: 16px; }
+    .gestor-info .name { font-size: 14px; font-weight: 500; }
+    .gestor-info .sub  { font-size: 12px; color: var(--text-muted); }
+
+    /* habitacion selector */
+    .hab-selector {
+      margin-bottom: 24px;
+    }
+    .hab-selector label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
 
     /* file drop */
     .file-drop {
@@ -404,24 +418,34 @@
     <!-- LOADING -->
     <div class="loading-state" id="loadingState">
       <div class="spinner"></div>
-      <p>Cargando tu información...</p>
+      <p>Verificando acceso...</p>
     </div>
 
     <!-- ERROR -->
     <div class="error-state" id="errorState">
       <div class="error-icon">🔒</div>
-      <h2>Acceso no válido</h2>
-      <p>Este enlace no es válido o ha expirado. Solicita uno nuevo por WhatsApp.</p>
+      <h2 id="errorTitle">Acceso no válido</h2>
+      <p id="errorMsg">Este enlace no es válido o ha expirado. Contacta con soporte.</p>
     </div>
 
     <!-- FORMULARIO -->
     <div class="form-state" id="formState">
 
-      <div class="inquilino-info">
-        <span class="icon">👤</span>
+      <div class="gestor-info">
+        <span class="icon">🏢</span>
         <div>
-          <div class="name" id="inquilinoNombre">—</div>
-          <div class="sub"  id="inquilinoRef">—</div>
+          <div class="name" id="gestorNombre">—</div>
+          <div class="sub" id="gestorSub">Gestor · Invicta Rent</div>
+        </div>
+      </div>
+
+      <!-- SELECTOR DE HABITACIÓN / PISO -->
+      <div class="hab-selector">
+        <label for="habitacionSelect">Habitación / Piso</label>
+        <div class="select-wrapper">
+          <select class="field-select" id="habitacionSelect">
+            <option value="">— Seleccionar habitación —</option>
+          </select>
         </div>
       </div>
 
@@ -465,7 +489,7 @@
     <div class="success-state" id="successState">
       <div class="success-icon">✓</div>
       <h2>¡Justificante enviado!</h2>
-      <p>Lo revisaremos y recibirás confirmación por WhatsApp en breve. ¡Gracias!</p>
+      <p>Lo revisaremos y recibirás confirmación en breve. ¡Gracias!</p>
     </div>
 
   </div>
@@ -492,7 +516,8 @@
 </footer>
 
 <script>
-  const WEBHOOK_GET  = 'https://n8n.automanize.com/webhook/gastos-datos';
+  const SUPABASE_URL = 'https://edjugpekcntzvqaskbmc.supabase.co/rest/v1';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA';
   const WEBHOOK_POST = 'https://n8n.automanize.com/webhook/gastos-submit';
 
   const TIPOS_PAGO = {
@@ -513,24 +538,26 @@
   const MESES_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
   const params  = new URLSearchParams(window.location.search);
-  const token   = params.get('token');
+  const token   = params.get('token'); // UUID del gestor
   const tipo    = params.get('tipo');
   const config  = TIPOS_PAGO[tipo];
 
-  const loadingState  = document.getElementById('loadingState');
-  const errorState    = document.getElementById('errorState');
-  const formState     = document.getElementById('formState');
-  const successState  = document.getElementById('successState');
-  const fileDrop      = document.getElementById('fileDrop');
-  const fileInput     = document.getElementById('fileInput');
-  const fileSelected  = document.getElementById('fileSelected');
-  const fileName      = document.getElementById('fileName');
-  const fileRemove    = document.getElementById('fileRemove');
-  const btnSubmit     = document.getElementById('btnSubmit');
-  const periodoSelect = document.getElementById('periodoSelect');
-  const importeInput  = document.getElementById('importeInput');
+  const loadingState    = document.getElementById('loadingState');
+  const errorState      = document.getElementById('errorState');
+  const formState       = document.getElementById('formState');
+  const successState    = document.getElementById('successState');
+  const fileDrop        = document.getElementById('fileDrop');
+  const fileInput       = document.getElementById('fileInput');
+  const fileSelected    = document.getElementById('fileSelected');
+  const fileName        = document.getElementById('fileName');
+  const fileRemove      = document.getElementById('fileRemove');
+  const btnSubmit       = document.getElementById('btnSubmit');
+  const periodoSelect   = document.getElementById('periodoSelect');
+  const importeInput    = document.getElementById('importeInput');
+  const habitacionSelect = document.getElementById('habitacionSelect');
 
   let selectedFile = null;
+  let gestorId     = null;
 
   if (config) {
     document.getElementById('cardTitle').textContent = config.nombre + ' · Justificante';
@@ -559,10 +586,24 @@
     });
   }
 
-  if (!token || !config) {
+  function sbHeaders() {
+    return {
+      'apikey':        SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type':  'application/json',
+    };
+  }
+
+  function showError(titulo, msg) {
     loadingState.style.display = 'none';
-    errorState.style.display   = 'block';
+    document.getElementById('errorTitle').textContent = titulo || 'Acceso no válido';
+    document.getElementById('errorMsg').textContent   = msg   || 'Contacta con soporte.';
+    errorState.style.display = 'block';
     setStep(1);
+  }
+
+  if (!token || !config) {
+    showError('Enlace incompleto', 'Falta el token de acceso o el tipo de gasto. Solicita un nuevo enlace.');
   } else {
     setStep(2);
     cargarDatos();
@@ -570,19 +611,71 @@
 
   async function cargarDatos() {
     try {
-      const res  = await fetch(`${WEBHOOK_GET}?token=${encodeURIComponent(token)}&tipo=${encodeURIComponent(tipo)}`);
-      const data = await res.json();
-      if (!res.ok || data.error) throw new Error();
+      // 1 — Validar gestor por UUID
+      const gestorRes = await fetch(
+        `${SUPABASE_URL}/gestores?id=eq.${encodeURIComponent(token)}&select=id,nombre`,
+        { headers: sbHeaders() }
+      );
+      if (!gestorRes.ok) throw new Error('Error al consultar gestores');
+      const gestores = await gestorRes.json();
+      if (!gestores.length) {
+        showError('Acceso no válido', 'El token de gestor no existe o ha sido desactivado.');
+        return;
+      }
+      const gestor = gestores[0];
+      gestorId = gestor.id;
 
-      document.getElementById('inquilinoNombre').textContent = data.nombre     || 'Inquilino';
-      document.getElementById('inquilinoRef').textContent    = data.referencia || data.habitacion || '';
+      document.getElementById('gestorNombre').textContent = gestor.nombre || 'Gestor';
+
+      // 2 — Cargar habitaciones y pisos de este gestor en paralelo
+      const [habRes, pisosRes] = await Promise.all([
+        fetch(`${SUPABASE_URL}/habitaciones?gestor_id=eq.${gestorId}&select=id,nombre,direccion_completa&order=nombre.asc`, { headers: sbHeaders() }),
+        fetch(`${SUPABASE_URL}/pisos?gestor_id=eq.${gestorId}&select=id,nombre,direccion_completa&order=nombre.asc`,       { headers: sbHeaders() }),
+      ]);
+
+      const habitaciones = habRes.ok   ? await habRes.json()   : [];
+      const pisos        = pisosRes.ok ? await pisosRes.json() : [];
+
+      // Poblar el selector agrupando por tipo
+      if (habitaciones.length) {
+        const grupo = document.createElement('optgroup');
+        grupo.label = 'Habitaciones';
+        habitaciones.forEach(h => {
+          const opt = document.createElement('option');
+          opt.value       = `hab_${h.id}`;
+          opt.textContent = h.nombre + (h.direccion_completa ? ` · ${h.direccion_completa}` : '');
+          opt.dataset.tipo = 'habitacion';
+          opt.dataset.id   = h.id;
+          grupo.appendChild(opt);
+        });
+        habitacionSelect.appendChild(grupo);
+      }
+
+      if (pisos.length) {
+        const grupo = document.createElement('optgroup');
+        grupo.label = 'Pisos';
+        pisos.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value       = `piso_${p.id}`;
+          opt.textContent = p.nombre + (p.direccion_completa ? ` · ${p.direccion_completa}` : '');
+          opt.dataset.tipo = 'piso';
+          opt.dataset.id   = p.id;
+          grupo.appendChild(opt);
+        });
+        habitacionSelect.appendChild(grupo);
+      }
+
+      if (!habitaciones.length && !pisos.length) {
+        showError('Sin inmuebles', 'No se encontraron habitaciones ni pisos asociados a este gestor.');
+        return;
+      }
 
       loadingState.style.display = 'none';
       formState.style.display    = 'block';
-    } catch {
-      loadingState.style.display = 'none';
-      errorState.style.display   = 'block';
-      setStep(1);
+
+    } catch (err) {
+      console.error(err);
+      showError('Error de conexión', 'No se pudo verificar el acceso. Inténtalo de nuevo.');
     }
   }
 
@@ -597,8 +690,8 @@
 
   function setFile(f) {
     const ok = f.type.startsWith('image/') || f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
-    if (!ok)                       { alert('Solo se permiten imágenes o PDF.'); fileInput.value = ''; return; }
-    if (f.size > 10*1024*1024)    { alert('El archivo supera los 10 MB.');     return; }
+    if (!ok)                    { alert('Solo se permiten imágenes o PDF.'); fileInput.value = ''; return; }
+    if (f.size > 10*1024*1024)  { alert('El archivo supera los 10 MB.');     return; }
     selectedFile = f;
     fileName.textContent = f.name;
     fileSelected.classList.add('show');
@@ -611,23 +704,37 @@
     validarFormulario();
   });
 
-  periodoSelect.addEventListener('change', validarFormulario);
-  importeInput.addEventListener('input',   validarFormulario);
+  habitacionSelect.addEventListener('change', validarFormulario);
+  periodoSelect.addEventListener('change',    validarFormulario);
+  importeInput.addEventListener('input',      validarFormulario);
 
   function validarFormulario() {
-    btnSubmit.disabled = !(periodoSelect.value && parseFloat(importeInput.value) > 0 && selectedFile);
+    btnSubmit.disabled = !(
+      habitacionSelect.value &&
+      periodoSelect.value    &&
+      parseFloat(importeInput.value) > 0 &&
+      selectedFile
+    );
   }
 
   btnSubmit.addEventListener('click', async () => {
     if (btnSubmit.disabled) return;
     btnSubmit.classList.add('loading'); btnSubmit.disabled = true;
 
+    // Extraer tipo e id del inmueble seleccionado
+    const selOpt      = habitacionSelect.options[habitacionSelect.selectedIndex];
+    const inmTipo     = selOpt.dataset.tipo; // 'habitacion' | 'piso'
+    const inmId       = selOpt.dataset.id;
+
     const form = new FormData();
-    form.append('token',   token);
-    form.append('tipo',    tipo);
-    form.append('periodo', periodoSelect.value);
-    form.append('importe', importeInput.value);
-    form.append('archivo', selectedFile, selectedFile.name);
+    form.append('gestor_id',    gestorId);
+    form.append('token',        token);
+    form.append('tipo',         tipo);
+    form.append('inmueble_tipo', inmTipo);
+    form.append('inmueble_id',   inmId);
+    form.append('periodo',      periodoSelect.value);
+    form.append('importe',      importeInput.value);
+    form.append('archivo',      selectedFile, selectedFile.name);
 
     try {
       const res = await fetch(WEBHOOK_POST, { method: 'POST', body: form });
@@ -637,7 +744,7 @@
       setStep(3);
     } catch {
       btnSubmit.classList.remove('loading'); btnSubmit.disabled = false;
-      alert('Hubo un error al enviar. Inténtalo de nuevo o escríbenos por WhatsApp.');
+      alert('Hubo un error al enviar. Inténtalo de nuevo o contacta con soporte.');
     }
   });
 </script>
