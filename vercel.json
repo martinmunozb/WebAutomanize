@@ -1,4 +1,18 @@
 {
+  "rewrites": [
+    { "source": "/subir/hipoteca",        "destination": "/subir/index.html?tipo=hipoteca" },
+    { "source": "/subir/seguro-vida",     "destination": "/subir/index.html?tipo=seguro-vida" },
+    { "source": "/subir/seguro-hogar",    "destination": "/subir/index.html?tipo=seguro-hogar" },
+    { "source": "/subir/seguro-impago",   "destination": "/subir/index.html?tipo=seguro-impago" },
+    { "source": "/subir/comunidad",       "destination": "/subir/index.html?tipo=comunidad" },
+    { "source": "/subir/derramas",        "destination": "/subir/index.html?tipo=derramas" },
+    { "source": "/subir/ibi",             "destination": "/subir/index.html?tipo=ibi" },
+    { "source": "/subir/agua",            "destination": "/subir/index.html?tipo=agua" },
+    { "source": "/subir/luz",             "destination": "/subir/index.html?tipo=luz" },
+    { "source": "/subir/limpieza",        "destination": "/subir/index.html?tipo=limpieza" },
+    { "source": "/subir/alarma",          "destination": "/subir/index.html?tipo=alarma" },
+    { "source": "/subir/wifi",            "destination": "/subir/index.html?tipo=wifi" }
+  ],
   "redirects": [
     {
       "source": "/privacy.html",
@@ -45,7 +59,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://assets.calendly.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://calendly.com https://assets.calendly.com https://www.googletagmanager.com https://www.google-analytics.com; frame-src https://calendly.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://assets.calendly.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://n8n.automanize.com https://calendly.com https://assets.calendly.com https://www.googletagmanager.com https://www.google-analytics.com; frame-src https://calendly.com; object-src 'none'; base-uri 'self'; form-action 'self' https://n8n.automanize.com; frame-ancestors 'none'; upgrade-insecure-requests"
         }
       ]
     }

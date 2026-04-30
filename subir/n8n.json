@@ -1,0 +1,912 @@
+{
+    "name": "Gastos — Webhooks Justificantes v3 (FormData + Drive)",
+    "nodes": [
+        {
+            "id": "webhook-gastos-datos",
+            "name": "Webhook GET gastos-datos",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                240,
+                200
+            ],
+            "webhookId": "gastos-datos",
+            "parameters": {
+                "httpMethod": "GET",
+                "path": "gastos-datos",
+                "responseMode": "responseNode",
+                "options": {
+                    "allowedOrigins": "*"
+                }
+            }
+        },
+        {
+            "id": "buscar-inquilino-get",
+            "name": "Buscar Inquilino GET",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.4,
+            "position": [
+                460,
+                200
+            ],
+            "parameters": {
+                "method": "GET",
+                "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/inquilinos",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "apikey",
+                            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
+                        },
+                        {
+                            "name": "Authorization",
+                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
+                        }
+                    ]
+                },
+                "sendQuery": true,
+                "queryParameters": {
+                    "parameters": [
+                        {
+                            "name": "id",
+                            "value": "=eq.{{ $json.query.token }}"
+                        },
+                        {
+                            "name": "activo",
+                            "value": "=eq.true"
+                        },
+                        {
+                            "name": "select",
+                            "value": "id,cliente_id,habitacion_id"
+                        }
+                    ]
+                },
+                "options": {}
+            }
+        },
+        {
+            "id": "if-inquilino-existe",
+            "name": "IF Inquilino Existe",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.3,
+            "position": [
+                680,
+                200
+            ],
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "c1",
+                            "leftValue": "={{ $json.length }}",
+                            "rightValue": 0,
+                            "operator": {
+                                "type": "number",
+                                "operation": "gt"
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            }
+        },
+        {
+            "id": "buscar-cliente",
+            "name": "Buscar Cliente",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.4,
+            "position": [
+                900,
+                100
+            ],
+            "parameters": {
+                "method": "GET",
+                "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/clientes",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "apikey",
+                            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
+                        },
+                        {
+                            "name": "Authorization",
+                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
+                        }
+                    ]
+                },
+                "sendQuery": true,
+                "queryParameters": {
+                    "parameters": [
+                        {
+                            "name": "id",
+                            "value": "=eq.{{ $('Buscar Inquilino GET').first().json[0].cliente_id }}"
+                        },
+                        {
+                            "name": "select",
+                            "value": "id,nombre,telefono"
+                        }
+                    ]
+                },
+                "options": {}
+            }
+        },
+        {
+            "id": "buscar-inmueble",
+            "name": "Buscar Inmueble",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.4,
+            "position": [
+                900,
+                280
+            ],
+            "parameters": {
+                "method": "GET",
+                "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/habitaciones",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "apikey",
+                            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
+                        },
+                        {
+                            "name": "Authorization",
+                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
+                        }
+                    ]
+                },
+                "sendQuery": true,
+                "queryParameters": {
+                    "parameters": [
+                        {
+                            "name": "id_inmueble",
+                            "value": "=eq.{{ $('Buscar Inquilino GET').first().json[0].habitacion_id }}"
+                        },
+                        {
+                            "name": "select",
+                            "value": "id_inmueble,nombre,direccion_completa"
+                        }
+                    ]
+                },
+                "options": {}
+            }
+        },
+        {
+            "id": "merge-datos",
+            "name": "Merge Datos",
+            "type": "n8n-nodes-base.merge",
+            "typeVersion": 3.2,
+            "position": [
+                1120,
+                200
+            ],
+            "parameters": {
+                "mode": "combine",
+                "combinationMode": "mergeByPosition",
+                "options": {}
+            }
+        },
+        {
+            "id": "preparar-respuesta-get",
+            "name": "Preparar Respuesta GET",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1340,
+                200
+            ],
+            "parameters": {
+                "jsCode": "const allItems = $input.all().map(i => i.json);\nconst clienteItem  = allItems.find(i => Array.isArray(i) ? i[0]?.nombre : i.nombre);\nconst inmuebleItem = allItems.find(i => Array.isArray(i) ? i[0]?.id_inmueble : i.id_inmueble);\nconst cliente  = Array.isArray(clienteItem)  ? clienteItem[0]  : clienteItem;\nconst inmueble = Array.isArray(inmuebleItem) ? inmuebleItem[0] : inmuebleItem;\nconst nombre     = cliente?.nombre || 'Inquilino';\nconst referencia = inmueble?.nombre ? `${inmueble.nombre} — ${inmueble.direccion_completa || ''}`.trim() : '';\nreturn [{ json: { nombre, referencia, ok: true } }];"
+            }
+        },
+        {
+            "id": "respond-get-ok",
+            "name": "Respond GET OK",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1.1,
+            "position": [
+                1560,
+                200
+            ],
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ JSON.stringify($json) }}",
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Access-Control-Allow-Origin",
+                                "value": "*"
+                            }
+                        ]
+                    },
+                    "responseCode": 200
+                }
+            }
+        },
+        {
+            "id": "respond-get-401",
+            "name": "Respond GET 401",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1.1,
+            "position": [
+                900,
+                440
+            ],
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "{\"error\": \"Token no válido o inquilino inactivo.\"}",
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Access-Control-Allow-Origin",
+                                "value": "*"
+                            }
+                        ]
+                    },
+                    "responseCode": 401
+                }
+            }
+        },
+        {
+            "id": "webhook-gastos-submit",
+            "name": "Webhook POST gastos-submit",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                240,
+                700
+            ],
+            "webhookId": "gastos-submit",
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "gastos-submit",
+                "responseMode": "responseNode",
+                "options": {
+                    "allowedOrigins": "*",
+                    "binaryPropertyName": "archivo",
+                    "rawBody": false
+                }
+            }
+        },
+        {
+            "id": "validar-token",
+            "name": "Validar Token",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.4,
+            "position": [
+                460,
+                700
+            ],
+            "parameters": {
+                "method": "GET",
+                "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/inquilinos",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "apikey",
+                            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
+                        },
+                        {
+                            "name": "Authorization",
+                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
+                        }
+                    ]
+                },
+                "sendQuery": true,
+                "queryParameters": {
+                    "parameters": [
+                        {
+                            "name": "id",
+                            "value": "=eq.{{ $json.body.token }}"
+                        },
+                        {
+                            "name": "activo",
+                            "value": "=eq.true"
+                        },
+                        {
+                            "name": "select",
+                            "value": "id,cliente_id"
+                        }
+                    ]
+                },
+                "options": {}
+            }
+        },
+        {
+            "id": "if-token-valido",
+            "name": "IF Token Válido",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.3,
+            "position": [
+                680,
+                700
+            ],
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "c2",
+                            "leftValue": "={{ $json.length }}",
+                            "rightValue": 0,
+                            "operator": {
+                                "type": "number",
+                                "operation": "gt"
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            }
+        },
+        {
+            "id": "preparar-datos-drive",
+            "name": "Preparar Datos Drive",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                900,
+                620
+            ],
+            "parameters": {
+                "jsCode": "const webhookData = $('Webhook POST gastos-submit').first();\nconst body        = webhookData.json.body;\nconst inquilino   = $('Validar Token').first().json[0];\n\nconst CARPETAS = {\n  'hipoteca':      '167rSr7ALC52FQz4NNtP4Yh33eBO0SgAN',\n  'seguro-vida':   '1bWe2D62QFgye0v5L5-ZnsLMmc88qVw9F',\n  'seguro-hogar':  '1IH6RrytwijxRYzrtBZzfnRqaFINDkF13',\n  'seguro-impago': '1vzIDLzJ5yrtg35NcViESA3V2EwlCp5O_',\n  'comunidad':     '1WgsRy0sKpcP9t45Mc-VDBY8y9x18vHl5',\n  'derramas':      '1RJsoEO-S3_be__UgsjR6CXSwRdVdzZP4',\n  'ibi':           '1jJUBl7OzilTTOJ8uJVQM04ryb03iMZkc',\n  'agua':          '1oSYS7AwF-l9l5Z8cO9GRLKX02R19LWli',\n  'luz':           '1gzCL7LAiCmhBaQbsUglt9F4xdFxhNWrD',\n  'limpieza':      '1z0yIN-83yHJBxLtBHMAu_ZVHqsDO5V2s',\n  'alarma':        '1-v5zouk7OuZeuDn7T6ialZL0vADjir3w',\n  'wifi':          '1-W05CTSlaErPraimwsFTJOI0Oc6pLX57'\n};\n\nconst tipo        = (body.tipo || 'otros').toLowerCase();\nconst carpetaId   = CARPETAS[tipo] || '1i0iC9eoR-J1R69MLotuth-R1aHilbril';\nconst inquilinoId = inquilino.id;\n\n// Periodo viene como MM-YYYY → convertir a YYYY-MM para Supabase\nconst periodoRaw = body.periodo || '';\nlet periodoISO = '';\nif (periodoRaw.includes('-')) {\n  const parts = periodoRaw.split('-');\n  if (parts[0].length === 2) {\n    // formato MM-YYYY\n    periodoISO = `${parts[1]}-${parts[0]}-01`;\n  } else {\n    // ya viene YYYY-MM\n    periodoISO = `${periodoRaw}-01`;\n  }\n}\n\n// Nombre del archivo: INQUILINOID-TIPO-YYYY-MM.ext\nconst binaryData   = webhookData.binary?.archivo;\nconst mimeType     = binaryData?.mimeType || 'image/jpeg';\nconst originalName = binaryData?.fileName || 'justificante.jpg';\nconst ext          = originalName.split('.').pop() || 'jpg';\nconst periodoLabel = periodoRaw.replace('-', '-');\nconst nombreArchivo = `${inquilinoId}-${tipo}-${periodoLabel}.${ext}`;\n\nfunction pad(n, w) { return String(n).padStart(w, '0'); }\nconst date    = new Date().toISOString().slice(0,10).replace(/-/g,'');\nconst rand    = Math.floor(Math.random() * 10000);\nconst gastoId = `GASTO-${date}-${pad(rand,4)}`;\n\nreturn [{\n  json: {\n    gastoId, inquilinoId,\n    clienteId:    inquilino.cliente_id,\n    tipo, periodoISO,\n    importe:      parseFloat(body.importe) || 0,\n    carpetaId, nombreArchivo, mimeType\n  },\n  binary: webhookData.binary\n}];"
+            }
+        },
+        {
+            "id": "buscar-subcarpeta",
+            "name": "Buscar Subcarpeta Inquilino",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.4,
+            "position": [
+                1120,
+                620
+            ],
+            "parameters": {
+                "method": "GET",
+                "url": "https://www.googleapis.com/drive/v3/files",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "googleDriveOAuth2Api",
+                "sendQuery": true,
+                "queryParameters": {
+                    "parameters": [
+                        {
+                            "name": "q",
+                            "value": "={{ 'name=\\'' + $json.inquilinoId + '\\' and mimeType=\\'application/vnd.google-apps.folder\\' and \\'' + $json.carpetaId + '\\' in parents and trashed=false' }}"
+                        },
+                        {
+                            "name": "fields",
+                            "value": "files(id,name)"
+                        },
+                        {
+                            "name": "pageSize",
+                            "value": "1"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "YOUR_GOOGLE_DRIVE_CREDENTIAL_ID",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "id": "if-subcarpeta-existe",
+            "name": "IF Subcarpeta Existe",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.3,
+            "position": [
+                1340,
+                620
+            ],
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "c3",
+                            "leftValue": "={{ $json.files[0]?.id }}",
+                            "rightValue": "",
+                            "operator": {
+                                "type": "string",
+                                "operation": "notEmpty"
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            }
+        },
+        {
+            "id": "usar-subcarpeta-existente",
+            "name": "Usar Subcarpeta Existente",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1560,
+                520
+            ],
+            "parameters": {
+                "jsCode": "const subcarpetaId = $input.first().json.files[0].id;\nconst datos  = $('Preparar Datos Drive').first().json;\nconst binary = $('Preparar Datos Drive').first().binary;\nreturn [{ json: { ...datos, subcarpetaId }, binary }];"
+            }
+        },
+        {
+            "id": "crear-subcarpeta",
+            "name": "Crear Subcarpeta Inquilino",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.4,
+            "position": [
+                1560,
+                720
+            ],
+            "parameters": {
+                "method": "POST",
+                "url": "https://www.googleapis.com/drive/v3/files",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "googleDriveOAuth2Api",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ name: $('Preparar Datos Drive').first().json.inquilinoId, mimeType: 'application/vnd.google-apps.folder', parents: [$('Preparar Datos Drive').first().json.carpetaId] }) }}",
+                "options": {}
+            },
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "YOUR_GOOGLE_DRIVE_CREDENTIAL_ID",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "id": "set-subcarpeta-nueva",
+            "name": "Set Subcarpeta Nueva",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1780,
+                720
+            ],
+            "parameters": {
+                "jsCode": "const subcarpetaId = $input.first().json.id;\nconst datos  = $('Preparar Datos Drive').first().json;\nconst binary = $('Preparar Datos Drive').first().binary;\nreturn [{ json: { ...datos, subcarpetaId }, binary }];"
+            }
+        },
+        {
+            "id": "merge-subcarpeta",
+            "name": "Merge Subcarpeta",
+            "type": "n8n-nodes-base.merge",
+            "typeVersion": 3.2,
+            "position": [
+                1780,
+                580
+            ],
+            "parameters": {
+                "mode": "combine",
+                "combinationMode": "mergeByPosition",
+                "options": {}
+            }
+        },
+        {
+            "id": "subir-archivo-drive",
+            "name": "Subir Archivo Drive",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.4,
+            "position": [
+                2000,
+                580
+            ],
+            "parameters": {
+                "method": "POST",
+                "url": "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "googleDriveOAuth2Api",
+                "sendBody": true,
+                "contentType": "multipart-form-data",
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "metadata",
+                            "value": "={{ JSON.stringify({ name: $json.nombreArchivo, parents: [$json.subcarpetaId], mimeType: $json.mimeType }) }}",
+                            "parameterType": "formData"
+                        },
+                        {
+                            "name": "file",
+                            "parameterType": "formBinaryData",
+                            "inputDataFieldName": "archivo"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "YOUR_GOOGLE_DRIVE_CREDENTIAL_ID",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "id": "preparar-registro",
+            "name": "Preparar Registro",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                2220,
+                580
+            ],
+            "parameters": {
+                "jsCode": "const driveFile = $input.first().json;\nconst datos     = $('Merge Subcarpeta').first().json;\nconst archivoUrl = driveFile.webViewLink || `https://drive.google.com/file/d/${driveFile.id}/view`;\nreturn [{ json: {\n  gastoId:     datos.gastoId,\n  inquilinoId: datos.inquilinoId,\n  tipo:        datos.tipo,\n  periodoISO:  datos.periodoISO,\n  importe:     datos.importe,\n  archivoUrl,\n  driveFileId: driveFile.id\n}}];"
+            }
+        },
+        {
+            "id": "insertar-gasto",
+            "name": "Insertar Gasto Supabase",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.4,
+            "position": [
+                2440,
+                580
+            ],
+            "parameters": {
+                "method": "POST",
+                "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/gastos",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "apikey",
+                            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
+                        },
+                        {
+                            "name": "Authorization",
+                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "Prefer",
+                            "value": "return=representation"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ id: $json.gastoId, inquilino_id: $json.inquilinoId, tipo: $json.tipo, periodo: $json.periodoISO, importe: $json.importe, archivo_url: $json.archivoUrl, verificado: false }) }}",
+                "options": {}
+            }
+        },
+        {
+            "id": "respond-ok",
+            "name": "Respond Submit OK",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1.1,
+            "position": [
+                2660,
+                580
+            ],
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ JSON.stringify({ ok: true, id: $('Preparar Registro').first().json.gastoId, archivo: $('Preparar Registro').first().json.archivoUrl }) }}",
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Access-Control-Allow-Origin",
+                                "value": "*"
+                            }
+                        ]
+                    },
+                    "responseCode": 200
+                }
+            }
+        },
+        {
+            "id": "respond-401",
+            "name": "Respond Submit 401",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1.1,
+            "position": [
+                900,
+                860
+            ],
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "{\"error\": \"Token no válido o inquilino inactivo.\"}",
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Access-Control-Allow-Origin",
+                                "value": "*"
+                            }
+                        ]
+                    },
+                    "responseCode": 401
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Webhook GET gastos-datos": {
+            "main": [
+                [
+                    {
+                        "node": "Buscar Inquilino GET",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Buscar Inquilino GET": {
+            "main": [
+                [
+                    {
+                        "node": "IF Inquilino Existe",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "IF Inquilino Existe": {
+            "main": [
+                [
+                    {
+                        "node": "Buscar Cliente",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Buscar Inmueble",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Respond GET 401",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Buscar Cliente": {
+            "main": [
+                [
+                    {
+                        "node": "Merge Datos",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Buscar Inmueble": {
+            "main": [
+                [
+                    {
+                        "node": "Merge Datos",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        },
+        "Merge Datos": {
+            "main": [
+                [
+                    {
+                        "node": "Preparar Respuesta GET",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Preparar Respuesta GET": {
+            "main": [
+                [
+                    {
+                        "node": "Respond GET OK",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook POST gastos-submit": {
+            "main": [
+                [
+                    {
+                        "node": "Validar Token",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Validar Token": {
+            "main": [
+                [
+                    {
+                        "node": "IF Token Válido",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "IF Token Válido": {
+            "main": [
+                [
+                    {
+                        "node": "Preparar Datos Drive",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Respond Submit 401",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Preparar Datos Drive": {
+            "main": [
+                [
+                    {
+                        "node": "Buscar Subcarpeta Inquilino",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Buscar Subcarpeta Inquilino": {
+            "main": [
+                [
+                    {
+                        "node": "IF Subcarpeta Existe",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "IF Subcarpeta Existe": {
+            "main": [
+                [
+                    {
+                        "node": "Usar Subcarpeta Existente",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Crear Subcarpeta Inquilino",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Usar Subcarpeta Existente": {
+            "main": [
+                [
+                    {
+                        "node": "Merge Subcarpeta",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Crear Subcarpeta Inquilino": {
+            "main": [
+                [
+                    {
+                        "node": "Set Subcarpeta Nueva",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Set Subcarpeta Nueva": {
+            "main": [
+                [
+                    {
+                        "node": "Merge Subcarpeta",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        },
+        "Merge Subcarpeta": {
+            "main": [
+                [
+                    {
+                        "node": "Subir Archivo Drive",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Subir Archivo Drive": {
+            "main": [
+                [
+                    {
+                        "node": "Preparar Registro",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Preparar Registro": {
+            "main": [
+                [
+                    {
+                        "node": "Insertar Gasto Supabase",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Insertar Gasto Supabase": {
+            "main": [
+                [
+                    {
+                        "node": "Respond Submit OK",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "meta": {
+        "instanceId": "gastos-drive-v3-formdata"
+    }
+}
