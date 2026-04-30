@@ -346,7 +346,8 @@
 </footer>
 
 <script>
-  const WEBHOOK_GET  = 'https://n8n.automanize.com/webhook/pago-datos';
+  const SUPABASE_URL = 'https://edjugpekcntzvqaskbmc.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA';
   const WEBHOOK_POST = 'https://n8n.automanize.com/webhook/pago-submit';
 
   const params = new URLSearchParams(window.location.search);
@@ -364,8 +365,15 @@
   const fileRemove   = document.getElementById('fileRemove');
   const btnSubmit    = document.getElementById('btnSubmit');
 
-  let selectedMes  = null;
-  let selectedFile = null;
+  let selectedMes    = null;
+  let selectedFile   = null;
+  let inquilinoId    = null;
+
+  function sbFetch(path) {
+    return fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    }).then(r => r.json());
+  }
 
   function setStep(n) {
     [1,2,3].forEach(i => {
@@ -389,26 +397,39 @@
 
   async function cargarDatos() {
     try {
-      const res  = await fetch(`${WEBHOOK_GET}?token=${token}`);
-      const data = await res.json();
-      if (!res.ok || data.error) throw new Error('invalid');
+      // 1. Buscar inquilino por token
+      const inquilinos = await sbFetch(`inquilinos?token=eq.${token}&activo=eq.true&select=id,cliente_id,habitacion_id`);
+      if (!inquilinos.length) throw new Error('invalid');
+      const inq = inquilinos[0];
+      inquilinoId = inq.id;
 
-      document.getElementById('inquilinoNombre').textContent    = data.nombre    || 'Inquilino';
-      document.getElementById('inquilinoHabitacion').textContent = data.habitacion || '';
+      // 2. Datos en paralelo: cliente, habitación y pagos pendientes
+      const [clientes, habitaciones, pagos] = await Promise.all([
+        sbFetch(`clientes?id=eq.${inq.cliente_id}&select=nombre`),
+        sbFetch(`habitaciones?id_inmueble=eq.${inq.habitacion_id}&select=nombre,direccion_completa`),
+        sbFetch(`pagos?inquilino_id=eq.${inq.id}&recibido=eq.false&select=id,mes,importe&order=mes.asc`)
+      ]);
 
-      if (!data.meses || data.meses.length === 0) {
+      const nombre     = clientes[0]?.nombre || 'Inquilino';
+      const hab        = habitaciones[0];
+      const habitacion = hab?.nombre ? `${hab.nombre}${hab.direccion_completa ? ' — ' + hab.direccion_completa : ''}` : '';
+
+      document.getElementById('inquilinoNombre').textContent     = nombre;
+      document.getElementById('inquilinoHabitacion').textContent = habitacion;
+
+      if (!pagos.length) {
         mesesGrid.innerHTML = '<p style="color:var(--text-muted);font-size:14px">No tienes pagos pendientes en este momento.</p>';
       } else {
-        data.meses.forEach(m => {
-          const el = document.createElement('div');
-          el.className = 'mes-option';
-          el.dataset.id      = m.id;
-          el.dataset.mes     = m.etiqueta;
-          el.dataset.importe = m.importe;
-          el.innerHTML = `
-            <span class="mes-nombre">${m.etiqueta}</span>
+        pagos.forEach(p => {
+          const fecha    = new Date(p.mes + 'T12:00:00');
+          const etiqueta = fecha.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+          const m        = { id: p.id, etiqueta, importe: p.importe };
+          const el       = document.createElement('div');
+          el.className   = 'mes-option';
+          el.innerHTML   = `
+            <span class="mes-nombre">${etiqueta}</span>
             <span class="mes-right">
-              <span class="mes-importe">${m.importe}€</span>
+              <span class="mes-importe">${p.importe}€</span>
               <span class="mes-check"></span>
             </span>`;
           el.addEventListener('click', () => seleccionarMes(el, m));
