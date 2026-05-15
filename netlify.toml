@@ -4,6 +4,9 @@
 [functions]
   node_bundler = "esbuild"
 
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "STRIPE_SECRET_KEY,STRIPE_PRICE_MENSUAL,STRIPE_PRICE_ANUAL,SUPABASE_SERVICE_KEY,SUPABASE_URL,SUPABASE_BUCKET,SUPABASE_FILE"
+
 [[headers]]
   for = "/netlify/functions/*"
   [headers.values]
