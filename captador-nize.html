@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Captador Nize · Scraper de Idealista para Particulares</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0D0D0D;
+      --surface:      #141414;
+      --surface2:     #1A1A1A;
+      --border:       #2A2A2A;
+      --accent:       #F0C000;
+      --accent-hover: #D9AC00;
+      --accent-dim:   rgba(240,192,0,0.08);
+      --accent-ring:  rgba(240,192,0,0.2);
+      --text:         #F5F5F5;
+      --text-muted:   #888;
+      --text-light:   #555;
+      --green:        #22C55E;
+    }
+
+    html, body { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 16px; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(13,13,13,0.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      height: 60px; padding: 0 40px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text); text-decoration: none; }
+    .nav-logo span { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent); color: #000;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 11px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 9px 20px; border-radius: 4px; border: none; cursor: pointer;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--accent-hover); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 120px 40px 80px; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(240,192,0,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-dim); border: 1px solid var(--accent-ring);
+      border-radius: 100px; padding: 6px 14px; margin-bottom: 28px;
+      font-size: 12px; color: var(--accent); font-weight: 500;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(36px, 6vw, 72px); line-height: 1.05;
+      letter-spacing: -0.02em; margin-bottom: 24px; max-width: 800px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: clamp(16px, 2vw, 20px); color: var(--text-muted);
+      max-width: 560px; line-height: 1.6; margin: 0 auto 40px;
+    }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent); color: #000;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 14px 32px; border-radius: 4px; border: none; cursor: pointer;
+      text-decoration: none; transition: background 0.2s; display: inline-block;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary {
+      background: transparent; color: var(--text);
+      font-family: 'Syne', sans-serif; font-weight: 600; font-size: 13px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 14px 32px; border-radius: 4px; border: 1px solid var(--border);
+      cursor: pointer; text-decoration: none; transition: border-color 0.2s; display: inline-block;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── DEMO VISUAL ── */
+    .demo-wrap { padding: 0 40px 80px; max-width: 900px; margin: 0 auto; }
+    .demo-screen {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    }
+    .demo-bar {
+      background: var(--surface2); padding: 12px 16px;
+      display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border);
+    }
+    .demo-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .demo-dot.r { background: #FF5F57; }
+    .demo-dot.y { background: #FFBD2E; }
+    .demo-dot.g { background: #28C840; }
+    .demo-url {
+      flex: 1; background: var(--border); border-radius: 4px;
+      padding: 5px 12px; font-size: 12px; color: var(--text-muted);
+      margin: 0 12px; text-align: center;
+    }
+    .demo-body { padding: 24px; }
+    .demo-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .demo-table thead th {
+      text-align: left; padding: 8px 12px; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .demo-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    .demo-table tbody tr:last-child { border-bottom: none; }
+    .demo-table tbody tr:hover { background: var(--surface2); }
+    .demo-table tbody td { padding: 10px 12px; color: var(--text); }
+    .demo-table tbody td.muted { color: var(--text-muted); }
+    .tag {
+      display: inline-block; padding: 2px 8px; border-radius: 100px;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+    }
+    .tag.p { background: rgba(34,197,94,0.12); color: var(--green); }
+    .tag.a { background: rgba(240,192,0,0.12); color: var(--accent); }
+    .demo-footer {
+      padding: 12px 24px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .demo-footer span { font-size: 12px; color: var(--text-muted); }
+    .demo-export {
+      background: var(--accent); color: #000; border: none; border-radius: 4px;
+      padding: 6px 14px; font-size: 11px; font-family: 'Syne', sans-serif;
+      font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: default;
+    }
+
+    /* ── HOW IT WORKS ── */
+    section { padding: 80px 40px; max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(28px, 4vw, 44px); line-height: 1.1;
+      letter-spacing: -0.02em; margin-bottom: 16px;
+    }
+    .section-sub { font-size: 16px; color: var(--text-muted); max-width: 520px; line-height: 1.6; margin-bottom: 56px; }
+
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2px; }
+    .step-card {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 32px 28px; position: relative;
+    }
+    .step-card:first-child { border-radius: 8px 0 0 8px; }
+    .step-card:last-child  { border-radius: 0 8px 8px 0; }
+    .step-num {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 48px;
+      color: var(--border); line-height: 1; margin-bottom: 20px;
+    }
+    .step-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 10px; }
+    .step-card p  { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ── FEATURES ── */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1px; background: var(--border); border-radius: 8px; overflow: hidden; }
+    .feature {
+      background: var(--surface); padding: 32px 28px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .feature-icon {
+      width: 40px; height: 40px; background: var(--accent-dim);
+      border: 1px solid var(--accent-ring); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+    }
+    .feature h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; }
+    .feature p  { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ── PRICING ── */
+    .pricing-wrap { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; justify-content: center; }
+    .plan {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 36px 32px; flex: 1; min-width: 280px; max-width: 360px;
+      display: flex; flex-direction: column; gap: 0; position: relative;
+    }
+    .plan.popular {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 20px 60px rgba(240,192,0,0.08);
+    }
+    .plan-badge {
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: #000;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 10px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 4px 14px; border-radius: 100px;
+    }
+    .plan-name {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .plan-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px; }
+    .plan-price .amount {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 48px; line-height: 1;
+    }
+    .plan-price .currency { font-size: 20px; font-weight: 600; color: var(--text-muted); align-self: flex-start; margin-top: 6px; }
+    .plan-price .period  { font-size: 14px; color: var(--text-muted); }
+    .plan-save { font-size: 13px; color: var(--green); font-weight: 500; margin-bottom: 28px; min-height: 20px; }
+    .plan-divider { height: 1px; background: var(--border); margin-bottom: 28px; }
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 14px; flex: 1; margin-bottom: 32px; }
+    .plan-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--text-muted); }
+    .plan-features li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .plan-features li strong { color: var(--text); }
+    .plan-btn {
+      width: 100%; padding: 14px;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      border-radius: 4px; border: none; cursor: pointer; transition: all 0.2s;
+    }
+    .plan-btn.primary { background: var(--accent); color: #000; }
+    .plan-btn.primary:hover { background: var(--accent-hover); }
+    .plan-btn.secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .plan-btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── GUARANTEE ── */
+    .guarantee {
+      text-align: center; padding: 60px 40px;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .guarantee-icon { font-size: 48px; margin-bottom: 16px; }
+    .guarantee h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 28px; margin-bottom: 12px; }
+    .guarantee p  { font-size: 15px; color: var(--text-muted); max-width: 480px; margin: 0 auto; line-height: 1.6; }
+
+    /* ── FAQ ── */
+    .faq { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      width: 100%; background: none; border: none; text-align: left;
+      padding: 20px 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--text);
+    }
+    .faq-q:hover { background: var(--surface2); }
+    .faq-arrow { color: var(--text-muted); font-size: 18px; transition: transform 0.3s; flex-shrink: 0; }
+    .faq-item.open .faq-arrow { transform: rotate(45deg); }
+    .faq-a { display: none; padding: 0 24px 20px; font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+    .faq-item.open .faq-a { display: block; }
+
+    /* ── CTA FINAL ── */
+    .cta-final {
+      text-align: center; padding: 100px 40px;
+      background: radial-gradient(ellipse 60% 80% at 50% 100%, rgba(240,192,0,0.06) 0%, transparent 70%);
+    }
+    .cta-final h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(28px, 4vw, 48px); margin-bottom: 16px; letter-spacing: -0.02em; }
+    .cta-final p  { font-size: 16px; color: var(--text-muted); max-width: 440px; margin: 0 auto 36px; line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border); padding: 24px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    footer span { font-size: 12px; color: var(--text-light); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-size: 12px; color: var(--text-light); text-decoration: none; }
+    .footer-links a:hover { color: var(--text-muted); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+      z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; width: 100%; max-width: 460px;
+      padding: 40px; position: relative; animation: modalIn 0.25s ease;
+    }
+    @keyframes modalIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; margin-bottom: 6px; }
+    .modal .modal-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+    .modal-plan-selector { display: flex; gap: 8px; margin-bottom: 24px; }
+    .modal-plan-btn {
+      flex: 1; padding: 12px; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 4px; cursor: pointer; text-align: center; transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .modal-plan-btn.selected { border-color: var(--accent); background: var(--accent-dim); }
+    .modal-plan-btn .mpb-name { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+    .modal-plan-btn .mpb-price { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; margin-top: 4px; }
+    .modal-plan-btn .mpb-save { font-size: 11px; color: var(--green); margin-top: 2px; }
+    .modal-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; display: block; }
+    .modal-input {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 4px; padding: 12px 14px; font-size: 14px; color: var(--text);
+      font-family: 'DM Sans', sans-serif; margin-bottom: 16px; transition: border-color 0.2s;
+    }
+    .modal-input:focus { outline: none; border-color: var(--accent); }
+    .modal-input::placeholder { color: var(--text-light); }
+    .modal-submit {
+      width: 100%; padding: 14px; background: var(--accent); color: #000;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .modal-submit:hover:not(:disabled) { background: var(--accent-hover); }
+    .modal-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+    .modal-submit.loading { position: relative; color: transparent; }
+    .modal-submit.loading::after {
+      content: ''; position: absolute;
+      width: 16px; height: 16px;
+      border: 2px solid #000; border-top-color: transparent;
+      border-radius: 50%; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .modal-secure { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 14px; font-size: 12px; color: var(--text-light); }
+
+    @media (max-width: 600px) {
+      nav { padding: 0 16px; }
+      .hero { padding: 100px 20px 60px; }
+      .demo-wrap { padding: 0 20px 60px; }
+      section { padding: 60px 20px; }
+      .steps { grid-template-columns: 1fr; gap: 1px; }
+      .step-card:first-child { border-radius: 8px 8px 0 0; }
+      .step-card:last-child  { border-radius: 0 0 8px 8px; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Captador <span>Nize</span></a>
+  <a class="nav-cta" href="#" onclick="abrirModal(); return false;">Empezar ahora</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Funciona 24/7 de forma autónoma
+    </div>
+    <h1>Encuentra particulares en<br><span>Idealista</span> sin mover un dedo</h1>
+    <p>Define tu zona, precio y filtros. Captador Nize rastrea Idealista automáticamente y te entrega toda la información lista en un Excel. Sin esfuerzo manual.</p>
+    <div class="hero-btns">
+      <a class="btn-primary" href="#" onclick="abrirModal(); return false;">Comprar ahora</a>
+      <a class="btn-secondary" href="#como-funciona">Ver cómo funciona</a>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO VISUAL -->
+<div class="demo-wrap">
+  <div class="demo-screen">
+    <div class="demo-bar">
+      <div class="demo-dot r"></div>
+      <div class="demo-dot y"></div>
+      <div class="demo-dot g"></div>
+      <div class="demo-url">idealista_resultados_madrid_2025.xlsx</div>
+    </div>
+    <div class="demo-body">
+      <table class="demo-table">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Zona</th>
+            <th>Precio</th>
+            <th>m²</th>
+            <th>Teléfono</th>
+            <th>Tipo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Piso luminoso 3 hab.</td>
+            <td class="muted">Chamberí</td>
+            <td>1.250€/mes</td>
+            <td class="muted">85</td>
+            <td>+34 6XX XXX XXX</td>
+            <td><span class="tag p">Particular</span></td>
+          </tr>
+          <tr>
+            <td>Apartamento reformado</td>
+            <td class="muted">Malasaña</td>
+            <td>950€/mes</td>
+            <td class="muted">60</td>
+            <td>+34 6XX XXX XXX</td>
+            <td><span class="tag p">Particular</span></td>
+          </tr>
+          <tr>
+            <td>Ático con terraza</td>
+            <td class="muted">Retiro</td>
+            <td>1.800€/mes</td>
+            <td class="muted">110</td>
+            <td>+34 6XX XXX XXX</td>
+            <td><span class="tag p">Particular</span></td>
+          </tr>
+          <tr>
+            <td>Estudio céntrico</td>
+            <td class="muted">Lavapiés</td>
+            <td>700€/mes</td>
+            <td class="muted">40</td>
+            <td>+34 6XX XXX XXX</td>
+            <td><span class="tag a">Agencia</span></td>
+          </tr>
+          <tr>
+            <td>Piso familiar 4 hab.</td>
+            <td class="muted">Vallecas</td>
+            <td>1.100€/mes</td>
+            <td class="muted">95</td>
+            <td>+34 6XX XXX XXX</td>
+            <td><span class="tag p">Particular</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="demo-footer">
+      <span>247 resultados encontrados · Última actualización: hace 3 min</span>
+      <button class="demo-export">Exportar Excel</button>
+    </div>
+  </div>
+</div>
+
+<!-- CÓMO FUNCIONA -->
+<section id="como-funciona">
+  <div class="section-label">Cómo funciona</div>
+  <h2 class="section-title">Tres pasos y ya está en marcha</h2>
+  <p class="section-sub">Sin configuraciones complicadas. En menos de 5 minutos tienes el captador funcionando de forma autónoma.</p>
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <h3>Instala la aplicación</h3>
+      <p>Descarga el instalador, ejecútalo y en menos de 2 minutos tienes Captador Nize listo en tu ordenador.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <h3>Define tus filtros</h3>
+      <p>Selecciona la zona, rango de precio, tipo de inmueble y si quieres solo particulares o también agencias.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <h3>Déjalo funcionar solo</h3>
+      <p>Captador Nize rastrea Idealista en segundo plano y va acumulando todos los resultados. Tú solo descarga el Excel cuando quieras.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section>
+  <div class="section-label">Características</div>
+  <h2 class="section-title">Todo lo que necesitas para captar</h2>
+  <p class="section-sub">Diseñado para agentes inmobiliarios, inversores y cualquiera que necesite datos de Idealista de forma rápida.</p>
+  <div class="features-grid">
+    <div class="feature">
+      <div class="feature-icon">🎯</div>
+      <h3>Filtro de particulares</h3>
+      <p>Identifica y separa automáticamente los anuncios de particulares de los de agencias. Contacta directamente sin intermediarios.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📍</div>
+      <h3>Búsqueda por zona</h3>
+      <p>Define cualquier zona, ciudad, barrio o código postal. El captador trabaja exactamente donde tú necesitas.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📊</div>
+      <h3>Exportación a Excel</h3>
+      <p>Todos los datos organizados y listos: título, precio, zona, metros cuadrados, teléfono y descripción completa.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">⚡</div>
+      <h3>Funcionamiento autónomo</h3>
+      <p>Configura una vez y olvídate. La aplicación trabaja sola en segundo plano mientras tú te dedicas a cerrar operaciones.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔄</div>
+      <h3>Actualización continua</h3>
+      <p>Detecta nuevos anuncios en tiempo real. Nunca te perderás una oportunidad que acabe de publicarse.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">💻</div>
+      <h3>App de escritorio nativa</h3>
+      <p>Instalación en Windows en un clic. Sin dependencias, sin configuración de servidores, sin complicaciones técnicas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="precios">
+  <div class="section-label">Precios</div>
+  <h2 class="section-title">Acceso simple y sin sorpresas</h2>
+  <p class="section-sub">Elige el plan que mejor se adapte a tu ritmo de trabajo. Cancela cuando quieras.</p>
+  <div class="pricing-wrap">
+
+    <div class="plan">
+      <div class="plan-name">Mensual</div>
+      <div class="plan-price">
+        <span class="currency">€</span>
+        <span class="amount">23</span>
+        <span class="period">,99/mes</span>
+      </div>
+      <div class="plan-save">&nbsp;</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li><strong>Acceso completo</strong> a todas las funciones</li>
+        <li>Búsquedas ilimitadas por zona y filtros</li>
+        <li>Exportación a Excel sin límite</li>
+        <li>Actualizaciones de la aplicación incluidas</li>
+        <li>Soporte por WhatsApp</li>
+      </ul>
+      <button class="plan-btn secondary" onclick="abrirModal('mensual')">Empezar mensual</button>
+    </div>
+
+    <div class="plan popular">
+      <div class="plan-badge">Más popular · Ahorra 30%</div>
+      <div class="plan-name">Anual</div>
+      <div class="plan-price">
+        <span class="currency">€</span>
+        <span class="amount">201</span>
+        <span class="period">,52/año</span>
+      </div>
+      <div class="plan-save">Solo 16,79€/mes · Ahorras 86,36€</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li><strong>Todo lo del plan mensual</strong></li>
+        <li>Precio bloqueado durante 12 meses</li>
+        <li>Prioridad en soporte y respuesta</li>
+        <li>Acceso anticipado a nuevas funciones</li>
+        <li>Sin preocuparte de renovaciones mensuales</li>
+      </ul>
+      <button class="plan-btn primary" onclick="abrirModal('anual')">Empezar anual</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- GARANTÍA -->
+<div class="guarantee">
+  <div class="guarantee-icon">🛡️</div>
+  <h2>Garantía de 7 días</h2>
+  <p>Si en los primeros 7 días no estás satisfecho con Captador Nize, te devolvemos el dinero sin preguntas. Sin letra pequeña.</p>
+</div>
+
+<!-- FAQ -->
+<section>
+  <div class="section-label">Preguntas frecuentes</div>
+  <h2 class="section-title">Resolvemos tus dudas</h2>
+  <p class="section-sub" style="margin-bottom:36px">Si tienes cualquier otra pregunta, escríbenos por WhatsApp.</p>
+  <div class="faq">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        ¿En qué sistemas operativos funciona?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-a">Captador Nize funciona en Windows 10 y Windows 11. La instalación es sencilla: descarga el instalador y en dos clics está listo.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        ¿Necesito tener cuenta en Idealista?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-a">No. Captador Nize accede a la información pública de Idealista sin necesidad de que tengas cuenta ni hagas ningún login.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        ¿Cómo recibo la aplicación tras el pago?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-a">Inmediatamente después del pago recibirás un enlace de descarga único en tu email. El enlace es válido durante 24 horas.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        ¿Puedo cancelar en cualquier momento?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-a">Sí. Si tienes el plan mensual puedes cancelar cuando quieras sin penalización. El acceso se mantiene hasta el final del periodo pagado.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        ¿Qué información exactamente extrae de Idealista?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-a">Extrae título del anuncio, precio, zona, metros cuadrados, número de habitaciones, teléfono de contacto, descripción completa y si es particular o agencia.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        ¿Tengo soporte si tengo algún problema?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-a">Sí, ofrecemos soporte directo por WhatsApp. Respondemos en menos de 24 horas en días laborables.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<div class="cta-final">
+  <h2>Empieza a captar hoy mismo</h2>
+  <p>Configúralo en 5 minutos y déjalo trabajar solo mientras tú cierras operaciones.</p>
+  <a class="btn-primary" href="#" onclick="abrirModal(); return false;">Comprar Captador Nize</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2025 Automanize · Captador Nize</span>
+  <div class="footer-links">
+    <a href="/terms.html">Términos</a>
+    <a href="/privacy.html">Privacidad</a>
+    <a href="https://wa.me/34617153252">Soporte</a>
+  </div>
+</footer>
+
+<!-- MODAL DE COMPRA -->
+<div class="modal-overlay" id="modalOverlay" onclick="cerrarModalFuera(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="cerrarModal()">✕</button>
+    <h2>Comprar Captador Nize</h2>
+    <p class="modal-sub">Elige tu plan y accede al instante tras el pago.</p>
+
+    <div class="modal-plan-selector">
+      <div class="modal-plan-btn selected" id="btn-mensual" onclick="seleccionarPlan('mensual')">
+        <div class="mpb-name">Mensual</div>
+        <div class="mpb-price">23,99€</div>
+        <div class="mpb-save">&nbsp;</div>
+      </div>
+      <div class="modal-plan-btn" id="btn-anual" onclick="seleccionarPlan('anual')">
+        <div class="mpb-name">Anual</div>
+        <div class="mpb-price">201,52€</div>
+        <div class="mpb-save">Ahorras 86€</div>
+      </div>
+    </div>
+
+    <label class="modal-label">Tu email</label>
+    <input class="modal-input" type="email" id="modalEmail" placeholder="tucorreo@ejemplo.com" />
+
+    <button class="modal-submit" id="modalSubmit" onclick="iniciarPago()">
+      Pagar con tarjeta →
+    </button>
+    <div class="modal-secure">🔒 Pago seguro con Stripe · SSL 256-bit</div>
+  </div>
+</div>
+
+<script>
+  const PRECIO = { mensual: 'price_MENSUAL_ID', anual: 'price_ANUAL_ID' };
+  const STRIPE_PK = 'pk_test_TU_CLAVE_PUBLICA';
+  let planSeleccionado = 'mensual';
+
+  function abrirModal(plan) {
+    if (plan) seleccionarPlan(plan);
+    document.getElementById('modalOverlay').classList.add('open');
+    document.getElementById('modalEmail').focus();
+  }
+
+  function cerrarModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+
+  function cerrarModalFuera(e) {
+    if (e.target === document.getElementById('modalOverlay')) cerrarModal();
+  }
+
+  function seleccionarPlan(plan) {
+    planSeleccionado = plan;
+    document.getElementById('btn-mensual').classList.toggle('selected', plan === 'mensual');
+    document.getElementById('btn-anual').classList.toggle('selected', plan === 'anual');
+  }
+
+  async function iniciarPago() {
+    const email = document.getElementById('modalEmail').value.trim();
+    if (!email || !email.includes('@')) {
+      document.getElementById('modalEmail').focus();
+      return;
+    }
+    const btn = document.getElementById('modalSubmit');
+    btn.classList.add('loading'); btn.disabled = true;
+
+    try {
+      const res = await fetch('/.netlify/functions/crear-sesion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: planSeleccionado, email })
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('Sin URL');
+      }
+    } catch {
+      btn.classList.remove('loading'); btn.disabled = false;
+      alert('Error al procesar el pago. Inténtalo de nuevo o escríbenos por WhatsApp.');
+    }
+  }
+
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    item.classList.toggle('open');
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+</script>
+</body>
+</html>
