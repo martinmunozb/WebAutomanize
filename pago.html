@@ -466,11 +466,13 @@
       inquilinoId = inq.id;
 
       // 2. Datos en paralelo: cliente, habitación y pagos pendientes
+      const now = new Date();
+      const limiteMes = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString().split('T')[0];
+
       const [clientes, habitaciones, pagos] = await Promise.all([
         sbFetch(`clientes?id=eq.${inq.cliente_id}&select=nombre`),
         sbFetch(`habitaciones?id_inmueble=eq.${inq.habitacion_id}&select=nombre,direccion_completa`),
-        // ── Se añade "estado" al select para detectar pendiente_gestor ──
-        sbFetch(`pagos?inquilino_id=eq.${inq.id}&recibido=eq.false&select=id,mes,importe,estado&order=mes.asc`)
+        sbFetch(`pagos?inquilino_id=eq.${inq.id}&recibido=eq.false&mes=lt.${limiteMes}&select=id,mes,importe,estado&order=mes.asc`)
       ]);
 
       const nombre     = clientes[0]?.nombre || 'Inquilino';
