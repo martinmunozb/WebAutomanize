@@ -21,6 +21,9 @@
       --text-muted:   #6B6866;
       --text-light:   #A8A5A0;
       --error:        #D94848;
+      --blocked-bg:   #F6F5F3;
+      --blocked-border: #D0CCC6;
+      --blocked-text: #9B9793;
     }
 
     html, body { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 16px; }
@@ -122,6 +125,43 @@
     }
     .mes-option:hover    { border-color: var(--accent); background: var(--accent-dim); }
     .mes-option.selected { border-color: var(--accent); background: var(--accent-dim); }
+
+    /* ── ESTADO BLOQUEADO ── */
+    /* Elemento estático: no es un div interactivo, no tiene listeners,
+       pointer-events none impide cualquier interacción desde el DOM */
+    .mes-bloqueado-static {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--blocked-bg);
+      border: 1px solid var(--blocked-border);
+      border-radius: 4px;
+      pointer-events: none;   /* no clickable */
+      user-select: none;       /* no seleccionable */
+    }
+    .mes-bloqueado-static .mes-nombre {
+      color: var(--blocked-text);
+      font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px;
+    }
+    .mes-bloqueado-static .mes-importe {
+      color: var(--blocked-text);
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;
+    }
+    .mes-bloqueado-badge {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 500;
+      color: var(--blocked-text);
+      background: #ECEAE6;
+      border: 1px solid var(--blocked-border);
+      border-radius: 3px;
+      padding: 3px 8px;
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+    .mes-bloqueado-badge svg {
+      width: 11px; height: 11px;
+      fill: var(--blocked-text);
+      flex-shrink: 0;
+    }
 
     .mes-nombre  { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; }
     .mes-right   { display: flex; align-items: center; gap: 10px; }
@@ -298,12 +338,12 @@
       <div class="field">
         <label>Justificante de pago</label>
         <div class="file-drop" id="fileDrop">
-          <input type="file" id="fileInput" accept="image/*,.pdf,application/pdf" />
+          <input type="file" id="fileInput" accept="image/*,.pdf,.png,.jpg,.jpeg,.webp,.gif,.bmp,.tif,.tiff,.heic,.heif,.avif,.jfif,application/pdf" />
           <div class="upload-icon">
             <svg viewBox="0 0 24 24"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
           </div>
           <p>Haz clic o arrastra un archivo</p>
-          <span class="file-hint">Formatos soportados: PDF, PNG, JPG (Máx. 10MB)</span>
+          <span class="file-hint">Formatos soportados: PDF e imágenes (JPG, PNG, WEBP, GIF, BMP, TIFF, HEIC, AVIF...) Máx. 10MB</span>
         </div>
         <div class="file-selected" id="fileSelected">
           <span>📄</span>
@@ -364,10 +404,32 @@
   const fileName     = document.getElementById('fileName');
   const fileRemove   = document.getElementById('fileRemove');
   const btnSubmit    = document.getElementById('btnSubmit');
+  const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+  const ACCEPTED_EXTENSIONS = new Set(['pdf', 'png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp', 'tif', 'tiff', 'heic', 'heif', 'avif', 'jfif']);
+  const ACCEPTED_MIME_TYPES = new Set([
+    'application/pdf',
+    'image/jpeg',
+    'image/pjpeg',
+    'image/png',
+    'image/webp',
+    'image/gif',
+    'image/bmp',
+    'image/x-ms-bmp',
+    'image/tiff',
+    'image/heic',
+    'image/heic-sequence',
+    'image/heif',
+    'image/heif-sequence',
+    'image/avif',
+    'image/jfif',
+  ]);
+  const SUPPORTED_FILE_TYPES_TEXT = 'JPG, JPEG, PNG, WEBP, GIF, BMP, TIFF, HEIC, HEIF, AVIF, JFIF y PDF';
 
   let selectedMes    = null;
   let selectedFile   = null;
   let inquilinoId    = null;
+
+  fileInput.accept = 'image/*,.pdf,.png,.jpg,.jpeg,.webp,.gif,.bmp,.tif,.tiff,.heic,.heif,.avif,.jfif,application/pdf';
 
   function sbFetch(path) {
     return fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -407,7 +469,8 @@
       const [clientes, habitaciones, pagos] = await Promise.all([
         sbFetch(`clientes?id=eq.${inq.cliente_id}&select=nombre`),
         sbFetch(`habitaciones?id_inmueble=eq.${inq.habitacion_id}&select=nombre,direccion_completa`),
-        sbFetch(`pagos?inquilino_id=eq.${inq.id}&recibido=eq.false&select=id,mes,importe&order=mes.asc`)
+        // ── Se añade "estado" al select para detectar pendiente_gestor ──
+        sbFetch(`pagos?inquilino_id=eq.${inq.id}&recibido=eq.false&select=id,mes,importe,estado&order=mes.asc`)
       ]);
 
       const nombre     = clientes[0]?.nombre || 'Inquilino';
@@ -421,18 +484,41 @@
         mesesGrid.innerHTML = '<p style="color:var(--text-muted);font-size:14px">No tienes pagos pendientes en este momento.</p>';
       } else {
         pagos.forEach(p => {
-          const fecha    = new Date(p.mes + 'T12:00:00');
-          const etiqueta = fecha.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-          const m        = { id: p.id, etiqueta, importe: p.importe };
-          const el       = document.createElement('div');
-          el.className   = 'mes-option';
-          el.innerHTML   = `
-            <span class="mes-nombre">${etiqueta}</span>
-            <span class="mes-right">
-              <span class="mes-importe">${p.importe}€</span>
-              <span class="mes-check"></span>
-            </span>`;
-          el.addEventListener('click', () => seleccionarMes(el, m));
+          const fecha      = new Date(p.mes + 'T12:00:00');
+          const etiqueta   = fecha.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+          const bloqueado  = p.estado === 'pendiente_gestor';
+          const m          = { id: p.id, etiqueta, importe: p.importe };
+
+          let el;
+
+          if (bloqueado) {
+            // Elemento ESTÁTICO: no es un div.mes-option, no tiene clase interactiva,
+            // no tiene ningún listener registrado. Solo texto + CSS.
+            el = document.createElement('div');
+            el.className = 'mes-bloqueado-static';
+            el.setAttribute('aria-disabled', 'true');
+            el.innerHTML = `
+              <span class="mes-nombre">${etiqueta}</span>
+              <span class="mes-right">
+                <span class="mes-importe">${p.importe}€</span>
+                <span class="mes-bloqueado-badge">
+                  <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                  Pendiente del gestor
+                </span>
+              </span>`;
+            // Sin ningún addEventListener → no hay nada que manipular en el DOM
+          } else {
+            el = document.createElement('div');
+            el.className = 'mes-option';
+            el.innerHTML = `
+              <span class="mes-nombre">${etiqueta}</span>
+              <span class="mes-right">
+                <span class="mes-importe">${p.importe}€</span>
+                <span class="mes-check"></span>
+              </span>`;
+            el.addEventListener('click', () => seleccionarMes(el, m));
+          }
+
           mesesGrid.appendChild(el);
         });
       }
@@ -454,6 +540,57 @@
     validarFormulario();
   }
 
+  function getFileExtension(fileName) {
+    const normalized = String(fileName || '').trim().toLowerCase();
+    const lastDot = normalized.lastIndexOf('.');
+    return lastDot === -1 ? '' : normalized.slice(lastDot + 1);
+  }
+
+  function isAcceptedUpload(file) {
+    const mimeType = String(file?.type || '').trim().toLowerCase();
+    const extension = getFileExtension(file?.name);
+
+    if (mimeType === 'application/pdf' || extension === 'pdf') {
+      return true;
+    }
+
+    if (mimeType.startsWith('image/')) {
+      return true;
+    }
+
+    return ACCEPTED_MIME_TYPES.has(mimeType) || ACCEPTED_EXTENSIONS.has(extension);
+  }
+
+  function clearSelectedFile(resetInput = false) {
+    selectedFile = null;
+    fileName.textContent = '';
+    fileSelected.classList.remove('show');
+
+    if (resetInput) {
+      fileInput.value = '';
+    }
+  }
+
+  function syncFileInput(file) {
+    if (typeof DataTransfer === 'undefined') {
+      return;
+    }
+
+    try {
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      fileInput.files = dataTransfer.files;
+    } catch (err) {
+      console.warn('No se pudo sincronizar el archivo seleccionado.', err);
+    }
+  }
+
+  function rejectFile(message) {
+    clearSelectedFile(true);
+    validarFormulario();
+    alert(message);
+  }
+
   fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
   fileDrop.addEventListener('dragover',  e => { e.preventDefault(); fileDrop.classList.add('dragover'); });
   fileDrop.addEventListener('dragleave', ()  => fileDrop.classList.remove('dragover'));
@@ -464,18 +601,25 @@
   });
 
   function setFile(f) {
-    const ok = f.type.startsWith('image/') || f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
-    if (!ok)                     { alert('Solo se permiten imágenes o PDF.'); fileInput.value = ''; return; }
-    if (f.size > 10*1024*1024)   { alert('El archivo supera los 10 MB.');     return; }
+    if (!isAcceptedUpload(f)) {
+      rejectFile(`Solo se permiten archivos de imagen o PDF. Formatos admitidos: ${SUPPORTED_FILE_TYPES_TEXT}.`);
+      return;
+    }
+
+    if (f.size > MAX_UPLOAD_BYTES) {
+      rejectFile('El archivo supera los 10 MB.');
+      return;
+    }
+
     selectedFile = f;
+    syncFileInput(f);
     fileName.textContent = f.name;
     fileSelected.classList.add('show');
     validarFormulario();
   }
 
   fileRemove.addEventListener('click', () => {
-    selectedFile = null; fileInput.value = '';
-    fileSelected.classList.remove('show');
+    clearSelectedFile(true);
     validarFormulario();
   });
 
