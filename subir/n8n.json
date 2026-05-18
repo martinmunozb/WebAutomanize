@@ -1,912 +1,802 @@
 {
-    "name": "Gastos — Webhooks Justificantes v3 (FormData + Drive)",
-    "nodes": [
-        {
-            "id": "webhook-gastos-datos",
-            "name": "Webhook GET gastos-datos",
-            "type": "n8n-nodes-base.webhook",
-            "typeVersion": 2,
-            "position": [
-                240,
-                200
-            ],
-            "webhookId": "gastos-datos",
-            "parameters": {
-                "httpMethod": "GET",
-                "path": "gastos-datos",
-                "responseMode": "responseNode",
-                "options": {
-                    "allowedOrigins": "*"
-                }
-            }
-        },
-        {
-            "id": "buscar-inquilino-get",
-            "name": "Buscar Inquilino GET",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 4.4,
-            "position": [
-                460,
-                200
-            ],
-            "parameters": {
-                "method": "GET",
-                "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/inquilinos",
-                "sendHeaders": true,
-                "headerParameters": {
-                    "parameters": [
-                        {
-                            "name": "apikey",
-                            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
-                        },
-                        {
-                            "name": "Authorization",
-                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
-                        }
-                    ]
-                },
-                "sendQuery": true,
-                "queryParameters": {
-                    "parameters": [
-                        {
-                            "name": "id",
-                            "value": "=eq.{{ $json.query.token }}"
-                        },
-                        {
-                            "name": "activo",
-                            "value": "=eq.true"
-                        },
-                        {
-                            "name": "select",
-                            "value": "id,cliente_id,habitacion_id"
-                        }
-                    ]
-                },
-                "options": {}
-            }
-        },
-        {
-            "id": "if-inquilino-existe",
-            "name": "IF Inquilino Existe",
-            "type": "n8n-nodes-base.if",
-            "typeVersion": 2.3,
-            "position": [
-                680,
-                200
-            ],
-            "parameters": {
-                "conditions": {
-                    "options": {
-                        "caseSensitive": true,
-                        "leftValue": "",
-                        "typeValidation": "strict"
-                    },
-                    "conditions": [
-                        {
-                            "id": "c1",
-                            "leftValue": "={{ $json.length }}",
-                            "rightValue": 0,
-                            "operator": {
-                                "type": "number",
-                                "operation": "gt"
-                            }
-                        }
-                    ],
-                    "combinator": "and"
-                },
-                "options": {}
-            }
-        },
-        {
-            "id": "buscar-cliente",
-            "name": "Buscar Cliente",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 4.4,
-            "position": [
-                900,
-                100
-            ],
-            "parameters": {
-                "method": "GET",
-                "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/clientes",
-                "sendHeaders": true,
-                "headerParameters": {
-                    "parameters": [
-                        {
-                            "name": "apikey",
-                            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
-                        },
-                        {
-                            "name": "Authorization",
-                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
-                        }
-                    ]
-                },
-                "sendQuery": true,
-                "queryParameters": {
-                    "parameters": [
-                        {
-                            "name": "id",
-                            "value": "=eq.{{ $('Buscar Inquilino GET').first().json[0].cliente_id }}"
-                        },
-                        {
-                            "name": "select",
-                            "value": "id,nombre,telefono"
-                        }
-                    ]
-                },
-                "options": {}
-            }
-        },
-        {
-            "id": "buscar-inmueble",
-            "name": "Buscar Inmueble",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 4.4,
-            "position": [
-                900,
-                280
-            ],
-            "parameters": {
-                "method": "GET",
-                "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/habitaciones",
-                "sendHeaders": true,
-                "headerParameters": {
-                    "parameters": [
-                        {
-                            "name": "apikey",
-                            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
-                        },
-                        {
-                            "name": "Authorization",
-                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
-                        }
-                    ]
-                },
-                "sendQuery": true,
-                "queryParameters": {
-                    "parameters": [
-                        {
-                            "name": "id_inmueble",
-                            "value": "=eq.{{ $('Buscar Inquilino GET').first().json[0].habitacion_id }}"
-                        },
-                        {
-                            "name": "select",
-                            "value": "id_inmueble,nombre,direccion_completa"
-                        }
-                    ]
-                },
-                "options": {}
-            }
-        },
-        {
-            "id": "merge-datos",
-            "name": "Merge Datos",
-            "type": "n8n-nodes-base.merge",
-            "typeVersion": 3.2,
-            "position": [
-                1120,
-                200
-            ],
-            "parameters": {
-                "mode": "combine",
-                "combinationMode": "mergeByPosition",
-                "options": {}
-            }
-        },
-        {
-            "id": "preparar-respuesta-get",
-            "name": "Preparar Respuesta GET",
-            "type": "n8n-nodes-base.code",
-            "typeVersion": 2,
-            "position": [
-                1340,
-                200
-            ],
-            "parameters": {
-                "jsCode": "const allItems = $input.all().map(i => i.json);\nconst clienteItem  = allItems.find(i => Array.isArray(i) ? i[0]?.nombre : i.nombre);\nconst inmuebleItem = allItems.find(i => Array.isArray(i) ? i[0]?.id_inmueble : i.id_inmueble);\nconst cliente  = Array.isArray(clienteItem)  ? clienteItem[0]  : clienteItem;\nconst inmueble = Array.isArray(inmuebleItem) ? inmuebleItem[0] : inmuebleItem;\nconst nombre     = cliente?.nombre || 'Inquilino';\nconst referencia = inmueble?.nombre ? `${inmueble.nombre} — ${inmueble.direccion_completa || ''}`.trim() : '';\nreturn [{ json: { nombre, referencia, ok: true } }];"
-            }
-        },
-        {
-            "id": "respond-get-ok",
-            "name": "Respond GET OK",
-            "type": "n8n-nodes-base.respondToWebhook",
-            "typeVersion": 1.1,
-            "position": [
-                1560,
-                200
-            ],
-            "parameters": {
-                "respondWith": "json",
-                "responseBody": "={{ JSON.stringify($json) }}",
-                "options": {
-                    "responseHeaders": {
-                        "entries": [
-                            {
-                                "name": "Access-Control-Allow-Origin",
-                                "value": "*"
-                            }
-                        ]
-                    },
-                    "responseCode": 200
-                }
-            }
-        },
-        {
-            "id": "respond-get-401",
-            "name": "Respond GET 401",
-            "type": "n8n-nodes-base.respondToWebhook",
-            "typeVersion": 1.1,
-            "position": [
-                900,
-                440
-            ],
-            "parameters": {
-                "respondWith": "json",
-                "responseBody": "{\"error\": \"Token no válido o inquilino inactivo.\"}",
-                "options": {
-                    "responseHeaders": {
-                        "entries": [
-                            {
-                                "name": "Access-Control-Allow-Origin",
-                                "value": "*"
-                            }
-                        ]
-                    },
-                    "responseCode": 401
-                }
-            }
-        },
-        {
-            "id": "webhook-gastos-submit",
-            "name": "Webhook POST gastos-submit",
-            "type": "n8n-nodes-base.webhook",
-            "typeVersion": 2,
-            "position": [
-                240,
-                700
-            ],
-            "webhookId": "gastos-submit",
-            "parameters": {
-                "httpMethod": "POST",
-                "path": "gastos-submit",
-                "responseMode": "responseNode",
-                "options": {
-                    "allowedOrigins": "*",
-                    "binaryPropertyName": "archivo",
-                    "rawBody": false
-                }
-            }
-        },
-        {
-            "id": "validar-token",
-            "name": "Validar Token",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 4.4,
-            "position": [
-                460,
-                700
-            ],
-            "parameters": {
-                "method": "GET",
-                "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/inquilinos",
-                "sendHeaders": true,
-                "headerParameters": {
-                    "parameters": [
-                        {
-                            "name": "apikey",
-                            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
-                        },
-                        {
-                            "name": "Authorization",
-                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
-                        }
-                    ]
-                },
-                "sendQuery": true,
-                "queryParameters": {
-                    "parameters": [
-                        {
-                            "name": "id",
-                            "value": "=eq.{{ $json.body.token }}"
-                        },
-                        {
-                            "name": "activo",
-                            "value": "=eq.true"
-                        },
-                        {
-                            "name": "select",
-                            "value": "id,cliente_id"
-                        }
-                    ]
-                },
-                "options": {}
-            }
-        },
-        {
-            "id": "if-token-valido",
-            "name": "IF Token Válido",
-            "type": "n8n-nodes-base.if",
-            "typeVersion": 2.3,
-            "position": [
-                680,
-                700
-            ],
-            "parameters": {
-                "conditions": {
-                    "options": {
-                        "caseSensitive": true,
-                        "leftValue": "",
-                        "typeValidation": "strict"
-                    },
-                    "conditions": [
-                        {
-                            "id": "c2",
-                            "leftValue": "={{ $json.length }}",
-                            "rightValue": 0,
-                            "operator": {
-                                "type": "number",
-                                "operation": "gt"
-                            }
-                        }
-                    ],
-                    "combinator": "and"
-                },
-                "options": {}
-            }
-        },
-        {
-            "id": "preparar-datos-drive",
-            "name": "Preparar Datos Drive",
-            "type": "n8n-nodes-base.code",
-            "typeVersion": 2,
-            "position": [
-                900,
-                620
-            ],
-            "parameters": {
-                "jsCode": "const webhookData = $('Webhook POST gastos-submit').first();\nconst body        = webhookData.json.body;\nconst inquilino   = $('Validar Token').first().json[0];\n\nconst CARPETAS = {\n  'hipoteca':      '167rSr7ALC52FQz4NNtP4Yh33eBO0SgAN',\n  'seguro-vida':   '1bWe2D62QFgye0v5L5-ZnsLMmc88qVw9F',\n  'seguro-hogar':  '1IH6RrytwijxRYzrtBZzfnRqaFINDkF13',\n  'seguro-impago': '1vzIDLzJ5yrtg35NcViESA3V2EwlCp5O_',\n  'comunidad':     '1WgsRy0sKpcP9t45Mc-VDBY8y9x18vHl5',\n  'derramas':      '1RJsoEO-S3_be__UgsjR6CXSwRdVdzZP4',\n  'ibi':           '1jJUBl7OzilTTOJ8uJVQM04ryb03iMZkc',\n  'agua':          '1oSYS7AwF-l9l5Z8cO9GRLKX02R19LWli',\n  'luz':           '1gzCL7LAiCmhBaQbsUglt9F4xdFxhNWrD',\n  'limpieza':      '1z0yIN-83yHJBxLtBHMAu_ZVHqsDO5V2s',\n  'alarma':        '1-v5zouk7OuZeuDn7T6ialZL0vADjir3w',\n  'wifi':          '1-W05CTSlaErPraimwsFTJOI0Oc6pLX57'\n};\n\nconst tipo        = (body.tipo || 'otros').toLowerCase();\nconst carpetaId   = CARPETAS[tipo] || '1i0iC9eoR-J1R69MLotuth-R1aHilbril';\nconst inquilinoId = inquilino.id;\n\n// Periodo viene como MM-YYYY → convertir a YYYY-MM para Supabase\nconst periodoRaw = body.periodo || '';\nlet periodoISO = '';\nif (periodoRaw.includes('-')) {\n  const parts = periodoRaw.split('-');\n  if (parts[0].length === 2) {\n    // formato MM-YYYY\n    periodoISO = `${parts[1]}-${parts[0]}-01`;\n  } else {\n    // ya viene YYYY-MM\n    periodoISO = `${periodoRaw}-01`;\n  }\n}\n\n// Nombre del archivo: INQUILINOID-TIPO-YYYY-MM.ext\nconst binaryData   = webhookData.binary?.archivo;\nconst mimeType     = binaryData?.mimeType || 'image/jpeg';\nconst originalName = binaryData?.fileName || 'justificante.jpg';\nconst ext          = originalName.split('.').pop() || 'jpg';\nconst periodoLabel = periodoRaw.replace('-', '-');\nconst nombreArchivo = `${inquilinoId}-${tipo}-${periodoLabel}.${ext}`;\n\nfunction pad(n, w) { return String(n).padStart(w, '0'); }\nconst date    = new Date().toISOString().slice(0,10).replace(/-/g,'');\nconst rand    = Math.floor(Math.random() * 10000);\nconst gastoId = `GASTO-${date}-${pad(rand,4)}`;\n\nreturn [{\n  json: {\n    gastoId, inquilinoId,\n    clienteId:    inquilino.cliente_id,\n    tipo, periodoISO,\n    importe:      parseFloat(body.importe) || 0,\n    carpetaId, nombreArchivo, mimeType\n  },\n  binary: webhookData.binary\n}];"
-            }
-        },
-        {
-            "id": "buscar-subcarpeta",
-            "name": "Buscar Subcarpeta Inquilino",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 4.4,
-            "position": [
-                1120,
-                620
-            ],
-            "parameters": {
-                "method": "GET",
-                "url": "https://www.googleapis.com/drive/v3/files",
-                "authentication": "predefinedCredentialType",
-                "nodeCredentialType": "googleDriveOAuth2Api",
-                "sendQuery": true,
-                "queryParameters": {
-                    "parameters": [
-                        {
-                            "name": "q",
-                            "value": "={{ 'name=\\'' + $json.inquilinoId + '\\' and mimeType=\\'application/vnd.google-apps.folder\\' and \\'' + $json.carpetaId + '\\' in parents and trashed=false' }}"
-                        },
-                        {
-                            "name": "fields",
-                            "value": "files(id,name)"
-                        },
-                        {
-                            "name": "pageSize",
-                            "value": "1"
-                        }
-                    ]
-                },
-                "options": {}
-            },
-            "credentials": {
-                "googleDriveOAuth2Api": {
-                    "id": "YOUR_GOOGLE_DRIVE_CREDENTIAL_ID",
-                    "name": "Google Drive account"
-                }
-            }
-        },
-        {
-            "id": "if-subcarpeta-existe",
-            "name": "IF Subcarpeta Existe",
-            "type": "n8n-nodes-base.if",
-            "typeVersion": 2.3,
-            "position": [
-                1340,
-                620
-            ],
-            "parameters": {
-                "conditions": {
-                    "options": {
-                        "caseSensitive": true,
-                        "leftValue": "",
-                        "typeValidation": "strict"
-                    },
-                    "conditions": [
-                        {
-                            "id": "c3",
-                            "leftValue": "={{ $json.files[0]?.id }}",
-                            "rightValue": "",
-                            "operator": {
-                                "type": "string",
-                                "operation": "notEmpty"
-                            }
-                        }
-                    ],
-                    "combinator": "and"
-                },
-                "options": {}
-            }
-        },
-        {
-            "id": "usar-subcarpeta-existente",
-            "name": "Usar Subcarpeta Existente",
-            "type": "n8n-nodes-base.code",
-            "typeVersion": 2,
-            "position": [
-                1560,
-                520
-            ],
-            "parameters": {
-                "jsCode": "const subcarpetaId = $input.first().json.files[0].id;\nconst datos  = $('Preparar Datos Drive').first().json;\nconst binary = $('Preparar Datos Drive').first().binary;\nreturn [{ json: { ...datos, subcarpetaId }, binary }];"
-            }
-        },
-        {
-            "id": "crear-subcarpeta",
-            "name": "Crear Subcarpeta Inquilino",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 4.4,
-            "position": [
-                1560,
-                720
-            ],
-            "parameters": {
-                "method": "POST",
-                "url": "https://www.googleapis.com/drive/v3/files",
-                "authentication": "predefinedCredentialType",
-                "nodeCredentialType": "googleDriveOAuth2Api",
-                "sendHeaders": true,
-                "headerParameters": {
-                    "parameters": [
-                        {
-                            "name": "Content-Type",
-                            "value": "application/json"
-                        }
-                    ]
-                },
-                "sendBody": true,
-                "specifyBody": "json",
-                "jsonBody": "={{ JSON.stringify({ name: $('Preparar Datos Drive').first().json.inquilinoId, mimeType: 'application/vnd.google-apps.folder', parents: [$('Preparar Datos Drive').first().json.carpetaId] }) }}",
-                "options": {}
-            },
-            "credentials": {
-                "googleDriveOAuth2Api": {
-                    "id": "YOUR_GOOGLE_DRIVE_CREDENTIAL_ID",
-                    "name": "Google Drive account"
-                }
-            }
-        },
-        {
-            "id": "set-subcarpeta-nueva",
-            "name": "Set Subcarpeta Nueva",
-            "type": "n8n-nodes-base.code",
-            "typeVersion": 2,
-            "position": [
-                1780,
-                720
-            ],
-            "parameters": {
-                "jsCode": "const subcarpetaId = $input.first().json.id;\nconst datos  = $('Preparar Datos Drive').first().json;\nconst binary = $('Preparar Datos Drive').first().binary;\nreturn [{ json: { ...datos, subcarpetaId }, binary }];"
-            }
-        },
-        {
-            "id": "merge-subcarpeta",
-            "name": "Merge Subcarpeta",
-            "type": "n8n-nodes-base.merge",
-            "typeVersion": 3.2,
-            "position": [
-                1780,
-                580
-            ],
-            "parameters": {
-                "mode": "combine",
-                "combinationMode": "mergeByPosition",
-                "options": {}
-            }
-        },
-        {
-            "id": "subir-archivo-drive",
-            "name": "Subir Archivo Drive",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 4.4,
-            "position": [
-                2000,
-                580
-            ],
-            "parameters": {
-                "method": "POST",
-                "url": "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink",
-                "authentication": "predefinedCredentialType",
-                "nodeCredentialType": "googleDriveOAuth2Api",
-                "sendBody": true,
-                "contentType": "multipart-form-data",
-                "bodyParameters": {
-                    "parameters": [
-                        {
-                            "name": "metadata",
-                            "value": "={{ JSON.stringify({ name: $json.nombreArchivo, parents: [$json.subcarpetaId], mimeType: $json.mimeType }) }}",
-                            "parameterType": "formData"
-                        },
-                        {
-                            "name": "file",
-                            "parameterType": "formBinaryData",
-                            "inputDataFieldName": "archivo"
-                        }
-                    ]
-                },
-                "options": {}
-            },
-            "credentials": {
-                "googleDriveOAuth2Api": {
-                    "id": "YOUR_GOOGLE_DRIVE_CREDENTIAL_ID",
-                    "name": "Google Drive account"
-                }
-            }
-        },
-        {
-            "id": "preparar-registro",
-            "name": "Preparar Registro",
-            "type": "n8n-nodes-base.code",
-            "typeVersion": 2,
-            "position": [
-                2220,
-                580
-            ],
-            "parameters": {
-                "jsCode": "const driveFile = $input.first().json;\nconst datos     = $('Merge Subcarpeta').first().json;\nconst archivoUrl = driveFile.webViewLink || `https://drive.google.com/file/d/${driveFile.id}/view`;\nreturn [{ json: {\n  gastoId:     datos.gastoId,\n  inquilinoId: datos.inquilinoId,\n  tipo:        datos.tipo,\n  periodoISO:  datos.periodoISO,\n  importe:     datos.importe,\n  archivoUrl,\n  driveFileId: driveFile.id\n}}];"
-            }
-        },
-        {
-            "id": "insertar-gasto",
-            "name": "Insertar Gasto Supabase",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 4.4,
-            "position": [
-                2440,
-                580
-            ],
-            "parameters": {
-                "method": "POST",
-                "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/gastos",
-                "sendHeaders": true,
-                "headerParameters": {
-                    "parameters": [
-                        {
-                            "name": "apikey",
-                            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
-                        },
-                        {
-                            "name": "Authorization",
-                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA"
-                        },
-                        {
-                            "name": "Content-Type",
-                            "value": "application/json"
-                        },
-                        {
-                            "name": "Prefer",
-                            "value": "return=representation"
-                        }
-                    ]
-                },
-                "sendBody": true,
-                "specifyBody": "json",
-                "jsonBody": "={{ JSON.stringify({ id: $json.gastoId, inquilino_id: $json.inquilinoId, tipo: $json.tipo, periodo: $json.periodoISO, importe: $json.importe, archivo_url: $json.archivoUrl, verificado: false }) }}",
-                "options": {}
-            }
-        },
-        {
-            "id": "respond-ok",
-            "name": "Respond Submit OK",
-            "type": "n8n-nodes-base.respondToWebhook",
-            "typeVersion": 1.1,
-            "position": [
-                2660,
-                580
-            ],
-            "parameters": {
-                "respondWith": "json",
-                "responseBody": "={{ JSON.stringify({ ok: true, id: $('Preparar Registro').first().json.gastoId, archivo: $('Preparar Registro').first().json.archivoUrl }) }}",
-                "options": {
-                    "responseHeaders": {
-                        "entries": [
-                            {
-                                "name": "Access-Control-Allow-Origin",
-                                "value": "*"
-                            }
-                        ]
-                    },
-                    "responseCode": 200
-                }
-            }
-        },
-        {
-            "id": "respond-401",
-            "name": "Respond Submit 401",
-            "type": "n8n-nodes-base.respondToWebhook",
-            "typeVersion": 1.1,
-            "position": [
-                900,
-                860
-            ],
-            "parameters": {
-                "respondWith": "json",
-                "responseBody": "{\"error\": \"Token no válido o inquilino inactivo.\"}",
-                "options": {
-                    "responseHeaders": {
-                        "entries": [
-                            {
-                                "name": "Access-Control-Allow-Origin",
-                                "value": "*"
-                            }
-                        ]
-                    },
-                    "responseCode": 401
-                }
-            }
+  "name": "Gastos — Gestor Submit v2 (Drive Carpetas + Sin IA)",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["messages"],
+        "options": {}
+      },
+      "id": "2a9e7bc0-f6ac-49ba-b627-ccdae489aea0",
+      "name": "WhatsApp Trigger",
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [-336, 544],
+      "webhookId": "gestion-pagos",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "ZWlaQOhEPCdDEV05",
+          "name": "WhatsApp OAuth account 2"
         }
-    ],
-    "connections": {
-        "Webhook GET gastos-datos": {
-            "main": [
-                [
-                    {
-                        "node": "Buscar Inquilino GET",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Buscar Inquilino GET": {
-            "main": [
-                [
-                    {
-                        "node": "IF Inquilino Existe",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "IF Inquilino Existe": {
-            "main": [
-                [
-                    {
-                        "node": "Buscar Cliente",
-                        "type": "main",
-                        "index": 0
-                    },
-                    {
-                        "node": "Buscar Inmueble",
-                        "type": "main",
-                        "index": 0
-                    }
-                ],
-                [
-                    {
-                        "node": "Respond GET 401",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Buscar Cliente": {
-            "main": [
-                [
-                    {
-                        "node": "Merge Datos",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Buscar Inmueble": {
-            "main": [
-                [
-                    {
-                        "node": "Merge Datos",
-                        "type": "main",
-                        "index": 1
-                    }
-                ]
-            ]
-        },
-        "Merge Datos": {
-            "main": [
-                [
-                    {
-                        "node": "Preparar Respuesta GET",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Preparar Respuesta GET": {
-            "main": [
-                [
-                    {
-                        "node": "Respond GET OK",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Webhook POST gastos-submit": {
-            "main": [
-                [
-                    {
-                        "node": "Validar Token",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Validar Token": {
-            "main": [
-                [
-                    {
-                        "node": "IF Token Válido",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "IF Token Válido": {
-            "main": [
-                [
-                    {
-                        "node": "Preparar Datos Drive",
-                        "type": "main",
-                        "index": 0
-                    }
-                ],
-                [
-                    {
-                        "node": "Respond Submit 401",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Preparar Datos Drive": {
-            "main": [
-                [
-                    {
-                        "node": "Buscar Subcarpeta Inquilino",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Buscar Subcarpeta Inquilino": {
-            "main": [
-                [
-                    {
-                        "node": "IF Subcarpeta Existe",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "IF Subcarpeta Existe": {
-            "main": [
-                [
-                    {
-                        "node": "Usar Subcarpeta Existente",
-                        "type": "main",
-                        "index": 0
-                    }
-                ],
-                [
-                    {
-                        "node": "Crear Subcarpeta Inquilino",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Usar Subcarpeta Existente": {
-            "main": [
-                [
-                    {
-                        "node": "Merge Subcarpeta",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Crear Subcarpeta Inquilino": {
-            "main": [
-                [
-                    {
-                        "node": "Set Subcarpeta Nueva",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Set Subcarpeta Nueva": {
-            "main": [
-                [
-                    {
-                        "node": "Merge Subcarpeta",
-                        "type": "main",
-                        "index": 1
-                    }
-                ]
-            ]
-        },
-        "Merge Subcarpeta": {
-            "main": [
-                [
-                    {
-                        "node": "Subir Archivo Drive",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Subir Archivo Drive": {
-            "main": [
-                [
-                    {
-                        "node": "Preparar Registro",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Preparar Registro": {
-            "main": [
-                [
-                    {
-                        "node": "Insertar Gasto Supabase",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Insertar Gasto Supabase": {
-            "main": [
-                [
-                    {
-                        "node": "Respond Submit OK",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        }
+      }
     },
-    "meta": {
-        "instanceId": "gastos-drive-v3-formdata"
+    {
+      "parameters": {
+        "jsCode": "const entry = $input.first().json;\nconst msg   = entry.messages?.[0] || entry;\nconst from  = msg.from  || entry.from  || '';\nconst type  = msg.type  || entry.type  || '';\nconst texto = msg.text?.body || msg.body || '';\nlet replyId = '', replyTitle = '';\nif (type === 'interactive') {\n  if (msg.interactive?.type === 'list_reply') {\n    replyId    = msg.interactive.list_reply?.id    || '';\n    replyTitle = msg.interactive.list_reply?.title || '';\n  } else if (msg.interactive?.type === 'button_reply') {\n    replyId    = msg.interactive.button_reply?.id    || '';\n    replyTitle = msg.interactive.button_reply?.title || '';\n  }\n}\nreturn [{ json: { from, type, texto, replyId, replyTitle } }];"
+      },
+      "id": "3ec8f322-624a-4119-8f1c-13060c38dbe8",
+      "name": "Extraer Datos Mensaje",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-112, 544]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "check-texto-pago",
+              "leftValue": "={{ $json.texto }}",
+              "rightValue": "pago",
+              "operator": { "type": "string", "operation": "contains" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "755f4265-a3a4-4fce-b95c-5b24f1680c39",
+      "name": "IF Contiene Pago",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [112, 544]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [{ "id": "r1", "leftValue": "={{ $json.replyId }}", "rightValue": "cat_hogar", "operator": { "type": "string", "operation": "equals" } }],
+                "combinator": "and"
+              },
+              "renameOutput": true, "outputKey": "Hogar"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [{ "id": "r2", "leftValue": "={{ $json.replyId }}", "rightValue": "cat_servicios", "operator": { "type": "string", "operation": "equals" } }],
+                "combinator": "and"
+              },
+              "renameOutput": true, "outputKey": "Servicios"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [{ "id": "r3", "leftValue": "={{ $json.replyId }}", "rightValue": "", "operator": { "type": "string", "operation": "notEmpty" } }],
+                "combinator": "and"
+              },
+              "renameOutput": true, "outputKey": "Pago"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2cdb0433-b2c6-4c02-aaa1-6d2ca2d88cc3",
+      "name": "Switch Tipo Respuesta",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [112, 768]
+    },
+    {
+      "parameters": {
+        "jsCode": "const from = $input.first().json.from;\nconst to   = from.startsWith('+') ? from : '+' + from;\nconst body = { messaging_product: 'whatsapp', recipient_type: 'individual', to, type: 'interactive', interactive: { type: 'list', header: { type: 'text', text: '🏠 Pagos del Hogar' }, body: { text: 'Selecciona el pago que quieres gestionar:' }, footer: { text: 'Paso 2 de 2' }, action: { button: 'Ver Pagos', sections: [{ title: 'Pagos del Hogar', rows: [ { id: 'hipoteca', title: 'Hipoteca' }, { id: 'seguro-vida', title: 'Seguro de Vida' }, { id: 'seguro-hogar', title: 'Seguro Hogar' }, { id: 'seguro-impago', title: 'Seguro Impago' }, { id: 'comunidad', title: 'Comunidad' }, { id: 'derramas', title: 'Derramas' }, { id: 'ibi', title: 'IBI' } ] }] } } };\nreturn [{ json: { from, requestBody: body } }];"
+      },
+      "id": "1cc29697-71a6-4f7f-8391-d36249c6e676",
+      "name": "Preparar Lista Hogar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [352, 448]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v22.0/1052452261290346/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "whatsAppApi",
+        "sendBody": true, "specifyBody": "json",
+        "jsonBody": "={{ $json.requestBody }}",
+        "options": {}
+      },
+      "id": "f2bb0154-19a0-45bd-b501-2734e88f7dcf",
+      "name": "Enviar Lista Hogar",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [576, 448],
+      "credentials": { "whatsAppApi": { "id": "1tahRwg2c1MEwPV8", "name": "WhatsApp account" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "const from = $input.first().json.from;\nconst to   = from.startsWith('+') ? from : '+' + from;\nconst body = { messaging_product: 'whatsapp', recipient_type: 'individual', to, type: 'interactive', interactive: { type: 'list', header: { type: 'text', text: '⚡ Suministros y Servicios' }, body: { text: 'Selecciona el pago que quieres gestionar:' }, footer: { text: 'Paso 2 de 2' }, action: { button: 'Ver Pagos', sections: [{ title: 'Suministros y Servicios', rows: [ { id: 'agua', title: 'Agua' }, { id: 'luz', title: 'Luz' }, { id: 'limpieza', title: 'Servicio de Limpieza' }, { id: 'alarma', title: 'Alarma' }, { id: 'wifi', title: 'Wifi' } ] }] } } };\nreturn [{ json: { from, requestBody: body } }];"
+      },
+      "id": "f09f0bbd-05f5-4056-855b-4adafabb7a7b",
+      "name": "Preparar Lista Servicios",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [352, 624]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v22.0/1052452261290346/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "whatsAppApi",
+        "sendBody": true, "specifyBody": "json",
+        "jsonBody": "={{ $json.requestBody }}",
+        "options": {}
+      },
+      "id": "771f65db-f48d-4dde-bba7-b6b652da5ebc",
+      "name": "Enviar Lista Servicios",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [576, 624],
+      "credentials": { "whatsAppApi": { "id": "1tahRwg2c1MEwPV8", "name": "WhatsApp account" } }
+    },
+    {
+      "parameters": {
+        "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/gestores",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "telefono", "value": "={{ 'eq.' + $json.from.slice(-9) }}" },
+            { "name": "activo", "value": "eq.true" },
+            { "name": "select", "value": "id,nombre,telefono" }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA" },
+            { "name": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "27e78b92-9d4f-4497-84c9-16ca48dfeaa7",
+      "name": "Buscar UUID Inquilino",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [352, 816]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { from, replyId, replyTitle } = $('Switch Tipo Respuesta').first().json;\nconst to    = from.startsWith('+') ? from : '+' + from;\nconst token = $input.first().json.id || from;\nconst BASE  = 'https://automanize.com/subir/';\nconst urls  = {\n  'hipoteca':      `${BASE}?tipo=hipoteca&token=${token}`,\n  'seguro-vida':   `${BASE}?tipo=seguro-vida&token=${token}`,\n  'seguro-hogar':  `${BASE}?tipo=seguro-hogar&token=${token}`,\n  'seguro-impago': `${BASE}?tipo=seguro-impago&token=${token}`,\n  'comunidad':     `${BASE}?tipo=comunidad&token=${token}`,\n  'derramas':      `${BASE}?tipo=derramas&token=${token}`,\n  'ibi':           `${BASE}?tipo=ibi&token=${token}`,\n  'agua':          `${BASE}?tipo=agua&token=${token}`,\n  'luz':           `${BASE}?tipo=luz&token=${token}`,\n  'limpieza':      `${BASE}?tipo=limpieza&token=${token}`,\n  'alarma':        `${BASE}?tipo=alarma&token=${token}`,\n  'wifi':          `${BASE}?tipo=wifi&token=${token}`\n};\nconst uploadUrl = urls[replyId] || `${BASE}?tipo=otros&token=${token}`;\nconst body = { messaging_product: 'whatsapp', recipient_type: 'individual', to, type: 'text', text: { body: `✅ Has seleccionado: *${replyTitle}*\\n\\nSube el justificante de pago aquí:\\n\\n🔗 ${uploadUrl}` } };\nreturn [{ json: { from, requestBody: body } }];"
+      },
+      "id": "75918785-5dfc-49bb-8c5d-2f3937204f4f",
+      "name": "Preparar Mensaje URL",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [576, 816]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v22.0/1052452261290346/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "whatsAppApi",
+        "sendBody": true, "specifyBody": "json",
+        "jsonBody": "={{ $json.requestBody }}",
+        "options": {}
+      },
+      "id": "2e23c2fa-354b-413d-90dc-d8b48b122d29",
+      "name": "Enviar URL Justificante",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [800, 816],
+      "credentials": { "whatsAppApi": { "id": "1tahRwg2c1MEwPV8", "name": "WhatsApp account" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "const from = $input.first().json.from;\nconst to   = from.startsWith('+') ? from : '+' + from;\nconst body = { messaging_product: 'whatsapp', recipient_type: 'individual', to, type: 'interactive', interactive: { type: 'button', header: { type: 'text', text: '💳 Gestión de Pagos' }, body: { text: '¿De qué categoría es el pago que quieres gestionar?' }, footer: { text: 'Paso 1 de 2' }, action: { buttons: [ { type: 'reply', reply: { id: 'cat_hogar', title: '🏠 Pagos del Hogar' } }, { type: 'reply', reply: { id: 'cat_servicios', title: '⚡ Suministros' } } ] } } };\nreturn [{ json: { from, requestBody: body } }];"
+      },
+      "id": "9c035892-4182-425d-aca7-7aa48c8c83a7",
+      "name": "Preparar Categorias",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 240]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v22.0/1052452261290346/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "whatsAppApi",
+        "sendBody": true, "specifyBody": "json",
+        "jsonBody": "={{ $json.requestBody }}",
+        "options": {}
+      },
+      "id": "37c36c7d-747c-49fc-9045-10562d7dab09",
+      "name": "Enviar Categorias",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [624, 240],
+      "credentials": { "whatsAppApi": { "id": "1tahRwg2c1MEwPV8", "name": "WhatsApp account" } }
+    },
+
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gastos-submit",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*",
+          "binaryPropertyName": "archivo0"
+        }
+      },
+      "id": "e49312e5-05b1-43fc-9fcb-05eef20be02e",
+      "name": "Webhook POST gastos-submit",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-464, 1400],
+      "webhookId": "gastos-submit"
+    },
+    {
+      "parameters": {
+        "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/gestores",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "id", "value": "eq.{{ $json.body.token }}" },
+            { "name": "select", "value": "id,nombre,telefono" }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA" },
+            { "name": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1000001-0001-0001-0001-000000000001",
+      "name": "Validar Gestor",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [-240, 1400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "cg1",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "notEmpty" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1000002-0002-0002-0002-000000000002",
+      "name": "IF Gestor Valido",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [-16, 1400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"error\": \"Token de gestor no válido.\"}",
+        "options": {
+          "responseCode": 401,
+          "responseHeaders": {
+            "entries": [{ "name": "Access-Control-Allow-Origin", "value": "*" }]
+          }
+        }
+      },
+      "id": "b276ad87-8516-4337-8739-a1c30ac953a4",
+      "name": "Respond Submit 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [-16, 1600]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $('Webhook POST gastos-submit').first().json.body;\nconst SUPABASE = 'https://edjugpekcntzvqaskbmc.supabase.co/rest/v1';\nconst table = body.inmueble_tipo === 'piso' ? 'pisos' : 'habitaciones';\nconst url = `${SUPABASE}/${table}?id=eq.${body.inmueble_id}&select=id,id_inmueble,nombre,direccion_completa`;\nreturn [{ json: { url } }];"
+      },
+      "id": "a1000003-0003-0003-0003-000000000003",
+      "name": "Preparar Consulta Inmueble",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [208, 1400]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA" },
+            { "name": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1000004-0004-0004-0004-000000000004",
+      "name": "Buscar Inmueble",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [432, 1400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const webhookItem = $('Webhook POST gastos-submit').first();\nconst body        = webhookItem.json.body;\nconst gestorData  = $('Validar Gestor').first().json;\nconst inmuebleData = $input.first().json;\n\nconst CARPETAS = {\n  'hipoteca':      '167rSr7ALC52FQz4NNtP4Yh33eBO0SgAN',\n  'seguro-vida':   '1bWe2D62QFgye0v5L5-ZnsLMmc88qVw9F',\n  'seguro-hogar':  '1IH6RrytwijxRYzrtBZzfnRqaFINDkF13',\n  'seguro-impago': '1vzIDLzJ5yrtg35NcViESA3V2EwlCp5O_',\n  'comunidad':     '1WgsRy0sKpcP9t45Mc-VDBY8y9x18vHl5',\n  'derramas':      '1RJsoEO-S3_be__UgsjR6CXSwRdVdzZP4',\n  'ibi':           '1jJUBl7OzilTTOJ8uJVQM04ryb03iMZkc',\n  'agua':          '1oSYS7AwF-l9l5Z8cO9GRLKX02R19LWli',\n  'luz':           '1gzCL7LAiCmhBaQbsUglt9F4xdFxhNWrD',\n  'limpieza':      '1z0yIN-83yHJBxLtBHMAu_ZVHqsDO5V2s',\n  'alarma':        '1-v5zouk7OuZeuDn7T6ialZL0vADjir3w',\n  'wifi':          '1-W05CTSlaErPraimwsFTJOI0Oc6pLX57'\n};\n\nconst tipo           = (body.tipo || 'otros').toLowerCase();\nconst carpetaRaizId  = CARPETAS[tipo] || '1i0iC9eoR-J1R69MLotuth-R1aHilbril';\n\nconst gestor         = Array.isArray(gestorData) ? gestorData[0] : gestorData;\nconst gestorId       = gestor?.id || body.gestor_id || body.token;\nconst gestorTelefono = gestor?.telefono || '';\n\nconst inmueble        = Array.isArray(inmuebleData) ? inmuebleData[0] : inmuebleData;\nconst nombreInmueble  = (inmueble?.nombre || body.inmueble_id || 'Inmueble').trim();\nconst inmuebleIdTexto = inmueble?.id_inmueble || body.inmueble_id;\n\nconst periodoRaw = body.periodo || '';\nconst MESES_ES   = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];\nlet mesAno = periodoRaw, periodoISO = '';\nif (periodoRaw.includes('-')) {\n  const parts  = periodoRaw.split('-');\n  const mesIdx = parseInt(parts[0], 10) - 1;\n  const ano    = parts[1];\n  mesAno      = `${MESES_ES[mesIdx] || parts[0]} ${ano}`;\n  periodoISO  = `${ano}-${parts[0].padStart(2, '0')}-01`;\n}\n\nconst binaryKey  = webhookItem.binary ? Object.keys(webhookItem.binary)[0] : 'archivo0';\nconst binaryData = webhookItem.binary?.[binaryKey];\nconst mimeType   = binaryData?.mimeType || 'image/jpeg';\nconst origName   = binaryData?.fileName || 'justificante.jpg';\nconst ext        = origName.split('.').pop() || 'jpg';\nconst nombreArchivo = `${tipo}-${periodoRaw}.${ext}`;\n\nreturn [{\n  json: {\n    gestorId, gestorTelefono,\n    inmuebleId:      body.inmueble_id,\n    inmuebleIdTexto: inmuebleIdTexto,\n    inmuebleTipo:    body.inmueble_tipo || 'habitacion',\n    tipo, periodoISO, periodoRaw, mesAno,\n    importe: parseFloat(body.importe) || 0,\n    carpetaRaizId, nombreInmueble, nombreArchivo, mimeType, binaryKey\n  },\n  binary: webhookItem.binary\n}];"
+      },
+      "id": "a1000005-0005-0005-0005-000000000005",
+      "name": "Preparar Datos Drive",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [656, 1400]
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/drive/v3/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ 'name=\\'' + $json.nombreInmueble + '\\' and mimeType=\\'application/vnd.google-apps.folder\\' and \\'' + $json.carpetaRaizId + '\\' in parents and trashed=false' }}"
+            },
+            { "name": "fields", "value": "files(id,name)" },
+            { "name": "pageSize", "value": "1" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1000006-0006-0006-0006-000000000006",
+      "name": "Buscar Carpeta Habitacion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [880, 1400],
+      "credentials": { "googleDriveOAuth2Api": { "id": "mKdx3fxoRZItYLzc", "name": "Google Drive account" } }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "chab",
+              "leftValue": "={{ $json.files?.[0]?.id }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "notEmpty" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1000007-0007-0007-0007-000000000007",
+      "name": "IF Carpeta Hab Existe",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [1104, 1400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const carpetaHabId = $input.first().json.files[0].id;\nconst datos = $('Preparar Datos Drive').first();\nreturn [{ json: { ...datos.json, carpetaHabId }, binary: datos.binary }];"
+      },
+      "id": "a1000008-0008-0008-0008-000000000008",
+      "name": "Usar Carpeta Hab Existente",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1328, 1304]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/drive/v3/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "Content-Type", "value": "application/json" }]
+        },
+        "sendBody": true, "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ name: $('Preparar Datos Drive').first().json.nombreInmueble, mimeType: 'application/vnd.google-apps.folder', parents: [$('Preparar Datos Drive').first().json.carpetaRaizId] }) }}",
+        "options": {}
+      },
+      "id": "a1000009-0009-0009-0009-000000000009",
+      "name": "Crear Carpeta Habitacion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1328, 1496],
+      "credentials": { "googleDriveOAuth2Api": { "id": "mKdx3fxoRZItYLzc", "name": "Google Drive account" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "const carpetaHabId = $input.first().json.id;\nconst datos = $('Preparar Datos Drive').first();\nreturn [{ json: { ...datos.json, carpetaHabId }, binary: datos.binary }];"
+      },
+      "id": "a1000010-0010-0010-0010-000000000010",
+      "name": "Set ID Carpeta Hab",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1552, 1496]
+    },
+    {
+      "parameters": {},
+      "id": "a1000011-0011-0011-0011-000000000011",
+      "name": "Merge Carpeta Hab",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [1776, 1400]
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/drive/v3/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ 'name=\\'' + $json.mesAno + '\\' and mimeType=\\'application/vnd.google-apps.folder\\' and \\'' + $json.carpetaHabId + '\\' in parents and trashed=false' }}"
+            },
+            { "name": "fields", "value": "files(id,name)" },
+            { "name": "pageSize", "value": "1" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1000012-0012-0012-0012-000000000012",
+      "name": "Buscar Carpeta Mes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [2000, 1400],
+      "credentials": { "googleDriveOAuth2Api": { "id": "mKdx3fxoRZItYLzc", "name": "Google Drive account" } }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "cmes",
+              "leftValue": "={{ $json.files?.[0]?.id }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "notEmpty" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1000013-0013-0013-0013-000000000013",
+      "name": "IF Carpeta Mes Existe",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [2224, 1400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const carpetaMesId = $input.first().json.files[0].id;\nconst anterior = $('Merge Carpeta Hab').first();\nreturn [{ json: { ...anterior.json, carpetaMesId }, binary: anterior.binary }];"
+      },
+      "id": "a1000014-0014-0014-0014-000000000014",
+      "name": "Usar Carpeta Mes Existente",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2448, 1304]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/drive/v3/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "Content-Type", "value": "application/json" }]
+        },
+        "sendBody": true, "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ name: $('Merge Carpeta Hab').first().json.mesAno, mimeType: 'application/vnd.google-apps.folder', parents: [$('Merge Carpeta Hab').first().json.carpetaHabId] }) }}",
+        "options": {}
+      },
+      "id": "a1000015-0015-0015-0015-000000000015",
+      "name": "Crear Carpeta Mes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [2448, 1496],
+      "credentials": { "googleDriveOAuth2Api": { "id": "mKdx3fxoRZItYLzc", "name": "Google Drive account" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "const carpetaMesId = $input.first().json.id;\nconst anterior = $('Merge Carpeta Hab').first();\nreturn [{ json: { ...anterior.json, carpetaMesId }, binary: anterior.binary }];"
+      },
+      "id": "a1000016-0016-0016-0016-000000000016",
+      "name": "Set ID Carpeta Mes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2672, 1496]
+    },
+    {
+      "parameters": {},
+      "id": "a1000017-0017-0017-0017-000000000017",
+      "name": "Merge Carpeta Mes",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [2896, 1400]
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "={{ $json.binaryKey }}",
+        "name": "={{ $json.nombreArchivo }}",
+        "driveId": { "__rl": true, "value": "MyDrive", "mode": "list" },
+        "folderId": { "__rl": true, "value": "={{ $json.carpetaMesId }}", "mode": "id" },
+        "options": {}
+      },
+      "id": "5fe19740-a35a-4370-bb22-67ce533afa5f",
+      "name": "Upload Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [3120, 1400],
+      "credentials": { "googleDriveOAuth2Api": { "id": "mKdx3fxoRZItYLzc", "name": "Google Drive account" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/gastos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA" },
+            { "name": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "resolution=merge-duplicates,return=representation" }
+          ]
+        },
+        "sendBody": true, "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ gestor_id: $('Merge Carpeta Mes').first().json.gestorId, inmueble_id: $('Merge Carpeta Mes').first().json.inmuebleIdTexto, inmueble_tipo: $('Merge Carpeta Mes').first().json.inmuebleTipo, tipo_pago: $('Merge Carpeta Mes').first().json.tipo, periodo: $('Merge Carpeta Mes').first().json.periodoISO, importe: $('Merge Carpeta Mes').first().json.importe * 1, archivo_url: $json.webViewLink || ('https://drive.google.com/file/d/' + $json.id + '/view'), archivo_tipo: $('Merge Carpeta Mes').first().json.mimeType, estado: 'pendiente', verificado: false }) }}",
+        "options": {}
+      },
+      "id": "9c506ade-450f-4122-85d6-62d325921cf3",
+      "name": "Insertar Gasto Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [3344, 1400]
+    },
+    {
+      "parameters": {
+        "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/gastos",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "inmueble_id", "value": "={{ 'eq.' + $('Merge Carpeta Mes').first().json.inmuebleIdTexto }}" },
+            { "name": "estado",      "value": "eq.pendiente" },
+            { "name": "select",      "value": "id,tipo_pago,importe,periodo" },
+            { "name": "order",       "value": "periodo.asc" }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey",        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA" },
+            { "name": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2000001-0001-0001-0001-000000000001",
+      "name": "Buscar Gastos Pendientes Inmueble",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [3344, 1200],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "url": "https://edjugpekcntzvqaskbmc.supabase.co/rest/v1/pagos",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "id_inmueble", "value": "={{ 'eq.' + $('Merge Carpeta Mes').first().json.inmuebleIdTexto }}" },
+            { "name": "recibido",    "value": "eq.true" },
+            { "name": "select",      "value": "importe,mes" }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey",        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA" },
+            { "name": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2000002-0002-0002-0002-000000000002",
+      "name": "Buscar Pagos Inmueble",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [3344, 1600],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {},
+      "id": "b2000003-0003-0003-0003-000000000003",
+      "name": "Merge Resumen",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [3568, 1400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const datos = $('Merge Carpeta Mes').first().json;\n\nconst gastosItems = $('Buscar Gastos Pendientes Inmueble').all().map(i => i.json);\nconst pagosItems  = $('Buscar Pagos Inmueble').all().map(i => i.json);\n\nconst gastosPendientes = Array.isArray(gastosItems[0]) ? gastosItems[0] : gastosItems.filter(g => g.tipo_pago);\nconst pagosList        = Array.isArray(pagosItems[0])  ? pagosItems[0]  : pagosItems.filter(p => p.importe !== undefined);\n\nconst totalGastos = gastosPendientes.reduce((s, g) => s + (parseFloat(g.importe) || 0), 0);\nconst totalPagos  = pagosList.reduce((s, p) => s + (parseFloat(p.importe) || 0), 0);\nconst balance     = totalPagos - totalGastos;\n\nconst TIPOS = {\n  'hipoteca':'Hipoteca','seguro-vida':'Seguro Vida','seguro-hogar':'Seguro Hogar',\n  'seguro-impago':'Seguro Impago','comunidad':'Comunidad','derramas':'Derramas',\n  'ibi':'IBI','agua':'Agua','luz':'Luz','limpieza':'Limpieza','alarma':'Alarma','wifi':'Wifi'\n};\nconst fmt = n => n.toFixed(2).replace('.', ',') + '€';\n\nconst lineas = gastosPendientes.map(g => {\n  const nombre  = TIPOS[g.tipo_pago] || g.tipo_pago;\n  const periodo = g.periodo ? g.periodo.slice(0,7).split('-').reverse().join('/') : '';\n  return `• ${nombre}${periodo ? ' · ' + periodo : ''}: ${fmt(parseFloat(g.importe||0))}`;\n}).join('\\n');\n\nconst mensaje = [\n  `🏠 *${datos.nombreInmueble}* · Resumen`,\n  '',\n  gastosPendientes.length\n    ? `📋 *Gastos pendientes (${gastosPendientes.length}):*\\n${lineas}`\n    : '✅ No hay gastos pendientes',\n  '',\n  `💸 *Total gastos pendientes:* ${fmt(totalGastos)}`,\n  `💵 *Total ingresos recibidos:* ${fmt(totalPagos)}`,\n  `${balance >= 0 ? '✅' : '⚠️'} *Balance:* ${fmt(balance)}`\n].join('\\n');\n\nconst tel = datos.gestorTelefono || '';\nconst to  = tel ? (tel.startsWith('+') ? tel : '+34' + tel.replace(/^0+/, '')) : '';\n\nreturn [{ json: { mensaje, to } }];"
+      },
+      "id": "b2000004-0004-0004-0004-000000000004",
+      "name": "Calcular Balance",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3792, 1400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v22.0/1052452261290346/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "whatsAppApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ messaging_product: 'whatsapp', recipient_type: 'individual', to: $json.to, type: 'text', text: { body: $json.mensaje } }) }}",
+        "options": {}
+      },
+      "id": "b2000005-0005-0005-0005-000000000005",
+      "name": "Enviar Resumen WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [4016, 1400],
+      "credentials": { "whatsAppApi": { "id": "1tahRwg2c1MEwPV8", "name": "WhatsApp account" } }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, archivo: $('Merge Carpeta Mes').first().json.nombreArchivo, carpeta: $('Merge Carpeta Mes').first().json.mesAno }) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [{ "name": "Access-Control-Allow-Origin", "value": "*" }]
+          }
+        }
+      },
+      "id": "f8880c87-43eb-42c7-b77f-e660c6858fc6",
+      "name": "Respond Submit OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [4240, 1400]
     }
+  ],
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [[{ "node": "Extraer Datos Mensaje", "type": "main", "index": 0 }]]
+    },
+    "Extraer Datos Mensaje": {
+      "main": [[{ "node": "IF Contiene Pago", "type": "main", "index": 0 }]]
+    },
+    "IF Contiene Pago": {
+      "main": [
+        [{ "node": "Preparar Categorias", "type": "main", "index": 0 }],
+        [{ "node": "Switch Tipo Respuesta", "type": "main", "index": 0 }]
+      ]
+    },
+    "Switch Tipo Respuesta": {
+      "main": [
+        [{ "node": "Preparar Lista Hogar", "type": "main", "index": 0 }],
+        [{ "node": "Preparar Lista Servicios", "type": "main", "index": 0 }],
+        [{ "node": "Buscar UUID Inquilino", "type": "main", "index": 0 }]
+      ]
+    },
+    "Preparar Lista Hogar": { "main": [[{ "node": "Enviar Lista Hogar", "type": "main", "index": 0 }]] },
+    "Preparar Lista Servicios": { "main": [[{ "node": "Enviar Lista Servicios", "type": "main", "index": 0 }]] },
+    "Buscar UUID Inquilino": { "main": [[{ "node": "Preparar Mensaje URL", "type": "main", "index": 0 }]] },
+    "Preparar Mensaje URL": { "main": [[{ "node": "Enviar URL Justificante", "type": "main", "index": 0 }]] },
+    "Preparar Categorias": { "main": [[{ "node": "Enviar Categorias", "type": "main", "index": 0 }]] },
+    "Webhook POST gastos-submit": {
+      "main": [[{ "node": "Validar Gestor", "type": "main", "index": 0 }]]
+    },
+    "Validar Gestor": {
+      "main": [[{ "node": "IF Gestor Valido", "type": "main", "index": 0 }]]
+    },
+    "IF Gestor Valido": {
+      "main": [
+        [{ "node": "Preparar Consulta Inmueble", "type": "main", "index": 0 }],
+        [{ "node": "Respond Submit 401", "type": "main", "index": 0 }]
+      ]
+    },
+    "Preparar Consulta Inmueble": {
+      "main": [[{ "node": "Buscar Inmueble", "type": "main", "index": 0 }]]
+    },
+    "Buscar Inmueble": {
+      "main": [[{ "node": "Preparar Datos Drive", "type": "main", "index": 0 }]]
+    },
+    "Preparar Datos Drive": {
+      "main": [[{ "node": "Buscar Carpeta Habitacion", "type": "main", "index": 0 }]]
+    },
+    "Buscar Carpeta Habitacion": {
+      "main": [[{ "node": "IF Carpeta Hab Existe", "type": "main", "index": 0 }]]
+    },
+    "IF Carpeta Hab Existe": {
+      "main": [
+        [{ "node": "Usar Carpeta Hab Existente", "type": "main", "index": 0 }],
+        [{ "node": "Crear Carpeta Habitacion", "type": "main", "index": 0 }]
+      ]
+    },
+    "Usar Carpeta Hab Existente": {
+      "main": [[{ "node": "Merge Carpeta Hab", "type": "main", "index": 0 }]]
+    },
+    "Crear Carpeta Habitacion": {
+      "main": [[{ "node": "Set ID Carpeta Hab", "type": "main", "index": 0 }]]
+    },
+    "Set ID Carpeta Hab": {
+      "main": [[{ "node": "Merge Carpeta Hab", "type": "main", "index": 1 }]]
+    },
+    "Merge Carpeta Hab": {
+      "main": [[{ "node": "Buscar Carpeta Mes", "type": "main", "index": 0 }]]
+    },
+    "Buscar Carpeta Mes": {
+      "main": [[{ "node": "IF Carpeta Mes Existe", "type": "main", "index": 0 }]]
+    },
+    "IF Carpeta Mes Existe": {
+      "main": [
+        [{ "node": "Usar Carpeta Mes Existente", "type": "main", "index": 0 }],
+        [{ "node": "Crear Carpeta Mes", "type": "main", "index": 0 }]
+      ]
+    },
+    "Usar Carpeta Mes Existente": {
+      "main": [[{ "node": "Merge Carpeta Mes", "type": "main", "index": 0 }]]
+    },
+    "Crear Carpeta Mes": {
+      "main": [[{ "node": "Set ID Carpeta Mes", "type": "main", "index": 0 }]]
+    },
+    "Set ID Carpeta Mes": {
+      "main": [[{ "node": "Merge Carpeta Mes", "type": "main", "index": 1 }]]
+    },
+    "Merge Carpeta Mes": {
+      "main": [[{ "node": "Upload Drive", "type": "main", "index": 0 }]]
+    },
+    "Upload Drive": {
+      "main": [[{ "node": "Insertar Gasto Supabase", "type": "main", "index": 0 }]]
+    },
+    "Insertar Gasto Supabase": {
+      "main": [[
+        { "node": "Buscar Gastos Pendientes Inmueble", "type": "main", "index": 0 },
+        { "node": "Buscar Pagos Inmueble",             "type": "main", "index": 0 }
+      ]]
+    },
+    "Buscar Gastos Pendientes Inmueble": {
+      "main": [[{ "node": "Merge Resumen", "type": "main", "index": 0 }]]
+    },
+    "Buscar Pagos Inmueble": {
+      "main": [[{ "node": "Merge Resumen", "type": "main", "index": 1 }]]
+    },
+    "Merge Resumen": {
+      "main": [[{ "node": "Calcular Balance", "type": "main", "index": 0 }]]
+    },
+    "Calcular Balance": {
+      "main": [[{ "node": "Enviar Resumen WhatsApp", "type": "main", "index": 0 }]]
+    },
+    "Enviar Resumen WhatsApp": {
+      "main": [[{ "node": "Respond Submit OK", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "1f315efa9aa5abb45f504418ec15ea0dce4b43934c3f9e4f5748544690733cb3"
+  }
 }

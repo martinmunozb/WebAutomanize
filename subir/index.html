@@ -613,7 +613,7 @@
     try {
       // 1 — Validar gestor por UUID
       const gestorRes = await fetch(
-        `${SUPABASE_URL}/gestores?id=eq.${encodeURIComponent(token)}&select=id,nombre`,
+        `${SUPABASE_URL}/gestores?id=eq.${encodeURIComponent(token)}&select=id,nombre,telefono`,
         { headers: sbHeaders() }
       );
       if (!gestorRes.ok) throw new Error('Error al consultar gestores');
@@ -629,23 +629,24 @@
 
       // 2 — Cargar habitaciones y pisos de este gestor en paralelo
       const [habRes, pisosRes] = await Promise.all([
-        fetch(`${SUPABASE_URL}/habitaciones?gestor_id=eq.${gestorId}&select=id,nombre,direccion_completa&order=nombre.asc`, { headers: sbHeaders() }),
-        fetch(`${SUPABASE_URL}/pisos?gestor_id=eq.${gestorId}&select=id,nombre,direccion_completa&order=nombre.asc`,       { headers: sbHeaders() }),
+        fetch(`${SUPABASE_URL}/habitaciones?gestor_id=eq.${gestorId}&select=id,id_inmueble,nombre,direccion_completa&order=nombre.asc`, { headers: sbHeaders() }),
+        fetch(`${SUPABASE_URL}/pisos?gestor_id=eq.${gestorId}&select=id,id_inmueble,nombre,direccion_completa&order=nombre.asc`,       { headers: sbHeaders() }),
       ]);
 
       const habitaciones = habRes.ok   ? await habRes.json()   : [];
       const pisos        = pisosRes.ok ? await pisosRes.json() : [];
 
-      // Poblar el selector agrupando por tipo
+      // Poblar el selector agrupando por tipo — usa id_inmueble como identificador
       if (habitaciones.length) {
         const grupo = document.createElement('optgroup');
         grupo.label = 'Habitaciones';
         habitaciones.forEach(h => {
+          const idInmueble = h.id_inmueble || String(h.id);
           const opt = document.createElement('option');
-          opt.value       = `hab_${h.id}`;
-          opt.textContent = h.nombre + (h.direccion_completa ? ` · ${h.direccion_completa}` : '');
+          opt.value        = `hab_${idInmueble}`;
+          opt.textContent  = h.nombre + (h.direccion_completa ? ` · ${h.direccion_completa}` : '');
           opt.dataset.tipo = 'habitacion';
-          opt.dataset.id   = h.id;
+          opt.dataset.id   = idInmueble;
           grupo.appendChild(opt);
         });
         habitacionSelect.appendChild(grupo);
@@ -655,11 +656,12 @@
         const grupo = document.createElement('optgroup');
         grupo.label = 'Pisos';
         pisos.forEach(p => {
+          const idInmueble = p.id_inmueble || String(p.id);
           const opt = document.createElement('option');
-          opt.value       = `piso_${p.id}`;
-          opt.textContent = p.nombre + (p.direccion_completa ? ` · ${p.direccion_completa}` : '');
+          opt.value        = `piso_${idInmueble}`;
+          opt.textContent  = p.nombre + (p.direccion_completa ? ` · ${p.direccion_completa}` : '');
           opt.dataset.tipo = 'piso';
-          opt.dataset.id   = p.id;
+          opt.dataset.id   = idInmueble;
           grupo.appendChild(opt);
         });
         habitacionSelect.appendChild(grupo);
