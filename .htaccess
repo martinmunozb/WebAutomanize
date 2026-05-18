@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Sirve el captador desde la raiz del subdominio sin cambiar la URL visible.
+RewriteCond %{HTTP_HOST} ^captador\.automanize\.com$ [NC]
+RewriteRule ^$ /radar.html [L]
+
+# Si entran a /radar.html dentro del subdominio, canoniza a la raiz.
+RewriteCond %{HTTP_HOST} ^captador\.automanize\.com$ [NC]
+RewriteRule ^radar\.html$ / [R=301,L]

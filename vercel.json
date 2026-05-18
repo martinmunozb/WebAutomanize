@@ -1,5 +1,12 @@
 {
   "rewrites": [
+    {
+      "source": "/",
+      "has": [
+        { "type": "host", "value": "captador.automanize.com" }
+      ],
+      "destination": "/radar.html"
+    },
     { "source": "/subir/hipoteca",        "destination": "/subir/index.html?tipo=hipoteca" },
     { "source": "/subir/seguro-vida",     "destination": "/subir/index.html?tipo=seguro-vida" },
     { "source": "/subir/seguro-hogar",    "destination": "/subir/index.html?tipo=seguro-hogar" },
@@ -14,6 +21,11 @@
     { "source": "/subir/wifi",            "destination": "/subir/index.html?tipo=wifi" }
   ],
   "redirects": [
+    {
+      "source": "/radar.html",
+      "destination": "https://captador.automanize.com/",
+      "permanent": true
+    },
     {
       "source": "/privacy.html",
       "destination": "/index.html",
