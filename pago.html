@@ -3,48 +3,77 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Justificante de pago · Invicta Rent</title>
+  <title>Justificante de pago · NIZE</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:           #F2F0EB;
-      --surface:      #FFFFFF;
-      --border:       #E0DDD6;
-      --border-dash:  #C8C5BE;
-      --accent:       #F0C000;
-      --accent-hover: #D9AC00;
-      --accent-dim:   rgba(240,192,0,0.08);
-      --accent-ring:  rgba(240,192,0,0.25);
-      --text:         #1A1918;
-      --text-muted:   #6B6866;
-      --text-light:   #A8A5A0;
+      --bg:           #090B0F;
+      --surface:      #FCFBF8;
+      --surface-soft: #F3F1EC;
+      --border:       #DDD6C8;
+      --border-dash:  #BEB5A4;
+      --accent:       #C69733;
+      --accent-hover: #A87820;
+      --accent-dim:   rgba(198,151,51,0.12);
+      --accent-ring:  rgba(198,151,51,0.34);
+      --text:         #14171C;
+      --text-muted:   #626A76;
+      --text-light:   #8A929E;
       --error:        #D94848;
-      --blocked-bg:   #F6F5F3;
-      --blocked-border: #D0CCC6;
-      --blocked-text: #9B9793;
+      --blocked-bg:   #F1F3F5;
+      --blocked-border: #D3D8DE;
+      --blocked-text: #8A929E;
+      --shadow:       0 28px 90px rgba(0,0,0,0.34);
     }
 
     html, body { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 16px; }
-    body { display: flex; flex-direction: column; }
+    body { display: flex; flex-direction: column; overflow-x: hidden; }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(rgba(9,11,15,0.78), rgba(9,11,15,0.94)),
+        url('assets/images/hero-house.jpg') center / cover no-repeat,
+        linear-gradient(145deg, #090B0F 0%, #171A20 52%, #08090D 100%);
+    }
 
     /* ── NAV ── */
     .navbar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      height: 56px; padding: 0 40px;
+      background: rgba(15,17,21,0.84);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      height: 64px; padding: 0 40px;
       display: flex; align-items: center; justify-content: space-between;
       position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(16px);
+    }
+    .brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      object-fit: cover;
+      background: #fff;
+      padding: 3px;
     }
     .nav-logo {
       font-family: 'Syne', sans-serif;
-      font-weight: 800; font-size: 13px;
-      letter-spacing: 0.12em; text-transform: uppercase;
+      font-weight: 800; font-size: 15px;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: #FFFFFF;
+      white-space: nowrap;
     }
     .nav-links { display: flex; gap: 28px; }
-    .nav-link { font-size: 13px; color: var(--text-muted); text-decoration: none; padding-bottom: 3px; }
-    .nav-link.active { color: var(--text); font-weight: 500; border-bottom: 2px solid var(--accent); }
+    .nav-link { font-size: 13px; color: rgba(255,255,255,0.58); text-decoration: none; padding-bottom: 3px; }
+    .nav-link.active { color: #FFFFFF; font-weight: 500; border-bottom: 2px solid var(--accent); }
 
     /* ── STEPPER ── */
     .stepper-wrap { display: flex; justify-content: center; padding: 28px 40px 0; }
@@ -52,27 +81,102 @@
     .step { display: flex; flex-direction: column; align-items: center; gap: 8px; }
     .step-dot {
       width: 10px; height: 10px; border-radius: 50%;
-      background: var(--border); transition: background 0.3s;
+      background: rgba(255,255,255,0.18); transition: background 0.3s;
     }
     .step.active .step-dot,
     .step.done   .step-dot { background: var(--accent); }
-    .step-label { font-size: 11px; color: var(--text-light); white-space: nowrap; }
+    .step-label { font-size: 11px; color: rgba(255,255,255,0.42); white-space: nowrap; }
     .step.active .step-label,
-    .step.done   .step-label { color: var(--text); font-weight: 500; }
-    .step-line { flex: 1; height: 1.5px; background: var(--border); margin-top: 4px; transition: background 0.3s; }
+    .step.done   .step-label { color: rgba(255,255,255,0.88); font-weight: 500; }
+    .step-line { flex: 1; height: 1.5px; background: rgba(255,255,255,0.16); margin-top: 4px; transition: background 0.3s; }
     .step-line.done { background: var(--accent); }
 
     /* ── MAIN ── */
-    .main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 28px 16px 40px; }
+    .main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 30px 18px 42px; }
+
+    .payment-shell {
+      width: 100%;
+      max-width: 980px;
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .trust-panel {
+      position: relative;
+      min-height: 100%;
+      padding: 38px 32px;
+      color: #fff;
+      background:
+        linear-gradient(180deg, rgba(10,12,16,0.72), rgba(10,12,16,0.94)),
+        url('assets/images/nize.png') center 82% / 290px auto no-repeat,
+        #101217;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 34px;
+    }
+
+    .panel-kicker {
+      color: rgba(255,255,255,0.58);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .trust-panel h1 {
+      max-width: 260px;
+      font-family: 'Syne', sans-serif;
+      font-size: 34px;
+      line-height: 1.02;
+      font-weight: 800;
+    }
+
+    .trust-panel p {
+      max-width: 280px;
+      margin-top: 14px;
+      color: rgba(255,255,255,0.68);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .panel-proof {
+      display: grid;
+      gap: 12px;
+    }
+
+    .proof-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(255,255,255,0.76);
+      font-size: 13px;
+    }
+
+    .proof-item svg {
+      width: 17px;
+      height: 17px;
+      stroke: var(--accent);
+      flex-shrink: 0;
+    }
 
     /* ── CARD ── */
     .card {
-      width: 100%; max-width: 560px;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 4px; padding: 40px;
+      width: 100%;
+      background: var(--surface);
+      border: 0;
+      border-radius: 0;
+      padding: 46px 52px;
+      box-shadow: none;
     }
-    .card-title { font-family: 'DM Sans', sans-serif; font-weight: 400; font-size: 18px; margin-bottom: 6px; }
-    .card-sub   { font-size: 14px; color: var(--text-muted); line-height: 1.55; margin-bottom: 28px; }
+    .card-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 25px; line-height: 1.15; margin-bottom: 8px; }
+    .card-sub   { font-size: 14px; color: var(--text-muted); line-height: 1.55; margin-bottom: 30px; }
 
     /* ── LOADING ── */
     .loading-state { text-align: center; padding: 48px 0; }
@@ -86,7 +190,23 @@
 
     /* ── ERROR ── */
     .error-state { display: none; text-align: center; padding: 48px 0; }
-    .error-icon  { font-size: 40px; margin-bottom: 16px; }
+    .error-icon,
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+    }
+    .error-icon {
+      background: rgba(217,72,72,0.10);
+      border: 1px solid rgba(217,72,72,0.22);
+      color: var(--error);
+    }
+    .error-icon svg,
+    .success-icon svg { width: 30px; height: 30px; stroke: currentColor; }
     .error-state h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 8px; }
     .error-state p  { font-size: 14px; color: var(--text-muted); }
 
@@ -94,12 +214,23 @@
     .form-state { display: none; }
 
     .inquilino-info {
-      background: var(--accent-dim);
-      border: 1px solid var(--accent-ring);
-      border-radius: 4px; padding: 12px 16px; margin-bottom: 24px;
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px; padding: 14px 16px; margin-bottom: 24px;
       display: flex; align-items: center; gap: 10px;
     }
-    .inquilino-info .icon { font-size: 16px; }
+    .identity-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: var(--accent-dim);
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .identity-icon svg { width: 17px; height: 17px; stroke: currentColor; }
     .inquilino-info .name { font-size: 14px; font-weight: 500; }
     .inquilino-info .sub  { font-size: 12px; color: var(--text-muted); }
 
@@ -116,15 +247,21 @@
     .mes-option {
       display: flex; align-items: center; justify-content: space-between;
       padding: 14px 16px;
-      background: #FAFAF8;
+      background: #FFFFFF;
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 8px;
       cursor: pointer;
       transition: border-color 0.2s, background 0.2s;
       position: relative; overflow: hidden;
     }
-    .mes-option:hover    { border-color: var(--accent); background: var(--accent-dim); }
-    .mes-option.selected { border-color: var(--accent); background: var(--accent-dim); }
+    .mes-option:hover    { border-color: var(--accent); background: #FBF7EE; }
+    .mes-option.selected {
+      border-color: #1B1D22;
+      background: #111318;
+      color: #FFFFFF;
+      box-shadow: 0 12px 28px rgba(17,19,24,0.12);
+    }
+    .mes-option.selected .mes-importe { color: #F0C86B; }
 
     /* ── ESTADO BLOQUEADO ── */
     /* Elemento estático: no es un div interactivo, no tiene listeners,
@@ -134,7 +271,7 @@
       padding: 14px 16px;
       background: var(--blocked-bg);
       border: 1px solid var(--blocked-border);
-      border-radius: 4px;
+      border-radius: 6px;
       pointer-events: none;   /* no clickable */
       user-select: none;       /* no seleccionable */
     }
@@ -150,7 +287,7 @@
       display: flex; align-items: center; gap: 5px;
       font-size: 11px; font-weight: 500;
       color: var(--blocked-text);
-      background: #ECEAE6;
+      background: #E8EAEE;
       border: 1px solid var(--blocked-border);
       border-radius: 3px;
       padding: 3px 8px;
@@ -174,23 +311,39 @@
       transition: all 0.2s; flex-shrink: 0;
     }
     .mes-option.selected .mes-check { background: var(--accent); border-color: var(--accent); }
-    .mes-check::after { content: '✓'; font-size: 10px; color: #000; opacity: 0; transition: opacity 0.2s; }
+    .mes-check::after {
+      content: '';
+      width: 5px;
+      height: 9px;
+      border: solid #101010;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg) translate(-1px, -1px);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
     .mes-option.selected .mes-check::after { opacity: 1; }
 
     /* ── FILE DROP ── */
     .file-drop {
-      border: 1.5px dashed var(--border-dash); border-radius: 4px;
-      padding: 40px 20px; text-align: center; cursor: pointer;
-      background: #FAFAF8; transition: border-color 0.2s, background 0.2s;
+      border: 1.5px dashed var(--border-dash); border-radius: 8px;
+      min-height: 180px;
+      padding: 34px 20px; text-align: center; cursor: pointer;
+      background: linear-gradient(180deg, #FFFFFF 0%, var(--surface-soft) 100%);
+      transition: border-color 0.2s, background 0.2s, transform 0.2s;
       position: relative; margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
-    .file-drop:hover, .file-drop.dragover { border-color: var(--accent); background: var(--accent-dim); }
+    .file-drop:hover, .file-drop.dragover { border-color: var(--accent); background: #FBF7EE; transform: translateY(-1px); }
     .file-drop input[type="file"] {
       position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
     }
     .upload-icon {
-      width: 48px; height: 48px; background: var(--accent); border-radius: 8px;
+      width: 50px; height: 50px; background: #111318; border-radius: 8px;
       display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
+      box-shadow: 0 16px 34px rgba(17,19,24,0.18);
     }
     .upload-icon svg { width: 24px; height: 24px; fill: #fff; }
     .file-drop p         { font-size: 14px; color: var(--text); margin-bottom: 4px; }
@@ -199,7 +352,7 @@
     .file-selected {
       display: none; align-items: center; gap: 12px;
       padding: 12px 16px; background: var(--accent-dim);
-      border: 1px solid var(--accent-ring); border-radius: 4px;
+      border: 1px solid var(--accent-ring); border-radius: 6px;
       margin-top: 8px;
     }
     .file-selected.show { display: flex; }
@@ -207,22 +360,45 @@
       font-size: 13px; font-weight: 500; flex: 1;
       overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
-    .file-remove {
-      background: none; border: none; color: var(--text-muted);
-      cursor: pointer; font-size: 16px; padding: 0; line-height: 1;
+    .file-chip-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      color: var(--accent);
+      flex-shrink: 0;
     }
+    .file-chip-icon svg { width: 16px; height: 16px; stroke: currentColor; }
+    .file-remove {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.55); border: 1px solid rgba(0,0,0,0.06); color: var(--text-muted);
+      cursor: pointer; padding: 0; line-height: 1; border-radius: 6px;
+    }
+    .file-remove svg { width: 15px; height: 15px; stroke: currentColor; }
     .file-remove:hover { color: var(--error); }
 
     /* ── SUBMIT ── */
     .btn-submit {
-      width: 100%; padding: 13px; margin-top: 24px;
-      background: var(--accent); color: #000;
+      width: 100%; padding: 15px; margin-top: 24px;
+      background: var(--accent); color: #101010;
       font-family: 'Syne', sans-serif; font-weight: 700;
       font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
-      border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;
+      border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 14px 32px rgba(198,151,51,0.22);
     }
-    .btn-submit:hover:not(:disabled) { background: var(--accent-hover); }
-    .btn-submit:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-submit:hover:not(:disabled) { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 14px 30px rgba(201,155,50,0.24); }
+    .btn-submit:disabled {
+      opacity: 1;
+      background: #E9DDC0;
+      color: rgba(20,23,28,0.38);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
     .btn-submit.loading { position: relative; color: transparent; }
     .btn-submit.loading::after {
       content: ''; position: absolute;
@@ -235,36 +411,59 @@
 
     /* ── SUCCESS ── */
     .success-state { display: none; text-align: center; padding: 48px 0; }
-    .success-icon {
-      width: 64px; height: 64px; background: var(--accent-dim);
-      border: 2px solid var(--accent); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 28px; margin: 0 auto 20px;
-    }
+    .success-icon { background: var(--accent-dim); border: 2px solid var(--accent); color: var(--accent); }
     .success-state h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; margin-bottom: 10px; }
     .success-state p  { font-size: 14px; color: var(--text-muted); max-width: 300px; margin: 0 auto; }
 
     /* ── BADGES ── */
     .badges { display: flex; align-items: center; justify-content: center; gap: 40px; margin-top: 20px; }
-    .badge  { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-light); }
-    .badge svg { width: 13px; height: 13px; fill: var(--text-light); flex-shrink: 0; }
+    .badge  { display: flex; align-items: center; gap: 7px; font-size: 12px; color: rgba(255,255,255,0.52); }
+    .badge svg { width: 13px; height: 13px; fill: rgba(255,255,255,0.52); flex-shrink: 0; }
 
     /* ── FOOTER ── */
     .footer {
-      border-top: 1px solid var(--border); padding: 14px 40px;
+      border-top: 1px solid rgba(255,255,255,0.08); padding: 16px 40px;
       display: flex; align-items: center; justify-content: space-between;
-      background: var(--surface);
+      background: rgba(15,17,21,0.72);
     }
-    .footer-left { font-size: 12px; color: var(--text-light); }
+    .footer-left { font-size: 12px; color: rgba(255,255,255,0.48); }
     .footer-links { display: flex; gap: 20px; }
-    .footer-links a { font-size: 12px; color: var(--text-light); text-decoration: none; }
-    .footer-links a:hover { color: var(--text-muted); }
+    .footer-links a { font-size: 12px; color: rgba(255,255,255,0.48); text-decoration: none; }
+    .footer-links a:hover { color: rgba(255,255,255,0.72); }
 
-    @media (max-width: 600px) {
-      .navbar { padding: 0 16px; }
-      .card   { padding: 24px 20px; }
+    @media (max-width: 760px) {
+      .navbar { height: auto; min-height: 66px; padding: 12px 16px; gap: 12px; }
+      .brand-mark { width: 25px; height: 25px; }
+      .nav-logo { font-size: 12px; letter-spacing: 0.12em; }
+      .nav-links { gap: 12px; }
+      .nav-link { font-size: 12px; }
+      .stepper-wrap { padding: 24px 20px 0; }
+      .stepper { max-width: 360px; }
+      .step-label { font-size: 10px; }
+      .main { padding: 22px 12px 34px; }
+      .payment-shell { grid-template-columns: 1fr; }
+      .trust-panel {
+        min-height: 0;
+        padding: 18px 18px;
+        background:
+          linear-gradient(90deg, rgba(10,12,16,0.94), rgba(10,12,16,0.74)),
+          url('assets/images/nize.png') right 18px center / 116px auto no-repeat,
+          #101217;
+      }
+      .panel-kicker { margin-bottom: 7px; }
+      .trust-panel h1 { font-size: 22px; max-width: 220px; }
+      .trust-panel p { max-width: 250px; margin-top: 7px; font-size: 12px; line-height: 1.45; }
+      .panel-proof { display: none; }
+      .card { padding: 28px 18px; }
+      .card-title { font-size: 21px; }
+      .inquilino-info { align-items: flex-start; }
+      .mes-option,
+      .mes-bloqueado-static { padding: 13px 12px; gap: 10px; }
+      .mes-right { gap: 8px; }
+      .mes-bloqueado-badge { white-space: normal; justify-content: flex-end; text-align: right; }
+      .file-drop { padding: 34px 14px; }
       .badges { flex-direction: column; gap: 10px; }
-      .footer { flex-direction: column; gap: 10px; text-align: center; }
+      .footer { flex-direction: column; gap: 10px; text-align: center; padding: 16px; }
       .footer-links { flex-wrap: wrap; justify-content: center; }
     }
   </style>
@@ -272,7 +471,10 @@
 <body>
 
 <nav class="navbar">
-  <span class="nav-logo">Invicta Rent · Pagos</span>
+  <span class="brand-lockup">
+    <img class="brand-mark" src="assets/images/nize.png" alt="" />
+    <span class="nav-logo">NIZE · Pagos</span>
+  </span>
   <div class="nav-links">
     <a class="nav-link active" href="#">Subir Justificante</a>
     <a class="nav-link" href="#">Historial</a>
@@ -299,7 +501,26 @@
 </div>
 
 <main class="main">
-  <div class="card">
+  <section class="payment-shell" aria-label="Subida de justificante de pago">
+    <aside class="trust-panel" aria-label="Pago seguro con NIZE">
+      <div>
+        <div class="panel-kicker">Portal de pagos</div>
+        <h1>Gestión segura de justificantes</h1>
+        <p>Sube tu comprobante en un entorno privado. El equipo revisará el pago y confirmará el estado cuando quede validado.</p>
+      </div>
+      <div class="panel-proof">
+        <div class="proof-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 1 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5z"/><path d="m9 12 2 2 4-5"/></svg>
+          Verificación manual del gestor
+        </div>
+        <div class="proof-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          Archivo protegido durante el envío
+        </div>
+      </div>
+    </aside>
+
+    <div class="card">
 
     <p class="card-title">Sube tu justificante de pago</p>
     <p class="card-sub">Selecciona el mes y adjunta el comprobante de transferencia.</p>
@@ -312,7 +533,9 @@
 
     <!-- ERROR -->
     <div class="error-state" id="errorState">
-      <div class="error-icon">🔒</div>
+      <div class="error-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+      </div>
       <h2>Acceso no válido</h2>
       <p>Este enlace no es válido o ha expirado. Solicita uno nuevo por WhatsApp.</p>
     </div>
@@ -321,7 +544,9 @@
     <div class="form-state" id="formState">
 
       <div class="inquilino-info">
-        <span class="icon">👤</span>
+        <span class="identity-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+        </span>
         <div>
           <div class="name" id="inquilinoNombre">—</div>
           <div class="sub"  id="inquilinoHabitacion">—</div>
@@ -346,9 +571,13 @@
           <span class="file-hint">Formatos soportados: PDF e imágenes (JPG, PNG, WEBP, GIF, BMP, TIFF, HEIC, AVIF...) Máx. 10MB</span>
         </div>
         <div class="file-selected" id="fileSelected">
-          <span>📄</span>
+          <span class="file-chip-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/><path d="M14 2v5h5"/><path d="M9 15h6"/><path d="M9 11h2"/></svg>
+          </span>
           <span class="file-name" id="fileName"></span>
-          <button class="file-remove" id="fileRemove">✕</button>
+          <button class="file-remove" id="fileRemove" type="button" aria-label="Quitar archivo">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
         </div>
       </div>
 
@@ -357,12 +586,15 @@
 
     <!-- ÉXITO -->
     <div class="success-state" id="successState">
-      <div class="success-icon">✓</div>
+      <div class="success-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
       <h2>¡Justificante enviado!</h2>
       <p>Lo revisaremos y recibirás confirmación por WhatsApp en breve. ¡Gracias!</p>
     </div>
 
-  </div>
+    </div>
+  </section>
 
   <div class="badges">
     <div class="badge">
@@ -377,7 +609,7 @@
 </main>
 
 <footer class="footer">
-  <span class="footer-left">Gestionado por Automanize · Nize IA</span>
+  <span class="footer-left">Gestionado por NIZE</span>
   <div class="footer-links">
     <a href="#">Términos de servicio</a>
     <a href="#">Política de privacidad</a>
@@ -392,6 +624,12 @@
 
   const params = new URLSearchParams(window.location.search);
   const token  = params.get('token');
+  const tenantParam = params.get('tenant')
+    || params.get('tenant_id')
+    || params.get('cliente_id')
+    || params.get('codigo_tenant')
+    || '';
+  const tenantFilter = tenantParam ? encodeURIComponent(tenantParam) : '';
 
   const loadingState = document.getElementById('loadingState');
   const errorState   = document.getElementById('errorState');
@@ -437,6 +675,56 @@
     }).then(r => r.json());
   }
 
+  function eq(value) {
+    return encodeURIComponent(String(value ?? '').trim());
+  }
+
+  function normalizeBase64(value) {
+    const normalized = String(value || '').trim().replace(/-/g, '+').replace(/_/g, '/');
+    const padding = normalized.length % 4;
+    return padding ? normalized + '='.repeat(4 - padding) : normalized;
+  }
+
+  function decodeAccessToken(rawToken) {
+    if (!rawToken) return { telefono: '', tenantId: '' };
+
+    try {
+      const decoded = atob(normalizeBase64(rawToken));
+
+      if (decoded.includes('|')) {
+        const [tenantId, telefono] = decoded.split('|');
+        return {
+          tenantId: String(tenantId || '').trim(),
+          telefono: String(telefono || '').trim()
+        };
+      }
+
+      // Compatibilidad con el formato antiguo: solo telefono en base64.
+      return { tenantId: '', telefono: String(decoded || '').trim() };
+    } catch (error) {
+      console.warn('No se pudo decodificar el token de acceso.', error);
+      return { telefono: '', tenantId: '' };
+    }
+  }
+
+  function buildTenantClause(rawTenant) {
+    const value = String(rawTenant || '').trim();
+    if (!value) return '';
+
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+    const isNumeric = /^\d+$/.test(value);
+
+    if (isUuid) {
+      return `&tenant_id=eq.${eq(value)}`;
+    }
+
+    if (isNumeric) {
+      return `&cliente_id=eq.${eq(value)}`;
+    }
+
+    return '';
+  }
+
   function setStep(n) {
     [1,2,3].forEach(i => {
       document.getElementById(`step${i}`).className =
@@ -459,20 +747,46 @@
 
   async function cargarDatos() {
     try {
-      // 1. Buscar inquilino por token
-      const inquilinos = await sbFetch(`inquilinos?token=eq.${token}&activo=eq.true&select=id,cliente_id,habitacion_id`);
-      if (!inquilinos.length) throw new Error('invalid');
+      // 1. Resolver token a tenant + telefono y localizar al inquilino correcto.
+      const accessData = decodeAccessToken(token);
+      const resolvedTenant = accessData.tenantId || tenantParam;
+      const resolvedPhone = accessData.telefono;
+
+      if (!resolvedPhone) {
+        console.warn('El token recibido no contiene un telefono valido.', { token });
+        throw new Error('invalid-token');
+      }
+
+      const tenantClause = buildTenantClause(resolvedTenant);
+      const inquilinos = await sbFetch(`inquilinos?telefono=eq.${eq(resolvedPhone)}&activo=eq.true${tenantClause}&select=id,cliente_id,tenant_id,habitacion_id,telefono`);
+      if (!inquilinos.length) {
+        console.warn('No se encontro ningun inquilino activo para el telefono y tenant resueltos desde el token.', {
+          token,
+          telefono: resolvedPhone,
+          tenant: resolvedTenant || null
+        });
+        throw new Error('invalid');
+      }
+      if (!resolvedTenant && inquilinos.length > 1) {
+        console.warn('El token legado coincide con varios tenants y no se puede resolver de forma univoca.', {
+          token,
+          telefono: resolvedPhone,
+          tenantIds: inquilinos.map(i => i.cliente_id)
+        });
+        throw new Error('ambiguous-tenant');
+      }
       const inq = inquilinos[0];
       inquilinoId = inq.id;
+      const tenantId = inq.cliente_id;
 
       // 2. Datos en paralelo: cliente, habitación y pagos pendientes
       const now = new Date();
       const limiteMes = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString().split('T')[0];
 
       const [clientes, habitaciones, pagos] = await Promise.all([
-        sbFetch(`clientes?id=eq.${inq.cliente_id}&select=nombre`),
-        sbFetch(`habitaciones?id_inmueble=eq.${inq.habitacion_id}&select=nombre,direccion_completa`),
-        sbFetch(`pagos?inquilino_id=eq.${inq.id}&recibido=eq.false&mes=lt.${limiteMes}&select=id,mes,importe,estado&order=mes.asc`)
+        sbFetch(`clientes?id=eq.${eq(tenantId)}&select=nombre`),
+        sbFetch(`habitaciones?id_inmueble=eq.${eq(inq.habitacion_id)}&select=nombre,direccion_completa`),
+        sbFetch(`pagos?inquilino_id=eq.${eq(inq.id)}&recibido=eq.false&mes=lt.${eq(limiteMes)}&select=id,mes,importe,estado&order=mes.asc`)
       ]);
 
       const nombre     = clientes[0]?.nombre || 'Inquilino';
@@ -485,6 +799,9 @@
       if (!pagos.length) {
         mesesGrid.innerHTML = '<p style="color:var(--text-muted);font-size:14px">No tienes pagos pendientes en este momento.</p>';
       } else {
+        let firstAvailableOption = null;
+        let firstAvailableMonth = null;
+
         pagos.forEach(p => {
           const fecha      = new Date(p.mes + 'T12:00:00');
           const etiqueta   = fecha.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
@@ -508,7 +825,7 @@
                   Pendiente del gestor
                 </span>
               </span>`;
-            // Sin ningún addEventListener → no hay nada que manipular en el DOM
+            // Sin ningún addEventListener: no hay nada que manipular en el DOM
           } else {
             el = document.createElement('div');
             el.className = 'mes-option';
@@ -519,10 +836,19 @@
                 <span class="mes-check"></span>
               </span>`;
             el.addEventListener('click', () => seleccionarMes(el, m));
+
+            if (!firstAvailableOption) {
+              firstAvailableOption = el;
+              firstAvailableMonth = m;
+            }
           }
 
           mesesGrid.appendChild(el);
         });
+
+        if (firstAvailableOption && firstAvailableMonth) {
+          seleccionarMes(firstAvailableOption, firstAvailableMonth);
+        }
       }
 
       loadingState.style.display = 'none';
@@ -635,6 +961,7 @@
 
     const form = new FormData();
     form.append('token',   token);
+    if (tenantParam) form.append('tenant', tenantParam);
     form.append('pago_id', selectedMes.id);
     form.append('mes',     selectedMes.etiqueta);
     form.append('importe', selectedMes.importe);
