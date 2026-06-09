@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reserva tu visita — Automanize</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background: #111;
+      overflow-x: hidden;
+    }
+
+    .bg {
+      position: fixed; inset: 0;
+      background: url('hero-bg.jpg') center center / cover no-repeat;
+      z-index: 0;
+    }
+    .bg-overlay {
+      position: fixed; inset: 0;
+      background: linear-gradient(135deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.30) 100%);
+      z-index: 1;
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 60px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-mark {
+      width: 30px; height: 30px; background: #EAB308; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; color: white; font-size: 15px;
+    }
+    .nav-logo-text { font-size: 16px; font-weight: 700; color: white; }
+    .nav-tag { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 0.05em; }
+
+    .page {
+      position: relative; z-index: 2; min-height: 100vh;
+      padding-top: 60px; display: flex; align-items: stretch;
+    }
+
+    .card {
+      width: 420px; min-width: 420px; background: white;
+      min-height: calc(100vh - 60px);
+      display: flex; flex-direction: column;
+      box-shadow: 4px 0 40px rgba(0,0,0,0.3);
+    }
+    .card-top { padding: 36px 36px 24px; border-bottom: 1px solid #f0f0f0; }
+    .card-eyebrow {
+      font-size: 11px; font-weight: 700; color: #EAB308;
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .card-title { font-size: 22px; font-weight: 800; color: #111; line-height: 1.2; margin-bottom: 6px; }
+    .card-sub { font-size: 13px; color: #999; }
+    .card-body { padding: 24px 36px; flex: 1; overflow-y: auto; }
+
+    .hero-content {
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 64px; padding-bottom: 80px;
+    }
+    .hero-eyebrow {
+      font-size: 12px; font-weight: 700; color: #EAB308;
+      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 20px;
+    }
+    .hero-title {
+      font-size: clamp(38px, 4.5vw, 64px); font-weight: 900;
+      color: white; line-height: 1.05; margin-bottom: 20px;
+    }
+    .hero-title span { color: #EAB308; }
+    .hero-desc {
+      font-size: 16px; color: rgba(255,255,255,0.65);
+      line-height: 1.6; max-width: 440px; margin-bottom: 48px;
+    }
+    .hero-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 40px; font-size: 12px; font-weight: 500;
+      color: rgba(255,255,255,0.8); backdrop-filter: blur(8px);
+    }
+    .pill-dot { width: 6px; height: 6px; background: #EAB308; border-radius: 50%; }
+
+    /* ── CAMPO ── */
+    .field { margin-bottom: 20px; }
+    .field-label {
+      display: block; font-size: 11px; font-weight: 700;
+      color: #888; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px;
+    }
+
+    /* ── CHIPS DE ZONA ── */
+    .zone-chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .zone-chip {
+      padding: 8px 16px;
+      border: 1.5px solid #e8e8e8; border-radius: 40px;
+      background: white; font-size: 13px; font-weight: 500;
+      color: #444; cursor: pointer; font-family: inherit;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .zone-chip:hover { border-color: #EAB308; color: #111; background: #fffbeb; }
+    .zone-chip.active {
+      border-color: #EAB308; background: #EAB308;
+      color: #111; font-weight: 700;
+      box-shadow: 0 0 0 3px rgba(234,179,8,0.18);
+    }
+
+    /* ── SLOTS ── */
+    input, select {
+      width: 100%; padding: 11px 13px;
+      border: 1.5px solid #e8e8e8; border-radius: 9px;
+      font-size: 13px; font-family: inherit; color: #111; background: white;
+      outline: none; transition: border-color 0.15s;
+    }
+    input:focus { border-color: #EAB308; box-shadow: 0 0 0 3px rgba(234,179,8,0.1); }
+
+    .slots-wrap { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; }
+    .slot-btn {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 13px; border: 1.5px solid #e8e8e8;
+      border-radius: 9px; cursor: pointer; background: white;
+      transition: all 0.15s; text-align: left; font-family: inherit; width: 100%;
+    }
+    .slot-btn:hover { border-color: #EAB308; background: #fffbeb; }
+    .slot-btn.active { border-color: #EAB308; background: #fffbeb; box-shadow: 0 0 0 3px rgba(234,179,8,0.12); }
+    .slot-indicator { width: 7px; height: 7px; border-radius: 50%; background: #EAB308; flex-shrink: 0; }
+    .slot-time { font-size: 13px; font-weight: 600; color: #111; flex: 1; }
+    .slot-tag { font-size: 11px; color: #999; background: #f5f5f5; padding: 2px 8px; border-radius: 5px; }
+
+    .empty-state { text-align: center; padding: 28px 16px; color: #bbb; font-size: 13px; }
+    .empty-state .icon { font-size: 28px; margin-bottom: 8px; }
+
+    /* ── SIN DISPONIBILIDAD: CONTACTO ── */
+    .contact-block {
+      background: #fafafa; border: 1.5px solid #e8e8e8;
+      border-radius: 12px; padding: 22px 20px;
+      text-align: center; display: none;
+    }
+    .contact-block.show { display: block; }
+    .contact-block .contact-icon { font-size: 30px; margin-bottom: 10px; }
+    .contact-block .contact-title {
+      font-size: 14px; font-weight: 700; color: #111; margin-bottom: 6px;
+    }
+    .contact-block .contact-sub {
+      font-size: 12px; color: #888; margin-bottom: 16px; line-height: 1.5;
+    }
+    .contact-phone-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 22px;
+      background: #111; color: white;
+      border-radius: 9px; text-decoration: none;
+      font-size: 15px; font-weight: 700; font-family: inherit;
+      transition: background 0.15s;
+    }
+    .contact-phone-link:hover { background: #333; }
+    .contact-phone-link svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── RESERVA ── */
+    .reservation-inset {
+      background: #fafafa; border: 1.5px solid #efefef;
+      border-radius: 12px; padding: 18px; margin-top: 20px; display: none;
+    }
+    .reservation-inset.show { display: block; }
+    .inset-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; color: #92400e;
+      background: #fef3c7; border: 1px solid #fde68a;
+      padding: 4px 10px; border-radius: 6px; margin-bottom: 14px;
+    }
+    .inset-title {
+      font-size: 12px; font-weight: 700; color: #444;
+      margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .input-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+
+    .btn-confirm {
+      width: 100%; padding: 13px; background: #111; color: white;
+      border: none; border-radius: 9px; font-size: 14px; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: all 0.2s; margin-top: 14px;
+    }
+    .btn-confirm:hover:not(:disabled) { background: #333; }
+    .btn-confirm:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-cancel {
+      width: 100%; padding: 10px; background: transparent; color: #aaa;
+      border: 1.5px solid #e8e8e8; border-radius: 9px; font-size: 13px;
+      font-weight: 500; cursor: pointer; font-family: inherit;
+      margin-top: 6px; transition: all 0.15s;
+    }
+    .btn-cancel:hover { color: #666; border-color: #ccc; }
+
+    .alert { padding: 11px 13px; border-radius: 9px; font-size: 13px; margin-bottom: 16px; display: none; }
+    .alert-ok  { background: #f0fdf4; border: 1.5px solid #bbf7d0; color: #166534; }
+    .alert-err { background: #fff1f2; border: 1.5px solid #fecaca; color: #991b1b; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin {
+      display: inline-block; width: 13px; height: 13px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: white;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+      vertical-align: middle; margin-right: 6px;
+    }
+    .spin-lg {
+      width: 24px; height: 24px; border: 3px solid #f0f0f0; border-top-color: #EAB308;
+      border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 10px;
+    }
+    .loading-state { text-align: center; padding: 28px; color: #bbb; font-size: 12px; }
+
+    @media (max-width: 768px) {
+      .page { flex-direction: column; }
+      .card { width: 100%; min-width: 0; min-height: auto; }
+      .hero-content { padding: 40px 24px; }
+      nav { padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="bg-overlay"></div>
+
+<nav>
+  <a href="https://automanize.com" class="nav-logo">
+    <div class="nav-logo-mark">A</div>
+    <span class="nav-logo-text">Automanize</span>
+  </a>
+  <span class="nav-tag">Reserva de visitas</span>
+</nav>
+
+<div class="page">
+
+  <div class="card">
+    <div class="card-top">
+      <div class="card-eyebrow">Agenda tu visita</div>
+      <div class="card-title">Elige zona y horario</div>
+      <div class="card-sub">Te confirmamos en menos de 24h</div>
+    </div>
+
+    <div class="card-body">
+
+      <div id="alertOk" class="alert alert-ok"></div>
+      <div id="alertErr" class="alert alert-err"></div>
+
+      <!-- Zonas -->
+      <div class="field" id="zonasField">
+        <label class="field-label">Zona</label>
+        <div id="zonasWrap">
+          <div class="loading-state">
+            <div class="spin-lg"></div>
+            Cargando zonas...
+          </div>
+        </div>
+      </div>
+
+      <!-- Slots -->
+      <div class="field" id="slotsField" style="display:none">
+        <label class="field-label">Huecos disponibles</label>
+        <div id="slotsWrap"></div>
+      </div>
+
+      <!-- Sin disponibilidad: contacto -->
+      <div id="contactBlock" class="contact-block">
+        <div class="contact-icon">📞</div>
+        <div class="contact-title">Sin disponibilidad en esta zona</div>
+        <div class="contact-sub" id="contactSub">
+          No hay huecos libres en este momento.<br>Contáctanos y te buscamos una cita.
+        </div>
+        <a id="contactLink" href="#" class="contact-phone-link">
+          <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+          <span id="contactPhoneText">Contactar</span>
+        </a>
+      </div>
+
+      <!-- Formulario de reserva -->
+      <div id="reservaInset" class="reservation-inset">
+        <div id="slotBadge" class="inset-badge">📅 <span id="slotInfo"></span></div>
+        <div class="inset-title">Tus datos</div>
+        <div style="margin-bottom:8px">
+          <input type="text" id="nombre" placeholder="Nombre completo" />
+        </div>
+        <div class="input-pair">
+          <input type="tel" id="telefono" placeholder="Teléfono" />
+          <input type="email" id="email" placeholder="Email" />
+        </div>
+        <button id="confirmBtn" class="btn-confirm" onclick="submitReservation()">Confirmar reserva →</button>
+        <button class="btn-cancel" onclick="deselectSlot()">Cancelar</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Nize — Asistente inmobiliario</div>
+    <h1 class="hero-title">
+      Agenda visitas.<br>
+      <span>Sin intervenir.</span>
+    </h1>
+    <p class="hero-desc">
+      Selecciona la zona que te interesa y elige el horario que mejor se adapte. Nuestro equipo te confirmará la visita a la mayor brevedad.
+    </p>
+    <div class="hero-pills">
+      <div class="pill"><span class="pill-dot"></span>Confirmación en 24h</div>
+      <div class="pill"><span class="pill-dot"></span>Sin compromiso</div>
+      <div class="pill"><span class="pill-dot"></span>Gestión 100% digital</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://edjugpekcntzvqaskbmc.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA';
+  const { createClient } = window.supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const params = new URLSearchParams(window.location.search);
+  const tenantId = params.get('t');
+
+  let freeSlots = [];
+  let selectedSlot = null;
+  let selectedZona = null;
+  let contactPhone = null;
+
+  if (!tenantId || !UUID_REGEX.test(tenantId)) {
+    document.querySelector('.card-body').innerHTML = `
+      <div style="text-align:center;padding:48px 24px">
+        <div style="font-size:40px;margin-bottom:16px">🔒</div>
+        <div style="font-size:16px;font-weight:700;color:#111;margin-bottom:8px">Enlace no válido</div>
+        <div style="font-size:13px;color:#999">Este enlace de reservas no es válido o ha expirado.<br>Solicita un nuevo enlace a tu agencia.</div>
+      </div>`;
+    document.querySelector('.card-eyebrow').textContent = 'Error de acceso';
+    document.querySelector('.card-title').textContent = 'Enlace no válido';
+    document.querySelector('.card-sub').textContent = '';
+  }
+
+  async function init() {
+    if (!tenantId || !UUID_REGEX.test(tenantId)) return;
+
+    // Cargar teléfono de contacto y slots en paralelo
+    const [phoneRes, slotsRes] = await Promise.all([
+      db.rpc('get_tenant_contact_phone', { p_tenant_id: tenantId }),
+      db.from('slots_disponibilidad').select('*')
+        .eq('tenant_id', tenantId).eq('reservado', false)
+        .order('fecha').order('hora_inicio')
+    ]);
+
+    if (phoneRes.data) {
+      contactPhone = String(phoneRes.data);
+      updateContactBlock();
+    }
+
+    if (slotsRes.error) {
+      document.getElementById('zonasWrap').innerHTML = '';
+      showErr('Error al cargar disponibilidad: ' + slotsRes.error.message);
+      return;
+    }
+
+    freeSlots = slotsRes.data || [];
+    renderZonas();
+  }
+
+  function updateContactBlock() {
+    if (!contactPhone) return;
+    const formatted = formatPhone(contactPhone);
+    document.getElementById('contactPhoneText').textContent = formatted;
+    document.getElementById('contactLink').href = 'tel:' + contactPhone;
+    document.getElementById('contactSub').innerHTML =
+      'No hay huecos libres en este momento.<br>Contáctanos y te buscamos una cita.';
+  }
+
+  function formatPhone(raw) {
+    const s = String(raw).replace(/\D/g, '');
+    if (s.length === 9) return '+34 ' + s.slice(0,3) + ' ' + s.slice(3,6) + ' ' + s.slice(6);
+    if (s.length === 11 && s.startsWith('34')) return '+' + s.slice(0,2) + ' ' + s.slice(2,5) + ' ' + s.slice(5,8) + ' ' + s.slice(8);
+    return '+' + s;
+  }
+
+  function renderZonas() {
+    const zonas = [...new Set(freeSlots.map(s => s.zona).filter(Boolean))].sort();
+    const wrap = document.getElementById('zonasWrap');
+
+    if (!zonas.length) {
+      wrap.innerHTML = '';
+      showNoSlotsState(null);
+      return;
+    }
+
+    wrap.innerHTML = '<div class="zone-chips">' +
+      zonas.map(z => `<button class="zone-chip" onclick="selectZona('${escAttr(z)}')">${escHtml(z)}</button>`).join('') +
+      '</div>';
+  }
+
+  function selectZona(zona) {
+    selectedZona = zona;
+    deselectSlot();
+
+    // Marcar chip activo
+    document.querySelectorAll('.zone-chip').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent === zona);
+    });
+
+    const filtered = freeSlots.filter(s => s.zona === zona);
+
+    document.getElementById('contactBlock').classList.remove('show');
+    document.getElementById('slotsField').style.display = '';
+
+    if (!filtered.length) {
+      showNoSlotsState(zona);
+      return;
+    }
+
+    document.getElementById('slotsWrap').innerHTML =
+      '<div class="slots-wrap">' +
+      filtered.map(s => `
+        <button class="slot-btn" id="slot-${s.id}"
+          onclick="selectSlot('${s.id}','${escAttr(s.zona)}','${s.fecha}','${s.hora_inicio}','${s.hora_fin}')">
+          <span class="slot-indicator"></span>
+          <span class="slot-time">${s.hora_inicio.slice(0,5)} – ${s.hora_fin.slice(0,5)}</span>
+          <span style="font-size:12px;color:#aaa">${fmtDate(s.fecha)}</span>
+          <span class="slot-tag">${escHtml(s.zona)}</span>
+        </button>
+      `).join('') +
+      '</div>';
+  }
+
+  function showNoSlotsState(zona) {
+    document.getElementById('slotsField').style.display = zona ? '' : 'none';
+    if (zona) {
+      document.getElementById('slotsWrap').innerHTML = '';
+    }
+    document.getElementById('contactBlock').classList.add('show');
+    // Si no hay teléfono configurado, ocultar el botón
+    if (!contactPhone) {
+      document.getElementById('contactLink').style.display = 'none';
+      document.getElementById('contactSub').textContent = 'No hay huecos disponibles en este momento. Inténtalo más tarde.';
+    }
+  }
+
+  function selectSlot(id, zona, fecha, hi, hf) {
+    selectedSlot = { id, zona, fecha, hi, hf };
+    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
+    const btn = document.getElementById('slot-' + id);
+    if (btn) btn.classList.add('active');
+    document.getElementById('slotInfo').textContent = `${zona} · ${fmtDate(fecha)} · ${hi.slice(0,5)}–${hf.slice(0,5)}`;
+    document.getElementById('reservaInset').classList.add('show');
+    document.getElementById('nombre').focus();
+  }
+
+  function deselectSlot() {
+    selectedSlot = null;
+    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('reservaInset').classList.remove('show');
+    ['nombre','telefono','email'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  }
+
+  async function submitReservation() {
+    if (!selectedSlot) return;
+    const nombre   = document.getElementById('nombre').value.trim();
+    const telefono = document.getElementById('telefono').value.trim();
+    const email    = document.getElementById('email').value.trim();
+    if (!nombre || !telefono || !email) { showErr('Completa todos los campos'); return; }
+
+    const btn = document.getElementById('confirmBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span>Reservando...';
+
+    try {
+      const { data: slotArr, error } = await db
+        .from('slots_disponibilidad')
+        .update({ reservado: true, cliente_nombre: nombre, cliente_telefono: telefono, cliente_email: email })
+        .eq('id', selectedSlot.id).select();
+      if (error) throw error;
+      if (!slotArr || slotArr.length === 0) throw new Error('Este hueco ya no está disponible.');
+      const slotData = slotArr[0];
+
+      // Liberar huecos hermanos del mismo gestor/fecha/hora
+      if (slotData?.gestor_id) {
+        await db.from('slots_disponibilidad').delete()
+          .eq('gestor_id', slotData.gestor_id)
+          .eq('fecha', slotData.fecha)
+          .eq('hora_inicio', slotData.hora_inicio)
+          .eq('hora_fin', slotData.hora_fin)
+          .eq('reservado', false)
+          .neq('id', selectedSlot.id);
+      }
+
+      showOk('¡Reserva confirmada! Nos pondremos en contacto en breve.');
+      deselectSlot();
+      // Recargar slots y mantener zona seleccionada
+      const z = selectedZona;
+      const { data } = await db.from('slots_disponibilidad').select('*')
+        .eq('tenant_id', tenantId).eq('reservado', false)
+        .order('fecha').order('hora_inicio');
+      freeSlots = data || [];
+      renderZonas();
+      if (z) {
+        // Remarcar chip y mostrar slots actualizados
+        document.querySelectorAll('.zone-chip').forEach(btn => {
+          if (btn.textContent === z) btn.click();
+        });
+      }
+    } catch (err) {
+      showErr('Error al confirmar la reserva: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Confirmar reserva →';
+    }
+  }
+
+  function fmtDate(d) {
+    return new Date(d + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+
+  function escHtml(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function escAttr(s) {
+    return String(s || '').replace(/'/g,"\\'");
+  }
+
+  function showOk(msg) {
+    const el = document.getElementById('alertOk');
+    el.textContent = msg; el.style.display = 'block';
+    document.getElementById('alertErr').style.display = 'none';
+    setTimeout(() => el.style.display = 'none', 6000);
+  }
+
+  function showErr(msg) {
+    const el = document.getElementById('alertErr');
+    el.textContent = msg; el.style.display = 'block';
+    document.getElementById('alertOk').style.display = 'none';
+  }
+
+  init();
+</script>
+</body>
+</html>
