@@ -476,24 +476,14 @@
     btn.innerHTML = '<span class="spin"></span>Reservando...';
 
     try {
-      const { data: slotArr, error } = await db
-        .from('slots_disponibilidad')
-        .update({ reservado: true, cliente_nombre: nombre, cliente_telefono: telefono, cliente_email: email })
-        .eq('id', selectedSlot.id).select();
+      const { data: result, error } = await db.rpc('reservar_slot', {
+        p_slot_id:   selectedSlot.id,
+        p_nombre:    nombre,
+        p_telefono:  telefono,
+        p_email:     email
+      });
       if (error) throw error;
-      if (!slotArr || slotArr.length === 0) throw new Error('Este hueco ya no está disponible.');
-      const slotData = slotArr[0];
-
-      // Liberar huecos hermanos del mismo gestor/fecha/hora
-      if (slotData?.gestor_id) {
-        await db.from('slots_disponibilidad').delete()
-          .eq('gestor_id', slotData.gestor_id)
-          .eq('fecha', slotData.fecha)
-          .eq('hora_inicio', slotData.hora_inicio)
-          .eq('hora_fin', slotData.hora_fin)
-          .eq('reservado', false)
-          .neq('id', selectedSlot.id);
-      }
+      if (!result?.ok) throw new Error(result?.error || 'Error al reservar el hueco.');
 
       showOk('¡Reserva confirmada! Nos pondremos en contacto en breve.');
       deselectSlot();
