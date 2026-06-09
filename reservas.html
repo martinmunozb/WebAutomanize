@@ -564,12 +564,13 @@
   async function init() {
     if (!tenantId || !UUID_REGEX.test(tenantId)) return;
 
-    // Cargar teléfono de contacto y slots en paralelo
-    const [phoneRes, slotsRes] = await Promise.all([
+    // Solo cargamos fecha+zona para el calendario (evita el límite de 1000 filas)
+    const [phoneRes, datesRes] = await Promise.all([
       db.rpc('get_tenant_contact_phone', { p_tenant_id: tenantId }),
-      db.from('slots_disponibilidad').select('*')
+      db.from('slots_disponibilidad')
+        .select('fecha, zona')
         .eq('tenant_id', tenantId).eq('reservado', false)
-        .order('fecha').order('hora_inicio')
+        .range(0, 49999)
     ]);
 
     if (phoneRes.data) {
@@ -577,13 +578,13 @@
       updateContactBlock();
     }
 
-    if (slotsRes.error) {
+    if (datesRes.error) {
       document.getElementById('zonasWrap').innerHTML = '';
-      showErr('Error al cargar disponibilidad: ' + slotsRes.error.message);
+      showErr('Error al cargar disponibilidad: ' + datesRes.error.message);
       return;
     }
 
-    freeSlots = slotsRes.data || [];
+    freeSlots = datesRes.data || [];
     renderZonas();
   }
 
@@ -679,26 +680,35 @@
     document.getElementById('daySlotsWrap').innerHTML = '';
   }
 
-  function selectDay(dateStr) {
+  async function selectDay(dateStr) {
     selectedDay = dateStr;
     deselectSlot();
     renderCalendar();
-    renderDaySlots(dateStr);
+    document.getElementById('daySlotsWrap').innerHTML = '<div class="loading-state"><div class="spin-lg"></div></div>';
+
+    const { data, error } = await db
+      .from('slots_disponibilidad')
+      .select('*')
+      .eq('tenant_id', tenantId)
+      .eq('zona', selectedZona)
+      .eq('fecha', dateStr)
+      .eq('reservado', false)
+      .order('hora_inicio');
+
+    if (error) { document.getElementById('daySlotsWrap').innerHTML = ''; showErr('Error al cargar huecos.'); return; }
+    renderDaySlots(data || [], dateStr);
   }
 
-  function renderDaySlots(dateStr) {
-    const daySlots = freeSlots.filter(s => s.zona === selectedZona && s.fecha === dateStr)
-      .sort((a,b) => a.hora_inicio.localeCompare(b.hora_inicio));
-
+  function renderDaySlots(slots, dateStr) {
     const date = new Date(dateStr + 'T00:00:00');
     const label = date.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' });
 
     let html = `<div class="day-slots-head">Huecos disponibles · ${label}</div>`;
-    if (!daySlots.length) {
+    if (!slots.length) {
       html += `<div class="empty-state"><div class="icon">📭</div>No hay huecos libres este día.</div>`;
     } else {
       html += '<div class="time-grid">' +
-        daySlots.map(s =>
+        slots.map(s =>
           `<button class="time-btn" id="slot-${s.id}"
             onclick="selectSlot('${s.id}','${escAttr(s.zona)}','${s.fecha}','${s.hora_inicio}','${s.hora_fin}')">
             ${s.hora_inicio.slice(0,5)}
@@ -768,12 +778,13 @@
       document.getElementById('successOverlay').style.display = 'flex';
 
       deselectSlot();
-      // Recargar slots en segundo plano
+      // Recargar fechas disponibles en segundo plano
       const z = selectedZona;
       const d = selectedDay;
-      const { data } = await db.from('slots_disponibilidad').select('*')
+      const { data } = await db.from('slots_disponibilidad')
+        .select('fecha, zona')
         .eq('tenant_id', tenantId).eq('reservado', false)
-        .order('fecha').order('hora_inicio');
+        .range(0, 49999);
       freeSlots = data || [];
       renderZonas();
       if (z) {
@@ -781,7 +792,7 @@
         document.querySelectorAll('.zone-chip').forEach(b => b.classList.toggle('active', b.textContent === z));
         document.getElementById('calendarField').style.display = '';
         renderCalendar();
-        if (d) { selectedDay = d; renderCalendar(); renderDaySlots(d); }
+        if (d) { selectedDay = d; renderCalendar(); selectDay(d); }
         else document.getElementById('daySlotsWrap').innerHTML = '';
       }
     } catch (err) {
