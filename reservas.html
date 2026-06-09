@@ -796,7 +796,23 @@
         else document.getElementById('daySlotsWrap').innerHTML = '';
       }
     } catch (err) {
-      showErr('Error al confirmar la reserva: ' + err.message);
+      const msg = err.message || '';
+      showErr(msg.includes('ya no está disponible')
+        ? '⚡ Alguien acaba de reservar este hueco. Elige otro horario.'
+        : 'Error al confirmar la reserva: ' + msg);
+      // Refrescar huecos del día para mostrar la disponibilidad real
+      if (selectedDay && selectedZona) {
+        const { data: fresh } = await db
+          .from('slots_disponibilidad').select('*')
+          .eq('tenant_id', tenantId).eq('zona', selectedZona)
+          .eq('fecha', selectedDay).eq('reservado', false)
+          .order('hora_inicio');
+        // Actualizar freeSlots quitando los ya reservados del día
+        freeSlots = freeSlots.filter(s => !(s.zona === selectedZona && s.fecha === selectedDay));
+        if (fresh?.length) fresh.forEach(s => freeSlots.push({ fecha: s.fecha, zona: s.zona }));
+        renderDaySlots(fresh || [], selectedDay);
+        renderCalendar();
+      }
     } finally {
       btn.disabled = false;
       btn.innerHTML = 'Confirmar reserva →';
