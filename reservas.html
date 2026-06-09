@@ -182,7 +182,79 @@
       font-size: 12px; font-weight: 700; color: #444;
       margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;
     }
+    /* ── PREFIJO TELÉFONO ── */
+    .phone-row { display: flex; gap: 6px; margin-bottom: 8px; }
+    .prefix-btn {
+      flex-shrink: 0; width: 72px; padding: 11px 8px;
+      border: 1.5px solid #e8e8e8; border-radius: 9px;
+      background: white; font-size: 13px; font-weight: 600; color: #111;
+      cursor: pointer; font-family: inherit; text-align: center;
+      white-space: nowrap; transition: border-color 0.15s;
+    }
+    .prefix-btn:focus, .prefix-btn.open { border-color: #EAB308; box-shadow: 0 0 0 3px rgba(234,179,8,0.1); }
+    .phone-row input { flex: 1; margin-bottom: 0; }
+
+    .prefix-dropdown {
+      position: absolute; z-index: 100;
+      background: white; border: 1.5px solid #e8e8e8; border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+      width: 280px; overflow: hidden;
+      display: none;
+    }
+    .prefix-dropdown.open { display: block; }
+    .prefix-search {
+      width: 100%; padding: 10px 12px; border: none; border-bottom: 1px solid #f0f0f0;
+      font-size: 13px; font-family: inherit; outline: none;
+    }
+    .prefix-list { max-height: 220px; overflow-y: auto; }
+    .prefix-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 12px; cursor: pointer; font-size: 13px; color: #111;
+      transition: background 0.1s;
+    }
+    .prefix-item:hover { background: #fffbeb; }
+    .prefix-item.selected { background: #fef3c7; font-weight: 700; }
+    .prefix-item .flag { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+    .prefix-item .country { flex: 1; }
+    .prefix-item .code { color: #888; font-size: 12px; flex-shrink: 0; }
+
     .input-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+
+    /* ── SUCCESS OVERLAY ── */
+    .success-overlay {
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px; animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .success-card {
+      background: white; border-radius: 16px; padding: 36px 28px;
+      max-width: 380px; width: 100%; text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.28);
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .success-checkmark {
+      width: 68px; height: 68px; border-radius: 50%;
+      background: #f0fdf4; border: 2px solid #bbf7d0;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-size: 32px;
+    }
+    .success-title { font-size: 22px; font-weight: 800; color: #111; margin-bottom: 8px; }
+    .success-sub { font-size: 14px; color: #666; line-height: 1.5; margin-bottom: 6px; }
+    .success-detail {
+      font-size: 13px; font-weight: 600; color: #92400e;
+      background: #fef3c7; border: 1px solid #fde68a;
+      border-radius: 8px; padding: 10px 14px; margin: 16px 0 24px;
+      text-align: left; line-height: 1.6;
+    }
+    .btn-back {
+      width: 100%; padding: 13px; background: #111; color: white;
+      border: none; border-radius: 9px; font-size: 14px; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: background 0.2s;
+    }
+    .btn-back:hover { background: #333; }
 
     .btn-confirm {
       width: 100%; padding: 13px; background: #111; color: white;
@@ -288,8 +360,17 @@
         <div style="margin-bottom:8px">
           <input type="text" id="nombre" placeholder="Nombre completo" />
         </div>
-        <div class="input-pair">
-          <input type="tel" id="telefono" placeholder="Teléfono" />
+        <div style="position:relative">
+          <div class="phone-row">
+            <button type="button" class="prefix-btn" id="prefixBtn" onclick="togglePrefixDropdown()">+34</button>
+            <input type="tel" id="telefono" placeholder="Número de teléfono" />
+          </div>
+          <div class="prefix-dropdown" id="prefixDropdown">
+            <input class="prefix-search" type="text" placeholder="Buscar país..." oninput="filterPrefixes(this.value)" />
+            <div class="prefix-list" id="prefixList"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:8px">
           <input type="email" id="email" placeholder="Email" />
         </div>
         <button id="confirmBtn" class="btn-confirm" onclick="submitReservation()">Confirmar reserva →</button>
@@ -317,6 +398,16 @@
 
 </div>
 
+<div id="successOverlay" class="success-overlay" style="display:none">
+  <div class="success-card">
+    <div class="success-checkmark">✅</div>
+    <div class="success-title">¡Reserva confirmada!</div>
+    <div class="success-sub">Tu visita ha sido registrada correctamente. Te confirmaremos en menos de 24h.</div>
+    <div class="success-detail" id="successDetail"></div>
+    <button class="btn-back" onclick="resetReservation()">← Reservar otra visita</button>
+  </div>
+</div>
+
 <script>
   const SUPABASE_URL = 'https://edjugpekcntzvqaskbmc.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA';
@@ -331,6 +422,94 @@
   let selectedSlot = null;
   let selectedZona = null;
   let contactPhone = null;
+  let selectedPrefix = '34';
+
+  // ── PAÍSES / PREFIJOS ──
+  const COUNTRIES = [
+    {f:'🇪🇸',n:'España',c:'34'},{f:'🇺🇸',n:'Estados Unidos',c:'1'},{f:'🇬🇧',n:'Reino Unido',c:'44'},
+    {f:'🇫🇷',n:'Francia',c:'33'},{f:'🇩🇪',n:'Alemania',c:'49'},{f:'🇮🇹',n:'Italia',c:'39'},
+    {f:'🇵🇹',n:'Portugal',c:'351'},{f:'🇳🇱',n:'Países Bajos',c:'31'},{f:'🇧🇪',n:'Bélgica',c:'32'},
+    {f:'🇨🇭',n:'Suiza',c:'41'},{f:'🇦🇹',n:'Austria',c:'43'},{f:'🇵🇱',n:'Polonia',c:'48'},
+    {f:'🇷🇴',n:'Rumanía',c:'40'},{f:'🇬🇷',n:'Grecia',c:'30'},{f:'🇨🇿',n:'Chequia',c:'420'},
+    {f:'🇭🇺',n:'Hungría',c:'36'},{f:'🇸🇪',n:'Suecia',c:'46'},{f:'🇳🇴',n:'Noruega',c:'47'},
+    {f:'🇩🇰',n:'Dinamarca',c:'45'},{f:'🇫🇮',n:'Finlandia',c:'358'},{f:'🇮🇪',n:'Irlanda',c:'353'},
+    {f:'🇸🇰',n:'Eslovaquia',c:'421'},{f:'🇸🇮',n:'Eslovenia',c:'386'},{f:'🇧🇬',n:'Bulgaria',c:'359'},
+    {f:'🇭🇷',n:'Croacia',c:'385'},{f:'🇷🇸',n:'Serbia',c:'381'},{f:'🇺🇦',n:'Ucrania',c:'380'},
+    {f:'🇷🇺',n:'Rusia',c:'7'},{f:'🇹🇷',n:'Turquía',c:'90'},{f:'🇮🇱',n:'Israel',c:'972'},
+    {f:'🇸🇦',n:'Arabia Saudí',c:'966'},{f:'🇦🇪',n:'Emiratos Árabes',c:'971'},{f:'🇶🇦',n:'Qatar',c:'974'},
+    {f:'🇰🇼',n:'Kuwait',c:'965'},{f:'🇧🇭',n:'Baréin',c:'973'},{f:'🇯🇴',n:'Jordania',c:'962'},
+    {f:'🇱🇧',n:'Líbano',c:'961'},{f:'🇪🇬',n:'Egipto',c:'20'},{f:'🇲🇦',n:'Marruecos',c:'212'},
+    {f:'🇩🇿',n:'Argelia',c:'213'},{f:'🇹🇳',n:'Túnez',c:'216'},{f:'🇱🇾',n:'Libia',c:'218'},
+    {f:'🇸🇳',n:'Senegal',c:'221'},{f:'🇳🇬',n:'Nigeria',c:'234'},{f:'🇬🇭',n:'Ghana',c:'233'},
+    {f:'🇿🇦',n:'Sudáfrica',c:'27'},{f:'🇰🇪',n:'Kenia',c:'254'},{f:'🇪🇹',n:'Etiopía',c:'251'},
+    {f:'🇮🇳',n:'India',c:'91'},{f:'🇵🇰',n:'Pakistán',c:'92'},{f:'🇧🇩',n:'Bangladesh',c:'880'},
+    {f:'🇨🇳',n:'China',c:'86'},{f:'🇯🇵',n:'Japón',c:'81'},{f:'🇰🇷',n:'Corea del Sur',c:'82'},
+    {f:'🇹🇼',n:'Taiwán',c:'886'},{f:'🇻🇳',n:'Vietnam',c:'84'},{f:'🇹🇭',n:'Tailandia',c:'66'},
+    {f:'🇮🇩',n:'Indonesia',c:'62'},{f:'🇲🇾',n:'Malasia',c:'60'},{f:'🇵🇭',n:'Filipinas',c:'63'},
+    {f:'🇸🇬',n:'Singapur',c:'65'},{f:'🇦🇺',n:'Australia',c:'61'},{f:'🇳🇿',n:'Nueva Zelanda',c:'64'},
+    {f:'🇨🇦',n:'Canadá',c:'1'},{f:'🇲🇽',n:'México',c:'52'},{f:'🇧🇷',n:'Brasil',c:'55'},
+    {f:'🇦🇷',n:'Argentina',c:'54'},{f:'🇨🇴',n:'Colombia',c:'57'},{f:'🇨🇱',n:'Chile',c:'56'},
+    {f:'🇵🇪',n:'Perú',c:'51'},{f:'🇻🇪',n:'Venezuela',c:'58'},{f:'🇪🇨',n:'Ecuador',c:'593'},
+    {f:'🇧🇴',n:'Bolivia',c:'591'},{f:'🇵🇾',n:'Paraguay',c:'595'},{f:'🇺🇾',n:'Uruguay',c:'598'},
+    {f:'🇨🇺',n:'Cuba',c:'53'},{f:'🇩🇴',n:'Rep. Dominicana',c:'1'},{f:'🇬🇹',n:'Guatemala',c:'502'},
+    {f:'🇭🇳',n:'Honduras',c:'504'},{f:'🇸🇻',n:'El Salvador',c:'503'},{f:'🇨🇷',n:'Costa Rica',c:'506'},
+    {f:'🇵🇦',n:'Panamá',c:'507'},{f:'🇦🇱',n:'Albania',c:'355'},{f:'🇱🇹',n:'Lituania',c:'370'},
+    {f:'🇱🇻',n:'Letonia',c:'371'},{f:'🇪🇪',n:'Estonia',c:'372'},{f:'🇲🇩',n:'Moldavia',c:'373'},
+    {f:'🇧🇾',n:'Bielorrusia',c:'375'},{f:'🇦🇿',n:'Azerbaiyán',c:'994'},{f:'🇦🇲',n:'Armenia',c:'374'},
+    {f:'🇬🇪',n:'Georgia',c:'995'},{f:'🇰🇿',n:'Kazajistán',c:'7'}
+  ];
+
+  let filteredCountries = [...COUNTRIES];
+
+  function renderPrefixList(list) {
+    document.getElementById('prefixList').innerHTML = list.map((c, i) =>
+      `<div class="prefix-item${c.c === selectedPrefix && c.n === (filteredCountries.find(x=>x.c===selectedPrefix)?.n||'España') ? ' selected' : ''}"
+        onclick="selectPrefix('${c.c}','${c.n.replace(/'/g,"\\'")}')">
+        <span class="flag">${c.f}</span>
+        <span class="country">${escHtml(c.n)}</span>
+        <span class="code">+${c.c}</span>
+      </div>`
+    ).join('');
+  }
+
+  function togglePrefixDropdown() {
+    const dd = document.getElementById('prefixDropdown');
+    const btn = document.getElementById('prefixBtn');
+    const isOpen = dd.classList.contains('open');
+    if (isOpen) {
+      dd.classList.remove('open');
+      btn.classList.remove('open');
+    } else {
+      filteredCountries = [...COUNTRIES];
+      renderPrefixList(filteredCountries);
+      dd.classList.add('open');
+      btn.classList.add('open');
+      dd.querySelector('.prefix-search').value = '';
+      dd.querySelector('.prefix-search').focus();
+    }
+  }
+
+  function filterPrefixes(q) {
+    const term = q.toLowerCase();
+    filteredCountries = COUNTRIES.filter(c =>
+      c.n.toLowerCase().includes(term) || c.c.includes(term)
+    );
+    renderPrefixList(filteredCountries);
+  }
+
+  function selectPrefix(code, name) {
+    selectedPrefix = code;
+    document.getElementById('prefixBtn').textContent = '+' + code;
+    document.getElementById('prefixDropdown').classList.remove('open');
+    document.getElementById('prefixBtn').classList.remove('open');
+  }
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.phone-row') && !e.target.closest('.prefix-dropdown')) {
+      document.getElementById('prefixDropdown').classList.remove('open');
+      document.getElementById('prefixBtn').classList.remove('open');
+    }
+  });
 
   if (!tenantId || !UUID_REGEX.test(tenantId)) {
     document.querySelector('.card-body').innerHTML = `
@@ -466,10 +645,12 @@
 
   async function submitReservation() {
     if (!selectedSlot) return;
-    const nombre   = document.getElementById('nombre').value.trim();
-    const telefono = document.getElementById('telefono').value.trim();
-    const email    = document.getElementById('email').value.trim();
-    if (!nombre || !telefono || !email) { showErr('Completa todos los campos'); return; }
+    const nombre    = document.getElementById('nombre').value.trim();
+    const numRaw    = document.getElementById('telefono').value.trim().replace(/\D/g, '');
+    const email     = document.getElementById('email').value.trim();
+    const telefono  = selectedPrefix + numRaw;
+
+    if (!nombre || !numRaw || !email) { showErr('Completa todos los campos'); return; }
 
     const btn = document.getElementById('confirmBtn');
     btn.disabled = true;
@@ -485,9 +666,16 @@
       if (error) throw error;
       if (!result?.ok) throw new Error(result?.error || 'Error al reservar el hueco.');
 
-      showOk('¡Reserva confirmada! Nos pondremos en contacto en breve.');
+      // Mostrar overlay de éxito
+      const slot = selectedSlot;
+      document.getElementById('successDetail').innerHTML =
+        `📅 <strong>${slot.zona}</strong><br>` +
+        `${fmtDate(slot.fecha)} · ${slot.hi.slice(0,5)} – ${slot.hf.slice(0,5)}<br>` +
+        `👤 ${escHtml(nombre)} · ${telefono}`;
+      document.getElementById('successOverlay').style.display = 'flex';
+
       deselectSlot();
-      // Recargar slots y mantener zona seleccionada
+      // Recargar slots en segundo plano
       const z = selectedZona;
       const { data } = await db.from('slots_disponibilidad').select('*')
         .eq('tenant_id', tenantId).eq('reservado', false)
@@ -495,9 +683,8 @@
       freeSlots = data || [];
       renderZonas();
       if (z) {
-        // Remarcar chip y mostrar slots actualizados
-        document.querySelectorAll('.zone-chip').forEach(btn => {
-          if (btn.textContent === z) btn.click();
+        document.querySelectorAll('.zone-chip').forEach(b => {
+          if (b.textContent === z) b.click();
         });
       }
     } catch (err) {
@@ -506,6 +693,10 @@
       btn.disabled = false;
       btn.innerHTML = 'Confirmar reserva →';
     }
+  }
+
+  function resetReservation() {
+    document.getElementById('successOverlay').style.display = 'none';
   }
 
   function fmtDate(d) {
