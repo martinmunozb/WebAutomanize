@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reserva tu visita — Automanize</title>
+  <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -37,10 +38,10 @@
     }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .nav-logo-mark {
-      width: 30px; height: 30px; background: #EAB308; border-radius: 7px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; color: white; font-size: 15px;
+      width: 30px; height: 30px; border-radius: 7px;
+      overflow: hidden; flex-shrink: 0;
     }
+    .nav-logo-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .nav-logo-text { font-size: 16px; font-weight: 700; color: white; }
     .nav-tag { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 0.05em; }
 
@@ -337,7 +338,7 @@
 
 <nav>
   <a href="https://automanize.com" class="nav-logo">
-    <div class="nav-logo-mark">A</div>
+    <div class="nav-logo-mark"><img src="/assets/images/Automanize (4).png" alt="Automanize" /></div>
     <span class="nav-logo-text">Automanize</span>
   </a>
   <span class="nav-tag">Reserva de visitas</span>
