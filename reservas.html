@@ -125,18 +125,52 @@
     }
     input:focus { border-color: #EAB308; box-shadow: 0 0 0 3px rgba(234,179,8,0.1); }
 
-    .slots-wrap { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; }
-    .slot-btn {
-      display: flex; align-items: center; gap: 10px;
-      padding: 11px 13px; border: 1.5px solid #e8e8e8;
-      border-radius: 9px; cursor: pointer; background: white;
-      transition: all 0.15s; text-align: left; font-family: inherit; width: 100%;
+    /* ── CALENDAR ── */
+    .cal-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
     }
-    .slot-btn:hover { border-color: #EAB308; background: #fffbeb; }
-    .slot-btn.active { border-color: #EAB308; background: #fffbeb; box-shadow: 0 0 0 3px rgba(234,179,8,0.12); }
-    .slot-indicator { width: 7px; height: 7px; border-radius: 50%; background: #EAB308; flex-shrink: 0; }
-    .slot-time { font-size: 13px; font-weight: 600; color: #111; flex: 1; }
-    .slot-tag { font-size: 11px; color: #999; background: #f5f5f5; padding: 2px 8px; border-radius: 5px; }
+    .cal-nav {
+      width: 32px; height: 32px; border: 1.5px solid #e8e8e8; border-radius: 8px;
+      background: white; cursor: pointer; font-size: 15px; color: #666;
+      display: flex; align-items: center; justify-content: center;
+      font-family: inherit; transition: all 0.15s; flex-shrink: 0;
+    }
+    .cal-nav:hover { border-color: #EAB308; color: #111; background: #fffbeb; }
+    .cal-month { font-size: 14px; font-weight: 700; color: #111; text-align: center; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+    .cal-dow {
+      text-align: center; font-size: 10px; font-weight: 700; color: #bbb;
+      letter-spacing: 0.04em; padding: 2px 0 6px; text-transform: uppercase;
+    }
+    .cal-day {
+      aspect-ratio: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; border-radius: 8px; font-size: 13px; font-weight: 500;
+      color: #ccc; position: relative; transition: all 0.12s; cursor: default;
+    }
+    .cal-day.available { color: #111; cursor: pointer; font-weight: 700; background: #fafafa; }
+    .cal-day.available:hover { background: #fffbeb; }
+    .cal-day.available::after {
+      content: ''; position: absolute; bottom: 5px;
+      width: 4px; height: 4px; border-radius: 50%; background: #EAB308;
+    }
+    .cal-day.today.available { border: 1.5px solid #EAB308; }
+    .cal-day.selected { background: #EAB308 !important; color: #111 !important; font-weight: 800;
+      box-shadow: 0 2px 10px rgba(234,179,8,0.3); }
+    .cal-day.selected::after { background: rgba(0,0,0,0.35); }
+
+    /* ── TIME GRID ── */
+    .day-slots-head {
+      font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase;
+      letter-spacing: 0.07em; margin: 14px 0 8px;
+    }
+    .time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .time-btn {
+      padding: 9px 2px; border: 1.5px solid #e8e8e8; border-radius: 8px;
+      background: white; font-size: 12px; font-weight: 600; color: #333;
+      cursor: pointer; font-family: inherit; text-align: center; transition: all 0.12s;
+    }
+    .time-btn:hover { border-color: #EAB308; background: #fffbeb; }
+    .time-btn.active { border-color: #EAB308; background: #EAB308; color: #111; }
 
     .empty-state { text-align: center; padding: 28px 16px; color: #bbb; font-size: 13px; }
     .empty-state .icon { font-size: 28px; margin-bottom: 8px; }
@@ -334,10 +368,11 @@
         </div>
       </div>
 
-      <!-- Slots -->
-      <div class="field" id="slotsField" style="display:none">
-        <label class="field-label">Huecos disponibles</label>
-        <div id="slotsWrap"></div>
+      <!-- Calendario + huecos del día -->
+      <div class="field" id="calendarField" style="display:none">
+        <label class="field-label">Elige un día</label>
+        <div id="calendarWrap"></div>
+        <div id="daySlotsWrap"></div>
       </div>
 
       <!-- Sin disponibilidad: contacto -->
@@ -421,8 +456,11 @@
   let freeSlots = [];
   let selectedSlot = null;
   let selectedZona = null;
+  let selectedDay = null;
   let contactPhone = null;
   let selectedPrefix = '34';
+  let calYear = new Date().getFullYear();
+  let calMonth = new Date().getMonth();
 
   // ── PAÍSES / PREFIJOS ──
   const COUNTRIES = [
@@ -565,16 +603,13 @@
     return '+' + s;
   }
 
+  const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const DOW_SHORT = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+
   function renderZonas() {
     const zonas = [...new Set(freeSlots.map(s => s.zona).filter(Boolean))].sort();
     const wrap = document.getElementById('zonasWrap');
-
-    if (!zonas.length) {
-      wrap.innerHTML = '';
-      showNoSlotsState(null);
-      return;
-    }
-
+    if (!zonas.length) { wrap.innerHTML = ''; showNoSlotsState(null); return; }
     wrap.innerHTML = '<div class="zone-chips">' +
       zonas.map(z => `<button class="zone-chip" onclick="selectZona('${escAttr(z)}')">${escHtml(z)}</button>`).join('') +
       '</div>';
@@ -582,44 +617,101 @@
 
   function selectZona(zona) {
     selectedZona = zona;
+    selectedDay = null;
     deselectSlot();
-
-    // Marcar chip activo
-    document.querySelectorAll('.zone-chip').forEach(btn => {
-      btn.classList.toggle('active', btn.textContent === zona);
-    });
-
-    const filtered = freeSlots.filter(s => s.zona === zona);
-
+    document.querySelectorAll('.zone-chip').forEach(b => b.classList.toggle('active', b.textContent === zona));
     document.getElementById('contactBlock').classList.remove('show');
-    document.getElementById('slotsField').style.display = '';
+    const filtered = freeSlots.filter(s => s.zona === zona);
+    if (!filtered.length) { showNoSlotsState(zona); return; }
+    document.getElementById('calendarField').style.display = '';
+    // Reset calendar to current month
+    calYear = new Date().getFullYear();
+    calMonth = new Date().getMonth();
+    renderCalendar();
+    document.getElementById('daySlotsWrap').innerHTML = '';
+  }
 
-    if (!filtered.length) {
-      showNoSlotsState(zona);
-      return;
+  function renderCalendar() {
+    const filtered = freeSlots.filter(s => s.zona === selectedZona);
+    const availDays = new Set(filtered.map(s => s.fecha));
+    const today = new Date(); today.setHours(0,0,0,0);
+
+    const firstDay = new Date(calYear, calMonth, 1);
+    // JS getDay(): 0=Sun,1=Mon...6=Sat → convert to Mon-first: (getDay()+6)%7
+    const startDow = (firstDay.getDay() + 6) % 7;
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+    let html = `<div class="cal-header">
+      <button class="cal-nav" onclick="shiftMonth(-1)">&#8249;</button>
+      <span class="cal-month">${MONTH_NAMES[calMonth]} ${calYear}</span>
+      <button class="cal-nav" onclick="shiftMonth(1)">&#8250;</button>
+    </div>
+    <div class="cal-grid">`;
+
+    DOW_SHORT.forEach(d => { html += `<div class="cal-dow">${d}</div>`; });
+
+    // Empty cells before first day
+    for (let i = 0; i < startDow; i++) html += `<div class="cal-day empty"></div>`;
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const cellDate = new Date(calYear, calMonth, d);
+      const isPast = cellDate < today;
+      const isAvail = availDays.has(dateStr) && !isPast;
+      const isSel = dateStr === selectedDay;
+      const isToday = cellDate.getTime() === today.getTime();
+      const cls = ['cal-day', isAvail ? 'available' : '', isSel ? 'selected' : '', isToday ? 'today' : ''].filter(Boolean).join(' ');
+      const click = isAvail ? `onclick="selectDay('${dateStr}')"` : '';
+      html += `<div class="${cls}" ${click}>${d}</div>`;
     }
 
-    document.getElementById('slotsWrap').innerHTML =
-      '<div class="slots-wrap">' +
-      filtered.map(s => `
-        <button class="slot-btn" id="slot-${s.id}"
-          onclick="selectSlot('${s.id}','${escAttr(s.zona)}','${s.fecha}','${s.hora_inicio}','${s.hora_fin}')">
-          <span class="slot-indicator"></span>
-          <span class="slot-time">${s.hora_inicio.slice(0,5)} – ${s.hora_fin.slice(0,5)}</span>
-          <span style="font-size:12px;color:#aaa">${fmtDate(s.fecha)}</span>
-          <span class="slot-tag">${escHtml(s.zona)}</span>
-        </button>
-      `).join('') +
-      '</div>';
+    html += '</div>';
+    document.getElementById('calendarWrap').innerHTML = html;
+  }
+
+  function shiftMonth(delta) {
+    calMonth += delta;
+    if (calMonth < 0) { calMonth = 11; calYear--; }
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    selectedDay = null;
+    deselectSlot();
+    renderCalendar();
+    document.getElementById('daySlotsWrap').innerHTML = '';
+  }
+
+  function selectDay(dateStr) {
+    selectedDay = dateStr;
+    deselectSlot();
+    renderCalendar();
+    renderDaySlots(dateStr);
+  }
+
+  function renderDaySlots(dateStr) {
+    const daySlots = freeSlots.filter(s => s.zona === selectedZona && s.fecha === dateStr)
+      .sort((a,b) => a.hora_inicio.localeCompare(b.hora_inicio));
+
+    const date = new Date(dateStr + 'T00:00:00');
+    const label = date.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' });
+
+    let html = `<div class="day-slots-head">Huecos disponibles · ${label}</div>`;
+    if (!daySlots.length) {
+      html += `<div class="empty-state"><div class="icon">📭</div>No hay huecos libres este día.</div>`;
+    } else {
+      html += '<div class="time-grid">' +
+        daySlots.map(s =>
+          `<button class="time-btn" id="slot-${s.id}"
+            onclick="selectSlot('${s.id}','${escAttr(s.zona)}','${s.fecha}','${s.hora_inicio}','${s.hora_fin}')">
+            ${s.hora_inicio.slice(0,5)}
+          </button>`
+        ).join('') +
+        '</div>';
+    }
+    document.getElementById('daySlotsWrap').innerHTML = html;
   }
 
   function showNoSlotsState(zona) {
-    document.getElementById('slotsField').style.display = zona ? '' : 'none';
-    if (zona) {
-      document.getElementById('slotsWrap').innerHTML = '';
-    }
+    document.getElementById('calendarField').style.display = zona ? '' : 'none';
     document.getElementById('contactBlock').classList.add('show');
-    // Si no hay teléfono configurado, ocultar el botón
     if (!contactPhone) {
       document.getElementById('contactLink').style.display = 'none';
       document.getElementById('contactSub').textContent = 'No hay huecos disponibles en este momento. Inténtalo más tarde.';
@@ -628,17 +720,18 @@
 
   function selectSlot(id, zona, fecha, hi, hf) {
     selectedSlot = { id, zona, fecha, hi, hf };
-    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
     const btn = document.getElementById('slot-' + id);
     if (btn) btn.classList.add('active');
     document.getElementById('slotInfo').textContent = `${zona} · ${fmtDate(fecha)} · ${hi.slice(0,5)}–${hf.slice(0,5)}`;
     document.getElementById('reservaInset').classList.add('show');
+    setTimeout(() => document.getElementById('reservaInset').scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
     document.getElementById('nombre').focus();
   }
 
   function deselectSlot() {
     selectedSlot = null;
-    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('reservaInset').classList.remove('show');
     ['nombre','telefono','email'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   }
@@ -677,15 +770,19 @@
       deselectSlot();
       // Recargar slots en segundo plano
       const z = selectedZona;
+      const d = selectedDay;
       const { data } = await db.from('slots_disponibilidad').select('*')
         .eq('tenant_id', tenantId).eq('reservado', false)
         .order('fecha').order('hora_inicio');
       freeSlots = data || [];
       renderZonas();
       if (z) {
-        document.querySelectorAll('.zone-chip').forEach(b => {
-          if (b.textContent === z) b.click();
-        });
+        selectedZona = z;
+        document.querySelectorAll('.zone-chip').forEach(b => b.classList.toggle('active', b.textContent === z));
+        document.getElementById('calendarField').style.display = '';
+        renderCalendar();
+        if (d) { selectedDay = d; renderCalendar(); renderDaySlots(d); }
+        else document.getElementById('daySlotsWrap').innerHTML = '';
       }
     } catch (err) {
       showErr('Error al confirmar la reserva: ' + err.message);
