@@ -63,7 +63,7 @@
     }
     .card-title { font-size: 22px; font-weight: 800; color: #111; line-height: 1.2; margin-bottom: 6px; }
     .card-sub { font-size: 13px; color: #999; }
-    .card-body { padding: 24px 36px; flex: 1; overflow-y: auto; }
+    .card-body { padding: 24px 36px; flex: 1; overflow-y: auto; overflow-x: hidden; }
 
     .hero-content {
       flex: 1; display: flex; flex-direction: column;
@@ -326,8 +326,45 @@
     @media (max-width: 768px) {
       .page { flex-direction: column; }
       .card { width: 100%; min-width: 0; min-height: auto; }
-      .hero-content { padding: 40px 24px; }
-      nav { padding: 0 20px; }
+      .card-top { padding: 20px 18px 16px; }
+      .card-title { font-size: 19px; }
+      .card-body { padding: 16px 18px; }
+      .hero-content { display: none; }
+      nav { padding: 0 16px; height: 52px; }
+      .nav-logo-text { font-size: 14px; }
+
+      /* Zona chips más grandes */
+      .zone-chip { padding: 10px 16px; font-size: 14px; }
+
+      /* Calendario: más compacto pero legible */
+      .cal-header { margin-bottom: 8px; }
+      .cal-month { font-size: 15px; }
+      .cal-nav { width: 36px; height: 36px; }
+      .cal-dow { font-size: 11px; padding-bottom: 8px; }
+      .cal-day { font-size: 14px; border-radius: 10px; }
+      .cal-day.available { background: #f5f5f5; }
+
+      /* Grid de horas: 3 columnas, botones grandes y fáciles de tocar */
+      .time-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .time-btn {
+        padding: 13px 4px; font-size: 14px; font-weight: 700;
+        border-radius: 10px; border-width: 2px;
+        min-height: 46px;
+      }
+      .time-btn.active { border-width: 2px; }
+
+      /* Formulario de reserva */
+      .reservation-inset { padding: 16px; }
+      .inset-badge { font-size: 12px; }
+      .btn-confirm { padding: 15px; font-size: 15px; margin-top: 12px; }
+      .btn-cancel { padding: 12px; }
+
+      /* Formulario datos: teléfono en columna */
+      .prefix-btn { width: 64px; font-size: 13px; }
+      .input-pair { grid-template-columns: 1fr; }
+
+      /* Alerta de error */
+      .alert { font-size: 13px; }
     }
   </style>
 </head>
