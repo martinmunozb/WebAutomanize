@@ -117,6 +117,27 @@
       box-shadow: 0 0 0 3px rgba(234,179,8,0.18);
     }
 
+    /* ── CHIPS DE INMUEBLE ── */
+    .inmueble-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .inmueble-chip {
+      padding: 8px 16px; border: 1.5px solid #e8e8e8; border-radius: 40px;
+      background: white; font-size: 13px; font-weight: 500; color: #444;
+      cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap;
+    }
+    .inmueble-chip:hover { border-color: #EAB308; color: #111; background: #fffbeb; }
+    .inmueble-chip.selected {
+      border-color: #111; background: #111; color: white; font-weight: 700;
+    }
+    .inmueble-notice {
+      margin-top: 10px; padding: 10px 12px; border-radius: 8px;
+      background: #fffbeb; border: 1px solid #fde68a;
+      font-size: 12px; color: #92400e; line-height: 1.5;
+    }
+    .slots-hint {
+      font-size: 11px; color: #999; margin-top: 8px; line-height: 1.4;
+    }
+    .time-btn.active2 { border-color: #888; background: #f5f5f5; color: #111; border-width: 2px; }
+
     /* ── SLOTS ── */
     input, select {
       width: 100%; padding: 11px 13px;
@@ -372,6 +393,13 @@
         </div>
       </div>
 
+      <!-- Picker de inmuebles (cuando hay >1 inmueble en la zona seleccionada) -->
+      <div class="field" id="inmueblesField" style="display:none">
+        <label class="field-label">¿Qué inmueble(s) quieres visitar?</label>
+        <div id="inmueblesWrap"></div>
+        <div id="inmueblesNotice"></div>
+      </div>
+
       <!-- Calendario + huecos del día -->
       <div class="field" id="calendarField" style="display:none">
         <label class="field-label">Elige un día</label>
@@ -457,10 +485,31 @@
   const params = new URLSearchParams(window.location.search);
   const tenantId = params.get('t');
 
+  // Decode optional zones token: ?zones=<base64url JSON>
+  // Formato: { grupos: { "BARRIO DEL CARMEN": ["CALLE-H1","CALLE-H2"], ... }, ts }
+  let allowedGrupos = null; // { zona: [id_inmueble, ...] }
+  let allowedZonas = null;  // array de zonas permitidas
+  (function() {
+    const raw = params.get('zones');
+    if (!raw) return;
+    try {
+      const json = JSON.parse(atob(raw.replace(/-/g,'+').replace(/_/g,'/')));
+      if (json.grupos && typeof json.grupos === 'object' && !Array.isArray(json.grupos)) {
+        const keys = Object.keys(json.grupos);
+        if (keys.length) { allowedGrupos = json.grupos; allowedZonas = keys; }
+      } else if (Array.isArray(json.zonas) && json.zonas.length) {
+        allowedZonas = json.zonas; // compatibilidad legacy
+      }
+    } catch(e) { /* token inválido, se ignora */ }
+  })();
+
   let freeSlots = [];
   let selectedSlot = null;
+  let selectedSlotExtras = []; // huecos extra consecutivos (uno por inmueble adicional)
   let selectedZona = null;
   let selectedDay = null;
+  let selectedInmuebles = []; // inmuebles elegidos en el picker (1..N)
+  let allDaySlots = [];       // huecos completos del día cargado
   let contactPhone = null;
   let selectedPrefix = '34';
   let calYear = new Date().getFullYear();
@@ -611,8 +660,16 @@
   const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   const DOW_SHORT = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
 
+  function zonaNormalize(s) {
+    return s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+
   function renderZonas() {
-    const zonas = [...new Set(freeSlots.map(s => s.zona).filter(Boolean))].sort();
+    let zonas = [...new Set(freeSlots.map(s => s.zona).filter(Boolean))].sort();
+    if (allowedZonas) {
+      const normalized = allowedZonas.map(zonaNormalize);
+      zonas = zonas.filter(z => normalized.some(n => zonaNormalize(z).includes(n) || n.includes(zonaNormalize(z))));
+    }
     const wrap = document.getElementById('zonasWrap');
     if (!zonas.length) { wrap.innerHTML = ''; showNoSlotsState(null); return; }
     wrap.innerHTML = '<div class="zone-chips">' +
@@ -620,18 +677,85 @@
       '</div>';
   }
 
+  function getInmueblesForZona(zona) {
+    if (!allowedGrupos) return [];
+    if (allowedGrupos[zona]) return allowedGrupos[zona];
+    const normZona = zonaNormalize(zona);
+    const key = Object.keys(allowedGrupos).find(k => zonaNormalize(k) === normZona);
+    return key ? allowedGrupos[key] : [];
+  }
+
   function selectZona(zona) {
     selectedZona = zona;
     selectedDay = null;
+    selectedInmuebles = [];
+    selectedSlotExtras = [];
     deselectSlot();
     document.querySelectorAll('.zone-chip').forEach(b => b.classList.toggle('active', b.textContent === zona));
     document.getElementById('contactBlock').classList.remove('show');
+    document.getElementById('inmueblesField').style.display = 'none';
+    document.getElementById('calendarField').style.display = 'none';
+
     const filtered = freeSlots.filter(s => s.zona === zona);
     if (!filtered.length) { showNoSlotsState(zona); return; }
-    document.getElementById('calendarField').style.display = '';
-    // Reset calendar to current month
+
+    // Inmuebles disponibles para esta zona según el token
+    const zonasInmuebles = allowedGrupos ? getInmueblesForZona(zona) : [];
+
+    if (zonasInmuebles.length > 1) {
+      renderInmuebles(zonasInmuebles);
+      document.getElementById('inmueblesField').style.display = '';
+    } else {
+      if (zonasInmuebles.length === 1) selectedInmuebles = [zonasInmuebles[0]];
+      showCalendar();
+    }
+  }
+
+  function renderInmuebles(inmuebles) {
+    selectedInmuebles = [];
+    document.getElementById('inmueblesWrap').innerHTML =
+      '<div class="inmueble-chips">' +
+      inmuebles.map(i =>
+        `<button class="inmueble-chip" data-inm="${escAttr(i)}" onclick="toggleInmueble('${escAttr(i)}')">${escHtml(formatInmueble(i))}</button>`
+      ).join('') +
+      '</div>';
+    document.getElementById('inmueblesNotice').innerHTML = '';
+  }
+
+  function formatInmueble(name) {
+    const m = name.match(/-H(\d+)$/i);
+    return m ? `Habitación ${m[1]}` : name;
+  }
+
+  function toggleInmueble(name) {
+    const idx = selectedInmuebles.indexOf(name);
+    if (idx >= 0) {
+      selectedInmuebles.splice(idx, 1);
+    } else {
+      selectedInmuebles.push(name);
+    }
+    document.querySelectorAll('.inmueble-chip').forEach(b => {
+      b.classList.toggle('selected', selectedInmuebles.includes(b.dataset.inm));
+    });
+    const notice = document.getElementById('inmueblesNotice');
+    deselectSlot();
+    const n = selectedInmuebles.length;
+    if (n === 0) {
+      notice.innerHTML = '';
+      document.getElementById('calendarField').style.display = 'none';
+    } else if (n > 1) {
+      notice.innerHTML = `<div class="inmueble-notice">⚡ Para visitar los ${n} inmuebles necesitas ${n} huecos consecutivos. Selecciona el primero y el resto se asignarán automáticamente.</div>`;
+      showCalendar();
+    } else {
+      notice.innerHTML = '';
+      showCalendar();
+    }
+  }
+
+  function showCalendar() {
     calYear = new Date().getFullYear();
     calMonth = new Date().getMonth();
+    document.getElementById('calendarField').style.display = '';
     renderCalendar();
     document.getElementById('daySlotsWrap').innerHTML = '';
   }
@@ -700,16 +824,46 @@
       .order('hora_inicio');
 
     if (error) { document.getElementById('daySlotsWrap').innerHTML = ''; showErr('Error al cargar huecos.'); return; }
-    renderDaySlots(data || [], dateStr);
+    allDaySlots = data || [];
+    renderDaySlots(allDaySlots, dateStr);
+  }
+
+  // Devuelve cadena de `count` slots consecutivos desde startSlot, o null si no existe
+  function findChain(startSlot, slots, count) {
+    const chain = [startSlot];
+    for (let i = 1; i < count; i++) {
+      const last = chain[chain.length - 1];
+      const next = slots.find(s => s.hora_inicio === last.hora_fin && !chain.some(c => c.id === s.id));
+      if (!next) return null;
+      chain.push(next);
+    }
+    return chain;
   }
 
   function renderDaySlots(slots, dateStr) {
     const date = new Date(dateStr + 'T00:00:00');
     const label = date.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' });
+    const n = selectedInmuebles.length;
+    const needChain = n > 1;
 
     let html = `<div class="day-slots-head">Huecos disponibles · ${label}</div>`;
     if (!slots.length) {
       html += `<div class="empty-state"><div class="icon">📭</div>No hay huecos libres este día.</div>`;
+    } else if (needChain) {
+      const validSlots = slots.filter(s => findChain(s, slots, n) !== null);
+      if (!validSlots.length) {
+        html += `<div class="empty-state"><div class="icon">📭</div>No hay ${n} huecos consecutivos disponibles este día. Prueba con otro día.</div>`;
+      } else {
+        html += '<div class="time-grid">' +
+          validSlots.map(s =>
+            `<button class="time-btn" id="slot-${s.id}"
+              onclick="selectSlot('${s.id}','${escAttr(s.zona)}','${s.fecha}','${s.hora_inicio}','${s.hora_fin}')">
+              ${s.hora_inicio.slice(0,5)}
+            </button>`
+          ).join('') +
+          '</div>';
+        html += `<div class="slots-hint">Selecciona el primer hueco — los ${n - 1} restantes se reservarán automáticamente.</div>`;
+      }
     } else {
       html += '<div class="time-grid">' +
         slots.map(s =>
@@ -734,10 +888,31 @@
 
   function selectSlot(id, zona, fecha, hi, hf) {
     selectedSlot = { id, zona, fecha, hi, hf };
-    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+    selectedSlotExtras = [];
+    document.querySelectorAll('.time-btn').forEach(b => { b.classList.remove('active'); b.classList.remove('active2'); });
     const btn = document.getElementById('slot-' + id);
     if (btn) btn.classList.add('active');
-    document.getElementById('slotInfo').textContent = `${zona} · ${fmtDate(fecha)} · ${hi.slice(0,5)}–${hf.slice(0,5)}`;
+
+    const n = selectedInmuebles.length;
+    if (n > 1) {
+      const firstRaw = allDaySlots.find(s => s.id === id);
+      const chain = firstRaw ? findChain(firstRaw, allDaySlots, n) : null;
+      if (!chain) {
+        showErr('No hay suficientes huecos consecutivos para este horario. Elige otro.');
+        deselectSlot();
+        return;
+      }
+      selectedSlotExtras = chain.slice(1).map(s => ({ id: s.id, zona: s.zona, fecha: s.fecha, hi: s.hora_inicio, hf: s.hora_fin }));
+      selectedSlotExtras.forEach(s => {
+        const b = document.getElementById('slot-' + s.id);
+        if (b) b.classList.add('active2');
+      });
+      const times = chain.map((s, i) => `${i + 1}.º&nbsp;${s.hora_inicio.slice(0,5)}–${s.hora_fin.slice(0,5)}`).join('&nbsp;&nbsp;·&nbsp;&nbsp;');
+      document.getElementById('slotInfo').innerHTML = `${zona} · ${fmtDate(fecha)}<br><span style="font-size:11px">${times}</span>`;
+    } else {
+      document.getElementById('slotInfo').textContent = `${zona} · ${fmtDate(fecha)} · ${hi.slice(0,5)}–${hf.slice(0,5)}`;
+    }
+
     document.getElementById('reservaInset').classList.add('show');
     setTimeout(() => document.getElementById('reservaInset').scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
     document.getElementById('nombre').focus();
@@ -745,7 +920,8 @@
 
   function deselectSlot() {
     selectedSlot = null;
-    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+    selectedSlotExtras = [];
+    document.querySelectorAll('.time-btn').forEach(b => { b.classList.remove('active'); b.classList.remove('active2'); });
     document.getElementById('reservaInset').classList.remove('show');
     ['nombre','telefono','email'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   }
@@ -764,21 +940,27 @@
     btn.innerHTML = '<span class="spin"></span>Reservando...';
 
     try {
-      const { data: result, error } = await db.rpc('reservar_slot', {
-        p_slot_id:   selectedSlot.id,
-        p_nombre:    nombre,
-        p_telefono:  telefono,
-        p_email:     email
+      const { data: r1, error: e1 } = await db.rpc('reservar_slot', {
+        p_slot_id: selectedSlot.id, p_nombre: nombre, p_telefono: telefono, p_email: email
       });
-      if (error) throw error;
-      if (!result?.ok) throw new Error(result?.error || 'Error al reservar el hueco.');
+      if (e1) throw e1;
+      if (!r1?.ok) throw new Error(r1?.error || 'Error al reservar el hueco.');
+
+      for (let i = 0; i < selectedSlotExtras.length; i++) {
+        const sx = selectedSlotExtras[i];
+        const { data: rx, error: ex } = await db.rpc('reservar_slot', {
+          p_slot_id: sx.id, p_nombre: nombre, p_telefono: telefono, p_email: email
+        });
+        if (ex) throw ex;
+        if (!rx?.ok) throw new Error(rx?.error || `El hueco ${i + 2} ya no estaba disponible. Los anteriores se reservaron correctamente.`);
+      }
 
       // Mostrar overlay de éxito
       const slot = selectedSlot;
-      document.getElementById('successDetail').innerHTML =
-        `📅 <strong>${slot.zona}</strong><br>` +
-        `${fmtDate(slot.fecha)} · ${slot.hi.slice(0,5)} – ${slot.hf.slice(0,5)}<br>` +
-        `👤 ${escHtml(nombre)} · ${telefono}`;
+      let detail = `📅 <strong>${slot.zona}</strong><br>${fmtDate(slot.fecha)} · ${slot.hi.slice(0,5)} – ${slot.hf.slice(0,5)}<br>`;
+      selectedSlotExtras.forEach(s => { detail += `📅 ${fmtDate(s.fecha)} · ${s.hi.slice(0,5)} – ${s.hf.slice(0,5)}<br>`; });
+      detail += `👤 ${escHtml(nombre)} · ${telefono}`;
+      document.getElementById('successDetail').innerHTML = detail;
       document.getElementById('successOverlay').style.display = 'flex';
 
       deselectSlot();
