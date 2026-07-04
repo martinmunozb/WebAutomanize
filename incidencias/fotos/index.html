@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enviar fotos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #F2F0EB;
+      --white:   #FFFFFF;
+      --border:  #E0DDD6;
+      --accent:  #F0C000;
+      --acc-h:   #D9AC00;
+      --text:    #1A1918;
+      --muted:   #6B6866;
+      --light:   #A8A5A0;
+      --red:     #D94848;
+      --green:   #2E8B57;
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+    }
+
+    /* ── Layout ── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 20px 48px;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 28px;
+      align-self: flex-start;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 32px 24px;
+    }
+
+    /* ── Estados ocultos por defecto ── */
+    .state { display: none; }
+    .state.active { display: block; }
+
+    /* ── Encabezado ── */
+    .card h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+    .card .sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 28px;
+    }
+
+    /* ── Zona de selección ── */
+    .pick-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 36px 20px;
+      background: #FAFAF8;
+      border: 1.5px dashed #C8C5BE;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .pick-btn:hover { border-color: var(--accent); background: rgba(240,192,0,0.05); }
+    .pick-btn input {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer;
+      width: 100%; height: 100%;
+    }
+    .pick-icon {
+      width: 48px; height: 48px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pick-icon svg { width: 24px; height: 24px; fill: #fff; }
+    .pick-btn strong { font-size: 15px; }
+    .pick-btn span   { font-size: 13px; color: var(--muted); }
+
+    /* ── Lista de fotos seleccionadas ── */
+    .photo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .photo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: #FAFAF8;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: 13px;
+    }
+    .photo-row .emoji { font-size: 18px; flex-shrink: 0; }
+    .photo-row .name  { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+    .photo-row .size  { font-size: 11px; color: var(--light); flex-shrink: 0; }
+    .photo-row .del   { background: none; border: none; color: var(--light); cursor: pointer; font-size: 16px; padding: 0 2px; flex-shrink: 0; line-height: 1; }
+    .photo-row .del:hover { color: var(--red); }
+    .photo-row.too-big { border-color: var(--red); background: rgba(217,72,72,0.05); }
+    .photo-row.too-big .size { color: var(--red); }
+
+    /* ── Botón enviar ── */
+    .btn-send {
+      width: 100%;
+      padding: 16px;
+      background: var(--accent);
+      color: #000;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.06em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 12px;
+    }
+    .btn-send:hover:not(:disabled) { background: var(--acc-h); }
+    .btn-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .add-more-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      background: none;
+      border: none;
+      width: 100%;
+      padding: 4px;
+    }
+    .add-more-link:hover { color: var(--text); }
+
+    /* ── Estado de subida ── */
+    .upload-header {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: 24px;
+    }
+    .progress-items {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .prog-row {}
+    .prog-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .prog-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .prog-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      border-radius: 99px;
+      transition: width 0.2s;
+    }
+    .prog-fill.ok    { background: var(--green); width: 100%; }
+    .prog-fill.fail  { background: var(--red);   width: 100%; }
+    .prog-fill.skip  { background: var(--light);  width: 100%; }
+
+    /* ── Estado final ── */
+    .result-icon {
+      font-size: 48px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .result-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    .result-msg {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .result-detail {
+      margin-top: 20px;
+      padding: 14px 16px;
+      background: #FAFAF8;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .result-detail .ok-line   { color: var(--green); }
+    .result-detail .fail-line { color: var(--red); }
+
+    /* ── Error general ── */
+    .error-icon  { font-size: 44px; text-align: center; margin-bottom: 16px; }
+    .error-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 8px; }
+    .error-msg   { font-size: 14px; color: var(--muted); line-height: 1.6; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="logo">Automanize</div>
+
+  <div class="card">
+
+    <!-- ESTADO: sin token o token inválido -->
+    <div class="state" id="stateInvalid">
+      <div class="error-icon">🔒</div>
+      <div class="error-title">Este enlace no es válido</div>
+      <p class="error-msg">Parece que este enlace ha caducado o no es correcto.<br><br>Pide uno nuevo directamente desde WhatsApp y vuelve a intentarlo.</p>
+    </div>
+
+    <!-- ESTADO: formulario de selección -->
+    <div class="state" id="statePick">
+      <h1>Envía las fotos de la incidencia</h1>
+      <p class="sub">Elige las fotos desde tu móvil y las recibiremos al instante. Puedes seleccionar varias a la vez.</p>
+
+      <label class="pick-btn" id="pickBtn">
+        <input type="file" id="fileInput" accept="image/*" multiple />
+        <div class="pick-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+        </div>
+        <strong>Elegir fotos</strong>
+        <span>JPG, PNG, HEIC · Máx. 15 MB por foto</span>
+      </label>
+
+      <div class="photo-list" id="photoList"></div>
+
+      <button class="btn-send" id="btnSend" disabled>Enviar fotos</button>
+      <button class="add-more-link" id="btnAddMore" style="display:none">+ Añadir más fotos</button>
+    </div>
+
+    <!-- ESTADO: subiendo -->
+    <div class="state" id="stateUploading">
+      <div class="upload-header" id="uploadHeader">Enviando fotos...</div>
+      <div class="progress-items" id="progressItems"></div>
+    </div>
+
+    <!-- ESTADO: resultado final -->
+    <div class="state" id="stateResult">
+      <div class="result-icon" id="resultIcon"></div>
+      <div class="result-title" id="resultTitle"></div>
+      <p class="result-msg"  id="resultMsg"></p>
+      <div class="result-detail" id="resultDetail" style="display:none"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── Configuración ──────────────────────────────────────────────
+  const WEBHOOK = 'https://n8n.automanize.com/webhook/incidencias-fotos-submit';
+  const MAX_MB  = 15;
+  // ──────────────────────────────────────────────────────────────
+
+  const token = new URLSearchParams(window.location.search).get('token') || '';
+
+  const stateInvalid   = document.getElementById('stateInvalid');
+  const statePick      = document.getElementById('statePick');
+  const stateUploading = document.getElementById('stateUploading');
+  const stateResult    = document.getElementById('stateResult');
+
+  const fileInput      = document.getElementById('fileInput');
+  const photoList      = document.getElementById('photoList');
+  const btnSend        = document.getElementById('btnSend');
+  const btnAddMore     = document.getElementById('btnAddMore');
+  const uploadHeader   = document.getElementById('uploadHeader');
+  const progressItems  = document.getElementById('progressItems');
+
+  let files = [];
+
+  function show(el) {
+    [stateInvalid, statePick, stateUploading, stateResult].forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // ── Init ──────────────────────────────────────────────────────
+  if (!token) {
+    show(stateInvalid);
+  } else {
+    show(statePick);
+  }
+
+  // ── Selección de archivos ─────────────────────────────────────
+  fileInput.addEventListener('change', () => {
+    addFiles(Array.from(fileInput.files));
+    fileInput.value = '';
+  });
+
+  btnAddMore.addEventListener('click', () => fileInput.click());
+
+  function addFiles(newFiles) {
+    newFiles.forEach(f => {
+      const dup = files.find(x => x.name === f.name && x.size === f.size);
+      if (!dup) files.push(f);
+    });
+    renderList();
+  }
+
+  function renderList() {
+    photoList.innerHTML = '';
+    const MAX = MAX_MB * 1024 * 1024;
+
+    files.forEach((f, i) => {
+      const tooBig = f.size > MAX;
+      const sizeTxt = f.size > 1024 * 1024
+        ? (f.size / 1024 / 1024).toFixed(1) + ' MB'
+        : Math.round(f.size / 1024) + ' KB';
+
+      const row = document.createElement('div');
+      row.className = 'photo-row' + (tooBig ? ' too-big' : '');
+      row.innerHTML = `
+        <span class="emoji">🖼️</span>
+        <span class="name">${f.name}</span>
+        <span class="size">${tooBig ? '⚠ ' : ''}${sizeTxt}</span>
+        <button class="del" data-i="${i}" title="Quitar">✕</button>
+      `;
+      photoList.appendChild(row);
+    });
+
+    photoList.querySelectorAll('.del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        files.splice(parseInt(btn.dataset.i), 1);
+        renderList();
+      });
+    });
+
+    const validCount = files.filter(f => f.size <= MAX_MB * 1024 * 1024).length;
+    btnSend.disabled    = validCount === 0;
+    btnSend.textContent = validCount === 1
+      ? 'Enviar 1 foto'
+      : `Enviar ${validCount} fotos`;
+    btnAddMore.style.display = files.length ? 'block' : 'none';
+  }
+
+  // ── Subida ────────────────────────────────────────────────────
+  btnSend.addEventListener('click', startUpload);
+
+  async function startUpload() {
+    const MAX = MAX_MB * 1024 * 1024;
+    const valid = files.filter(f => f.size <= MAX);
+    if (!valid.length) return;
+
+    show(stateUploading);
+    progressItems.innerHTML = '';
+    uploadHeader.textContent = 'Enviando fotos...';
+
+    const results = [];
+
+    for (let i = 0; i < valid.length; i++) {
+      const f = valid[i];
+      uploadHeader.textContent = `Enviando foto ${i + 1} de ${valid.length}...`;
+
+      const { fillEl, labelEl } = crearProgreso(f.name, i);
+
+      try {
+        const status = await subirFoto(f, fillEl);
+
+        if (status === 401) {
+          // Token inválido: no tiene sentido seguir
+          fillEl.classList.add('fail');
+          labelEl.textContent = f.name + ' · Enlace no válido';
+          for (let j = i + 1; j < valid.length; j++) {
+            const { fillEl: fj, labelEl: lj } = crearProgreso(valid[j].name, j);
+            fj.classList.add('skip');
+            lj.textContent = valid[j].name + ' · Cancelado';
+          }
+          results.push(...valid.slice(i).map((_, idx) => idx === 0 ? 'invalid' : 'skip'));
+          break;
+        }
+
+        fillEl.classList.add('ok');
+        labelEl.textContent = f.name + ' · Enviada ✓';
+        results.push('ok');
+
+      } catch {
+        fillEl.classList.add('fail');
+        labelEl.textContent = f.name + ' · Error al enviar';
+        results.push('fail');
+      }
+    }
+
+    mostrarResultado(valid, results);
+  }
+
+  function crearProgreso(nombre, idx) {
+    const wrap = document.createElement('div');
+    wrap.className = 'prog-row';
+
+    const label = document.createElement('div');
+    label.className = 'prog-label';
+    label.textContent = nombre;
+
+    const bar  = document.createElement('div');
+    bar.className = 'prog-bar';
+    const fill = document.createElement('div');
+    fill.className = 'prog-fill';
+    bar.appendChild(fill);
+
+    wrap.appendChild(label);
+    wrap.appendChild(bar);
+    progressItems.appendChild(wrap);
+
+    return { fillEl: fill, labelEl: label };
+  }
+
+  function subirFoto(file, fillEl) {
+    return new Promise((resolve, reject) => {
+      const form = new FormData();
+      form.append('token',    token);
+      form.append('archivo0', file, file.name);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', WEBHOOK);
+
+      xhr.upload.addEventListener('progress', e => {
+        if (e.lengthComputable) {
+          fillEl.style.width = Math.round((e.loaded / e.total) * 88) + '%';
+        }
+      });
+
+      xhr.addEventListener('load',  () => resolve(xhr.status));
+      xhr.addEventListener('error', () => reject(new Error('red')));
+      xhr.addEventListener('abort', () => reject(new Error('abort')));
+      xhr.send(form);
+    });
+  }
+
+  function mostrarResultado(valid, results) {
+    show(stateResult);
+
+    const ok      = results.filter(r => r === 'ok').length;
+    const fail    = results.filter(r => r === 'fail').length;
+    const invalid = results.some(r => r === 'invalid');
+
+    const iconEl   = document.getElementById('resultIcon');
+    const titleEl  = document.getElementById('resultTitle');
+    const msgEl    = document.getElementById('resultMsg');
+    const detailEl = document.getElementById('resultDetail');
+
+    if (invalid) {
+      iconEl.textContent  = '🔒';
+      titleEl.textContent = 'Este enlace no es válido';
+      msgEl.textContent   = 'Parece que el enlace ha caducado. Pide uno nuevo desde WhatsApp e inténtalo otra vez.';
+      detailEl.style.display = 'none';
+      return;
+    }
+
+    if (fail === 0) {
+      // Todo bien
+      iconEl.textContent  = '✅';
+      titleEl.textContent = ok === 1 ? '¡Foto recibida!' : '¡Fotos recibidas!';
+      msgEl.textContent   = 'Perfecto, ya las tenemos. El equipo las revisará y te avisará por WhatsApp en cuanto haya novedades.';
+      detailEl.style.display = 'none';
+    } else if (ok === 0) {
+      // Todo falló
+      iconEl.textContent  = '😔';
+      titleEl.textContent = 'Algo ha fallado';
+      msgEl.textContent   = 'No hemos podido recibir las fotos. Comprueba tu conexión a internet y vuelve a intentarlo.';
+      detailEl.style.display = 'none';
+    } else {
+      // Parcial
+      iconEl.textContent  = '⚠️';
+      titleEl.textContent = `${ok} de ${valid.length} fotos enviadas`;
+      msgEl.textContent   = 'Algunas fotos no se han podido enviar. Puedes volver a intentarlo más tarde con las que han fallado.';
+      detailEl.style.display = 'block';
+      detailEl.innerHTML  = results.map((r, i) => {
+        const name = valid[i]?.name || '';
+        if (r === 'ok')   return `<div class="ok-line">✓ ${name}</div>`;
+        if (r === 'fail') return `<div class="fail-line">✗ ${name} — no se pudo enviar</div>`;
+        return '';
+      }).join('');
+    }
+  }
+</script>
+</body>
+</html>
