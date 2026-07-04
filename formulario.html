@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <meta name="theme-color" content="#0D0D0D" />
+  <title>Formulario de solicitud</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0D0D0D;
+      --surface:     #141414;
+      --surface2:    #1A1A1A;
+      --border:      #2A2A2A;
+      --accent:      #F0C000;
+      --accent-h:    #D9AC00;
+      --accent-dim:  rgba(240,192,0,0.08);
+      --accent-ring: rgba(240,192,0,0.25);
+      --text:        #F5F5F5;
+      --muted:       #888;
+      --light:       #444;
+      --error:       #F87171;
+      --error-bg:    rgba(248,113,113,0.08);
+    }
+
+    html, body {
+      min-height: 100vh; background: var(--bg); color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif; font-size: 16px;
+    }
+    #app { min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* ── Spinner ── */
+    .spinner { width: 36px; height: 36px; border: 2.5px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Screens: loading / error / success ── */
+    .screen-center {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; text-align: center; padding: 40px 28px; gap: 12px;
+    }
+    .screen-icon { font-size: 48px; line-height: 1; margin-bottom: 8px; }
+    .screen-center h2 { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 22px; }
+    .screen-center p  { font-size: 15px; color: var(--muted); line-height: 1.65; max-width: 280px; }
+
+    /* ── Header ── */
+    .wizard-head {
+      padding: 20px 20px 0;
+      position: sticky; top: 0; z-index: 10;
+      background: var(--bg);
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .wizard-brand {
+      font-family: 'Inter', sans-serif; font-weight: 800;
+      font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 14px;
+    }
+    .wizard-brand span { color: var(--accent); }
+    .prog-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 8px; }
+    .prog-fill  { height: 100%; background: var(--accent); border-radius: 2px; transition: width .4s cubic-bezier(.4,0,.2,1); }
+    .prog-label { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+    /* ── Wizard layout ── */
+    .wizard { flex: 1; display: flex; flex-direction: column; max-width: 540px; width: 100%; margin: 0 auto; }
+    .wizard-body { flex: 1; padding: 24px 20px 12px; display: flex; flex-direction: column; }
+
+    .step-card {
+      flex: 1; display: flex; flex-direction: column; gap: 20px;
+      animation: fadeIn .18s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+    .step-q {
+      font-family: 'Inter', sans-serif; font-weight: 800;
+      font-size: clamp(19px, 5vw, 24px); line-height: 1.3;
+      color: var(--text); text-wrap: balance;
+    }
+    .input-area { display: flex; flex-direction: column; gap: 8px; }
+
+    /* ── Text / Number ── */
+    input[type="text"],
+    input[type="number"] {
+      width: 100%; padding: 16px 16px; font-size: 16px;
+      font-family: 'Inter', sans-serif;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text); transition: border-color .2s, box-shadow .2s;
+      -webkit-appearance: none; appearance: none;
+    }
+    input[type="number"] { -moz-appearance: textfield; }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); }
+    input::placeholder { color: var(--light); }
+
+    /* ── Single select ── */
+    .opt {
+      display: flex; align-items: center; gap: 14px;
+      padding: 15px 16px; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 4px; cursor: pointer; font-size: 15px; font-family: 'Inter', sans-serif;
+      color: var(--text); text-align: left; transition: border-color .15s, background .15s; width: 100%;
+      min-height: 52px;
+    }
+    .opt:active { transform: scale(.99); }
+    .opt.sel { border-color: var(--accent); background: var(--accent-dim); }
+    .opt-dot {
+      width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 50%;
+      flex-shrink: 0; transition: border-color .15s, background .15s;
+    }
+    .opt.sel .opt-dot { border-color: var(--accent); background: var(--accent); box-shadow: inset 0 0 0 3px var(--surface2); }
+
+    /* ── Multi select ── */
+    .chk {
+      display: flex; align-items: center; gap: 14px;
+      padding: 15px 16px; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 4px; cursor: pointer; font-size: 15px; font-family: 'Inter', sans-serif;
+      color: var(--text); text-align: left; transition: border-color .15s, background .15s; width: 100%;
+      min-height: 52px;
+    }
+    .chk:active { transform: scale(.99); }
+    .chk.sel { border-color: var(--accent); background: var(--accent-dim); }
+    .chk-box {
+      width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 3px;
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      transition: border-color .15s, background .15s;
+    }
+    .chk.sel .chk-box { border-color: var(--accent); background: var(--accent); }
+    .chk.sel .chk-box::after {
+      content: ''; display: block; width: 4px; height: 8px;
+      border: 2px solid #000; border-top: none; border-left: none;
+      transform: rotate(45deg) translate(-1px,-1px);
+    }
+
+    /* ── Boolean — tarjetas grandes ── */
+    .bool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .bool-btn {
+      padding: 24px 12px; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 4px; cursor: pointer; font-size: 16px; font-family: 'Inter', sans-serif;
+      font-weight: 700; text-align: center; color: var(--text); line-height: 1.3;
+      transition: border-color .15s, background .15s;
+      min-height: 80px; display: flex; align-items: center; justify-content: center;
+    }
+    .bool-btn:active { transform: scale(.98); }
+    .bool-btn.sel { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+
+    /* ── Empty ── */
+    .no-opts { font-size: 14px; color: var(--muted); padding: 12px 0; }
+
+    /* ── Error ── */
+    .field-err {
+      font-size: 13px; color: var(--error);
+      background: var(--error-bg); border-radius: 4px;
+      padding: 10px 14px; border: 1px solid rgba(248,113,113,0.15);
+    }
+
+    /* ── Nav ── */
+    .wizard-nav {
+      padding: 14px 20px max(24px, env(safe-area-inset-bottom));
+      display: flex; gap: 10px;
+      background: var(--bg); border-top: 1px solid var(--border);
+      position: sticky; bottom: 0;
+    }
+    .btn-back {
+      flex: 0 0 auto; padding: 0 20px; height: 52px;
+      background: transparent; border: 1px solid var(--border); border-radius: 4px;
+      font-size: 14px; font-family: 'Inter', sans-serif; font-weight: 600;
+      color: var(--muted); cursor: pointer; transition: border-color .15s, color .15s;
+    }
+    .btn-back:hover { border-color: var(--muted); color: var(--text); }
+    .btn-next {
+      flex: 1; height: 52px;
+      background: var(--accent); border: none; border-radius: 4px;
+      font-size: 13px; font-family: 'Inter', sans-serif; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: #000; cursor: pointer; transition: background .15s; position: relative;
+    }
+    .btn-next:hover:not(:disabled) { background: var(--accent-h); }
+    .btn-next:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-next.loading { color: transparent; }
+    .btn-next.loading::after {
+      content: ''; position: absolute; width: 18px; height: 18px;
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      border: 2px solid rgba(0,0,0,.25); border-top-color: #000;
+      border-radius: 50%; animation: spin .8s linear infinite;
+    }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+  'use strict';
+
+  const SUPABASE_URL     = 'https://edjugpekcntzvqaskbmc.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA';
+  const N8N_WEBHOOK_URL  = ''; // ← rellenar con la URL del webhook de n8n
+
+  // ─── API helpers ────────────────────────────────────────────────────────────
+
+  const BASE_HEADERS = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+  };
+
+  async function sbGet(table, qs) {
+    const url = new URL(`${SUPABASE_URL}/rest/v1/${table}`);
+    Object.entries(qs).forEach(([k, v]) => url.searchParams.set(k, v));
+    const r = await fetch(url.toString(), { headers: BASE_HEADERS });
+    if (!r.ok) { const t = await r.text(); throw new Error(`GET ${table}: ${r.status} ${t}`); }
+    return r.json();
+  }
+
+  async function sbRpc(fn, params) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+      method: 'POST',
+      headers: BASE_HEADERS,
+      body: JSON.stringify(params),
+    });
+    if (!r.ok) { const t = await r.text(); throw new Error(`RPC ${fn}: ${r.status} ${t}`); }
+    return r.json();
+  }
+
+  // ─── State ───────────────────────────────────────────────────────────────────
+
+  const S = {
+    screen:     'loading', // loading | error | wizard | success
+    errorKey:   '',        // notfound | expired | used | generic
+    tenantName: '',
+    tenantId:   null,
+    telefono:   null,
+    token:      null,
+    steps:      [],        // [{clave, campo_clientes, textoMostrar, tipo_input, opciones}]
+    step:       0,
+    answers:    {},        // { campo_clientes → value }
+    submitting: false,
+    fieldErr:   '',
+  };
+
+  // ─── Render ──────────────────────────────────────────────────────────────────
+
+  const app = document.getElementById('app');
+  const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+  function render() {
+    if      (S.screen === 'loading') renderLoading();
+    else if (S.screen === 'error')   renderError();
+    else if (S.screen === 'wizard')  renderWizard();
+    else if (S.screen === 'success') renderSuccess();
+  }
+
+  function renderLoading() {
+    app.innerHTML = `<div class="screen-center"><div class="spinner"></div><p style="color:var(--muted);font-size:14px">Cargando tu formulario…</p></div>`;
+  }
+
+  function renderSuccess() {
+    app.innerHTML = `
+      <div class="screen-center">
+        <div class="screen-icon">🏠</div>
+        <h2>¡Gracias!</h2>
+        <p>Hemos recibido tu solicitud.<br>Te contactamos en breve.</p>
+      </div>`;
+  }
+
+  function renderError() {
+    const map = {
+      notfound: ['🔗', 'Enlace no válido',   'Este enlace no existe o ha sido eliminado. Pide a la inmobiliaria que te reenvíe el formulario.'],
+      expired:  ['⏰', 'Enlace caducado',     'Este formulario ya no está disponible. Contacta con la inmobiliaria para recibir uno nuevo.'],
+      used:     ['✅', 'Ya completado',       'Ya habías enviado este formulario. Pronto recibirás respuesta de la inmobiliaria.'],
+      generic:  ['⚠️', 'Algo ha fallado',    'No hemos podido cargar el formulario. Inténtalo de nuevo más tarde.'],
+    };
+    const [icon, title, body] = map[S.errorKey] ?? map.generic;
+    app.innerHTML = `
+      <div class="screen-center">
+        <div class="screen-icon">${icon}</div>
+        <h2>${esc(title)}</h2>
+        <p>${esc(body)}</p>
+      </div>`;
+  }
+
+  function visibleSteps() {
+    return S.steps.filter(s => {
+      if (s.clave === 'aval_ingreso' && S.answers['tieneAval'] === 'false') return false;
+      return true;
+    });
+  }
+
+  function renderWizard() {
+    const steps  = visibleSteps();
+    const step   = steps[S.step];
+    if (!step) return;
+
+    const total  = steps.length;
+    const cur    = S.step + 1;
+    const pct    = Math.round((cur / total) * 100);
+    const isLast = S.step === total - 1;
+
+    app.innerHTML = `
+      <div class="wizard">
+        <div class="wizard-head">
+          <div class="wizard-brand">${esc(S.tenantName)} <span>·</span> Solicitud</div>
+          <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+          <div class="prog-label">${cur} / ${total}</div>
+        </div>
+
+        <div class="wizard-body">
+          <div class="step-card">
+            <div class="step-q">${esc(step.textoMostrar)}</div>
+            <div class="input-area" id="ia">${renderField(step)}</div>
+            ${S.fieldErr ? `<div class="field-err">${esc(S.fieldErr)}</div>` : ''}
+          </div>
+        </div>
+
+        <div class="wizard-nav">
+          ${S.step > 0 ? `<button class="btn-back" id="bBack">← Atrás</button>` : ''}
+          <button class="btn-next${S.submitting ? ' loading' : ''}" id="bNext" ${S.submitting ? 'disabled' : ''}>
+            ${isLast ? 'Enviar' : 'Continuar →'}
+          </button>
+        </div>
+      </div>`;
+
+    bindField(step);
+    document.getElementById('bNext')?.addEventListener('click', () => onNext(step, isLast));
+    document.getElementById('bBack')?.addEventListener('click', onBack);
+    // Autofocus text/number inputs
+    document.getElementById('field')?.focus();
+  }
+
+  function renderField(step) {
+    const val = S.answers[step.campo_clientes];
+
+    switch (step.tipo_input) {
+      case 'text':
+        return `<input id="field" type="text" value="${esc(val ?? '')}" placeholder="Escribe aquí…" autocomplete="off" />`;
+
+      case 'number':
+        return `<input id="field" type="number" value="${val ?? ''}" placeholder="0" inputmode="numeric" />`;
+
+      case 'single_select':
+        if (!step.opciones.length) return `<p class="no-opts">Sin opciones disponibles.</p>`;
+        return step.opciones.map(o => `
+          <button class="opt${val === o.value ? ' sel' : ''}" data-v="${esc(o.value)}">
+            <span class="opt-dot"></span>${esc(o.label)}
+          </button>`).join('');
+
+      case 'multi_select':
+      case 'dynamic_zone_multi_select': {
+        if (!step.opciones.length) return `<p class="no-opts">No hay opciones disponibles.</p>`;
+        const sel = val ? val.split(',').map(s => s.trim()) : [];
+        return step.opciones.map(o => `
+          <button class="chk${sel.includes(o.value) ? ' sel' : ''}" data-v="${esc(o.value)}">
+            <span class="chk-box"></span>${esc(o.label)}
+          </button>`).join('');
+      }
+
+      case 'boolean':
+        if (!step.opciones.length) return `<p class="no-opts">Sin opciones.</p>`;
+        return `<div class="bool-grid">${step.opciones.map(o => `
+          <button class="bool-btn${val === o.value ? ' sel' : ''}" data-v="${esc(o.value)}">${esc(o.label)}</button>`
+        ).join('')}</div>`;
+
+      default:
+        return `<input id="field" type="text" value="${esc(val ?? '')}" placeholder="Escribe aquí…" />`;
+    }
+  }
+
+  function bindField(step) {
+    const { tipo_input, campo_clientes } = step;
+
+    if (tipo_input === 'text' || tipo_input === 'number') {
+      const el = document.getElementById('field');
+      el?.addEventListener('input', e => { S.answers[campo_clientes] = e.target.value; S.fieldErr = ''; });
+      el?.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); onNext(step, S.step === visibleSteps().length - 1); }
+      });
+    }
+
+    if (tipo_input === 'single_select' || tipo_input === 'boolean') {
+      document.querySelectorAll('.opt,.bool-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          S.answers[campo_clientes] = btn.dataset.v;
+          S.fieldErr = '';
+          render();
+        });
+      });
+    }
+
+    if (tipo_input === 'multi_select' || tipo_input === 'dynamic_zone_multi_select') {
+      document.querySelectorAll('.chk').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cur = S.answers[campo_clientes] ? S.answers[campo_clientes].split(',').map(s => s.trim()) : [];
+          const v   = btn.dataset.v;
+          const idx = cur.indexOf(v);
+          if (idx === -1) cur.push(v); else cur.splice(idx, 1);
+          S.answers[campo_clientes] = cur.filter(Boolean).join(',');
+          S.fieldErr = '';
+          render();
+        });
+      });
+    }
+  }
+
+  // ─── Navigation ──────────────────────────────────────────────────────────────
+
+  function onBack() {
+    if (S.step > 0) { S.step--; S.fieldErr = ''; render(); }
+  }
+
+  async function onNext(step, isLast) {
+    const val  = S.answers[step.campo_clientes];
+    const empty = val === undefined || val === null || String(val).trim() === '';
+    if (empty) { S.fieldErr = 'Por favor, responde esta pregunta antes de continuar.'; render(); return; }
+
+    S.fieldErr = '';
+    if (isLast) { await submit(); }
+    else        { S.step++; render(); }
+  }
+
+  async function submit() {
+    S.submitting = true;
+    render();
+
+    try {
+      // Payload keyed by pregunta_id — valores siempre como string.
+      // La función submit_formulario castea tipos internamente y solo acepta
+      // preguntas activas para el tenant de ese cliente.
+      const respuestas = {};
+      visibleSteps().forEach(s => {
+        const v = S.answers[s.campo_clientes];
+        if (v === undefined || v === null) return;
+        respuestas[s.pregunta_id] = String(v);
+      });
+
+      await sbRpc('submit_formulario', { p_token: S.token, p_respuestas: respuestas });
+
+      // n8n webhook — best-effort, no bloquea si falla
+      if (N8N_WEBHOOK_URL) {
+        fetch(N8N_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tenant_id: S.tenantId, telefono: S.telefono }),
+        }).catch(() => {});
+      }
+
+      S.screen = 'success';
+      render();
+    } catch (err) {
+      console.error(err);
+      S.submitting = false;
+      S.fieldErr = 'No se pudo enviar el formulario. Inténtalo de nuevo.';
+      render();
+    }
+  }
+
+  // ─── Bootstrap ───────────────────────────────────────────────────────────────
+
+  async function init() {
+    render(); // loading
+
+    const token = new URLSearchParams(window.location.search).get('token');
+    if (!token) { S.screen = 'error'; S.errorKey = 'notfound'; render(); return; }
+    S.token = token;
+
+    try {
+      // 1. Resolver token → cliente
+      const rows = await sbGet('clientes', {
+        select: 'id,tenant_id,telefono,form_token_expira,formulario_enviado',
+        form_token: `eq.${token}`,
+        limit: '1',
+      });
+
+      if (!rows.length)           { S.screen = 'error'; S.errorKey = 'notfound'; render(); return; }
+
+      const c = rows[0];
+      if (c.formulario_enviado)   { S.screen = 'error'; S.errorKey = 'used';     render(); return; }
+      if (c.form_token_expira && new Date(c.form_token_expira) < new Date())
+                                  { S.screen = 'error'; S.errorKey = 'expired';  render(); return; }
+
+      S.tenantId = c.tenant_id;
+      S.telefono = c.telefono;
+
+      // 2. Nombre del tenant (vía función segura — no expone tokens ni config privada)
+      try {
+        const info = await sbRpc('get_tenant_public_info', { p_tenant_id: c.tenant_id });
+        S.tenantName = (Array.isArray(info) ? info[0]?.nombre : info?.nombre) || 'Tu inmobiliaria';
+      } catch { S.tenantName = 'Tu inmobiliaria'; }
+
+      // 3. Preguntas activas del tenant
+      const tp = await sbGet('tenant_preguntas', {
+        select: 'pregunta_id,pregunta_texto_custom,orden',
+        tenant_id: `eq.${c.tenant_id}`,
+        activa: 'eq.true',
+        order: 'orden.asc',
+      });
+
+      if (!tp.length) { S.screen = 'error'; S.errorKey = 'generic'; render(); return; }
+
+      // 4. Catálogo de preguntas para esos IDs
+      const ids      = tp.map(r => r.pregunta_id);
+      const catalogo = await sbGet('preguntas_catalogo', {
+        select: 'id,clave,campo_clientes,pregunta_texto,tipo_input,opciones',
+        id: `in.(${ids.join(',')})`,
+      });
+      const catMap = Object.fromEntries(catalogo.map(p => [p.id, p]));
+
+      // 5. Construir pasos
+      S.steps = tp.map(row => {
+        const cat = catMap[row.pregunta_id];
+        if (!cat) return null;
+        return {
+          pregunta_id:    row.pregunta_id,
+          clave:          cat.clave,
+          campo_clientes: cat.campo_clientes,
+          textoMostrar:   row.pregunta_texto_custom || cat.pregunta_texto,
+          tipo_input:     cat.tipo_input,
+          opciones:       cat.opciones ?? [],
+        };
+      }).filter(Boolean);
+
+      // 6. Zonas dinámicas para dynamic_zone_multi_select
+      const dynamicos = S.steps.filter(s => s.tipo_input === 'dynamic_zone_multi_select');
+      if (dynamicos.length) {
+        try {
+          const zonaRows = await sbGet('inmuebles_disponibles', {
+            select: 'zona',
+            tenant_id: `eq.${c.tenant_id}`,
+            estado: 'eq.disponible',
+          });
+          const uniqueZonas = [...new Set(zonaRows.map(r => r.zona).filter(Boolean))].sort();
+          const opts = uniqueZonas.map(z => ({ value: z, label: z }));
+          dynamicos.forEach(s => { s.opciones = opts; });
+        } catch { /* si falla, se queda con opciones vacías */ }
+      }
+
+      S.screen = 'wizard';
+      render();
+
+    } catch (err) {
+      console.error(err);
+      S.screen = 'error';
+      S.errorKey = 'generic';
+      render();
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>
