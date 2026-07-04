@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nize · Automatización WhatsApp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0D0D0D; --surface: #141414; --border: #2A2A2A;
+      --accent: #F0C000; --accent-hover: #D9AC00; --accent-dim: rgba(240,192,0,0.08); --accent-ring: rgba(240,192,0,0.2);
+      --text: #F5F5F5; --text-muted: #888; --green: #22C55E;
+    }
+    html, body { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 44px 38px; max-width: 460px; width: 100%; text-align: center;
+    }
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 28px; }
+    .logo span { color: var(--accent); }
+
+    .state { display: none; }
+    .state.active { display: block; }
+
+    h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 26px; margin-bottom: 10px; }
+    .sub { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px; }
+
+    .price-badge {
+      display: inline-flex; align-items: baseline; gap: 4px;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 40px;
+      margin-bottom: 6px;
+    }
+    .price-badge .cents { font-size: 18px; color: var(--text-muted); }
+    .price-note { font-size: 12px; color: var(--text-muted); margin-bottom: 28px; }
+
+    .pay-btn {
+      display: inline-flex; align-items: center; gap: 10px; justify-content: center;
+      width: 100%; background: var(--accent); color: #000;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 15px 24px; border-radius: 4px; border: none;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .pay-btn:hover:not(:disabled) { background: var(--accent-hover); }
+    .pay-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pay-btn.loading { position: relative; color: transparent; }
+    .pay-btn.loading::after {
+      content: ''; position: absolute; width: 16px; height: 16px;
+      border: 2px solid #000; border-top-color: transparent; border-radius: 50%;
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .secure { margin-top: 18px; font-size: 12px; color: var(--text-muted); }
+
+    .check-circle {
+      width: 64px; height: 64px; background: var(--accent-dim); border: 2px solid var(--green);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 28px; margin: 0 auto 20px; color: var(--green);
+    }
+
+    .error-msg { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
+    .whatsapp-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 20px; font-size: 13px; color: var(--text-muted); text-decoration: none; }
+    .whatsapp-link:hover { color: var(--green); }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo">Nize <span>Automatización</span></div>
+
+  <!-- PAGAR -->
+  <div class="state" id="statePay">
+    <h1>Activa tu automatización de WhatsApp</h1>
+    <p class="sub">Pago único. En un plazo de 48 horas tras el pago te compramos y activamos tu número dedicado de WhatsApp.</p>
+    <div class="price-badge">9,73<span class="cents">€ · pago único</span></div>
+    <p class="price-note">Sin cuotas mensuales por esto.</p>
+    <button class="pay-btn" id="payBtn">Pagar y activar →</button>
+    <div class="secure">🔒 Pago seguro con Stripe · SSL 256-bit</div>
+  </div>
+
+  <!-- ÉXITO -->
+  <div class="state" id="stateSuccess">
+    <div class="check-circle">✓</div>
+    <h1>¡Pago recibido!</h1>
+    <p class="sub">En un plazo de 48 horas te compraremos y activaremos tu número de WhatsApp dedicado. Te avisaremos por WhatsApp en cuanto esté listo.</p>
+    <a class="whatsapp-link" href="https://wa.me/34617153252" target="_blank">💬 ¿Dudas? Escríbenos por WhatsApp</a>
+  </div>
+
+  <!-- ERROR -->
+  <div class="state" id="stateError">
+    <h1>Algo salió mal</h1>
+    <p class="error-msg">No hemos podido iniciar el pago. Inténtalo de nuevo o escríbenos por WhatsApp.</p>
+    <a class="whatsapp-link" href="https://wa.me/34617153252" target="_blank">💬 Contactar soporte por WhatsApp</a>
+  </div>
+</div>
+
+<script>
+  const params    = new URLSearchParams(window.location.search);
+  const tenantId  = params.get('tenant_id') || '';
+  const email     = params.get('email') || '';
+  const sessionId = params.get('session_id') || '';
+
+  function mostrar(id) {
+    document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  if (sessionId) {
+    mostrar('stateSuccess');
+  } else {
+    mostrar('statePay');
+  }
+
+  const payBtn = document.getElementById('payBtn');
+  payBtn?.addEventListener('click', async () => {
+    payBtn.classList.add('loading');
+    payBtn.disabled = true;
+    try {
+      const res = await fetch('/.netlify/functions/crear-sesion-trial', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tenant_id: tenantId, email }),
+      });
+      const data = await res.json();
+      if (!data.url) throw new Error('Sin URL de pago');
+      window.location.href = data.url;
+    } catch {
+      mostrar('stateError');
+    }
+  });
+</script>
+</body>
+</html>
