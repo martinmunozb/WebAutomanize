@@ -450,6 +450,7 @@
     if (tipo_input === 'phone_prefix') {
       const selPrefijo = document.getElementById('prefijo');
       const inpNumero  = document.getElementById('telefonoNum');
+      if (selPrefijo && S.answers.__prefijo === undefined) S.answers.__prefijo = selPrefijo.value;
       selPrefijo?.addEventListener('change', e => { S.answers.__prefijo = e.target.value; S.fieldErr = ''; });
       inpNumero?.addEventListener('input', e => {
         S.answers.__telefonoNum = e.target.value.replace(/[^0-9]/g, '');
