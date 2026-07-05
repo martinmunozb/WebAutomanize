@@ -538,7 +538,12 @@
 
     const params = new URLSearchParams(window.location.search);
     const token  = params.get('token');
-    const slug   = params.get('t');
+    // El slug puede venir como ?t=... (uso directo de formulario.html) o como
+    // parte de la ruta /f/<slug> (el navegador nunca ve el rewrite interno de
+    // Caddy que reescribe /f/<slug> a formulario.html?t=<slug>, así que hay
+    // que leerlo también de la ruta visible).
+    const pathMatch = window.location.pathname.match(/^\/f\/([^/]+)\/?$/);
+    const slug = params.get('t') || (pathMatch ? pathMatch[1] : null);
 
     let tenantId;
     let tenantInfo = null;
