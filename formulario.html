@@ -94,6 +94,23 @@
     input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); }
     input::placeholder { color: var(--light); }
 
+    /* ── Phone + prefix ── */
+    .phone-group { display: flex; gap: 8px; }
+    .phone-group select {
+      flex: 0 0 auto; padding: 16px 10px; font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text); -webkit-appearance: none; appearance: none;
+    }
+    .phone-group select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); }
+    .phone-group input[type="tel"] {
+      flex: 1; width: 100%; padding: 16px 16px; font-size: 16px;
+      font-family: 'Inter', sans-serif;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text); -webkit-appearance: none; appearance: none;
+    }
+    .phone-group input[type="tel"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); }
+
     /* ── Single select ── */
     .opt {
       display: flex; align-items: center; gap: 14px;
@@ -195,6 +212,24 @@
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA';
   const N8N_WEBHOOK_URL  = 'https://n8n.automanize.com/webhook/formulario-completado';
 
+  const PREFIJOS = [
+    { value: '34',  label: '🇪🇸 +34' },
+    { value: '52',  label: '🇲🇽 +52' },
+    { value: '54',  label: '🇦🇷 +54' },
+    { value: '57',  label: '🇨🇴 +57' },
+    { value: '56',  label: '🇨🇱 +56' },
+    { value: '51',  label: '🇵🇪 +51' },
+    { value: '598', label: '🇺🇾 +598' },
+    { value: '595', label: '🇵🇾 +595' },
+    { value: '591', label: '🇧🇴 +591' },
+    { value: '1',   label: '🇺🇸 +1' },
+    { value: '44',  label: '🇬🇧 +44' },
+    { value: '33',  label: '🇫🇷 +33' },
+    { value: '49',  label: '🇩🇪 +49' },
+    { value: '39',  label: '🇮🇹 +39' },
+    { value: '351', label: '🇵🇹 +351' },
+  ];
+
   // ─── API helpers ────────────────────────────────────────────────────────────
 
   const BASE_HEADERS = {
@@ -226,6 +261,7 @@
   const S = {
     screen:     'loading', // loading | error | wizard | success
     errorKey:   '',        // notfound | expired | used | generic
+    mode:       'token',   // token (lead ya identificado por WhatsApp) | public (link compartido, ej. Idealista)
     tenantName: '',
     tenantId:   null,
     telefono:   null,
@@ -359,6 +395,18 @@
           <button class="bool-btn${val === o.value ? ' sel' : ''}" data-v="${esc(o.value)}">${esc(o.label)}</button>`
         ).join('')}</div>`;
 
+      case 'phone_prefix': {
+        const prefijo = S.answers.__prefijo ?? PREFIJOS[0].value;
+        const numero  = S.answers.__telefonoNum ?? '';
+        return `
+          <div class="phone-group">
+            <select id="prefijo">
+              ${PREFIJOS.map(p => `<option value="${esc(p.value)}"${p.value === prefijo ? ' selected' : ''}>${esc(p.label)}</option>`).join('')}
+            </select>
+            <input id="telefonoNum" type="tel" inputmode="numeric" placeholder="6XX XXX XXX" value="${esc(numero)}" />
+          </div>`;
+      }
+
       default:
         return `<input id="field" type="text" value="${esc(val ?? '')}" placeholder="Escribe aquí…" />`;
     }
@@ -398,6 +446,19 @@
         });
       });
     }
+
+    if (tipo_input === 'phone_prefix') {
+      const selPrefijo = document.getElementById('prefijo');
+      const inpNumero  = document.getElementById('telefonoNum');
+      selPrefijo?.addEventListener('change', e => { S.answers.__prefijo = e.target.value; S.fieldErr = ''; });
+      inpNumero?.addEventListener('input', e => {
+        S.answers.__telefonoNum = e.target.value.replace(/[^0-9]/g, '');
+        S.fieldErr = '';
+      });
+      inpNumero?.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); onNext(step, S.step === visibleSteps().length - 1); }
+      });
+    }
   }
 
   // ─── Navigation ──────────────────────────────────────────────────────────────
@@ -407,8 +468,13 @@
   }
 
   async function onNext(step, isLast) {
-    const val  = S.answers[step.campo_clientes];
-    const empty = val === undefined || val === null || String(val).trim() === '';
+    let empty;
+    if (step.tipo_input === 'phone_prefix') {
+      empty = !S.answers.__prefijo || !S.answers.__telefonoNum || S.answers.__telefonoNum.trim() === '';
+    } else {
+      const val = S.answers[step.campo_clientes];
+      empty = val === undefined || val === null || String(val).trim() === '';
+    }
     if (empty) { S.fieldErr = 'Por favor, responde esta pregunta antes de continuar.'; render(); return; }
 
     S.fieldErr = '';
@@ -422,16 +488,29 @@
 
     try {
       // Payload keyed by pregunta_id — valores siempre como string.
-      // La función submit_formulario castea tipos internamente y solo acepta
-      // preguntas activas para el tenant de ese cliente.
+      // Las RPCs castean tipos internamente y solo aceptan preguntas
+      // activas para el tenant correspondiente. Los pasos sintéticos
+      // (nombre/teléfono del modo público) no tienen pregunta_id y se excluyen.
       const respuestas = {};
       visibleSteps().forEach(s => {
+        if (!s.pregunta_id) return;
         const v = S.answers[s.campo_clientes];
         if (v === undefined || v === null) return;
         respuestas[s.pregunta_id] = String(v);
       });
 
-      await sbRpc('submit_formulario', { p_token: S.token, p_respuestas: respuestas });
+      if (S.mode === 'public') {
+        S.telefono = Number(S.answers.__prefijo + S.answers.__telefonoNum);
+        await sbRpc('crear_lead_publico', {
+          p_tenant_id:  S.tenantId,
+          p_nombre:     S.answers.__nombre || null,
+          p_prefijo:    S.answers.__prefijo,
+          p_telefono:   S.telefono,
+          p_respuestas: respuestas,
+        });
+      } else {
+        await sbRpc('submit_formulario', { p_token: S.token, p_respuestas: respuestas });
+      }
 
       // n8n webhook — best-effort, no bloquea si falla
       if (N8N_WEBHOOK_URL) {
@@ -457,45 +536,66 @@
   async function init() {
     render(); // loading
 
-    const token = new URLSearchParams(window.location.search).get('token');
-    if (!token) { S.screen = 'error'; S.errorKey = 'notfound'; render(); return; }
-    S.token = token;
+    const params    = new URLSearchParams(window.location.search);
+    const token     = params.get('token');
+    const tenantUrl = params.get('tenant');
+
+    let tenantId;
 
     try {
-      // 1. Resolver token → cliente
-      const rows = await sbGet('clientes', {
-        select: 'id,tenant_id,telefono,form_token_expira,formulario_enviado',
-        form_token: `eq.${token}`,
-        limit: '1',
-      });
+      if (token) {
+        // Modo lead (WhatsApp): el token ya identifica al cliente y su tenant.
+        S.mode  = 'token';
+        S.token = token;
 
-      if (!rows.length)           { S.screen = 'error'; S.errorKey = 'notfound'; render(); return; }
+        const rows = await sbGet('clientes', {
+          select: 'id,tenant_id,telefono,form_token_expira,formulario_enviado',
+          form_token: `eq.${token}`,
+          limit: '1',
+        });
 
-      const c = rows[0];
-      if (c.formulario_enviado)   { S.screen = 'error'; S.errorKey = 'used';     render(); return; }
-      if (c.form_token_expira && new Date(c.form_token_expira) < new Date())
-                                  { S.screen = 'error'; S.errorKey = 'expired';  render(); return; }
+        if (!rows.length)           { S.screen = 'error'; S.errorKey = 'notfound'; render(); return; }
 
-      S.tenantId = c.tenant_id;
-      S.telefono = c.telefono;
+        const c = rows[0];
+        if (c.formulario_enviado)   { S.screen = 'error'; S.errorKey = 'used';     render(); return; }
+        if (c.form_token_expira && new Date(c.form_token_expira) < new Date())
+                                    { S.screen = 'error'; S.errorKey = 'expired';  render(); return; }
 
-      // 2. Nombre del tenant (vía función segura — no expone tokens ni config privada)
+        tenantId   = c.tenant_id;
+        S.telefono = c.telefono;
+      } else if (tenantUrl) {
+        // Modo público (link compartido, ej. Idealista): no hay cliente todavía,
+        // el propio formulario pide nombre y teléfono al principio.
+        S.mode = 'public';
+        tenantId = tenantUrl;
+      } else {
+        S.screen = 'error'; S.errorKey = 'notfound'; render(); return;
+      }
+
+      S.tenantId = tenantId;
+
+      // Nombre del tenant (vía función segura — no expone tokens ni config privada).
+      // También sirve para validar que el tenant existe y está activo en modo público.
+      let tenantInfo;
       try {
-        const info = await sbRpc('get_tenant_public_info', { p_tenant_id: c.tenant_id });
-        S.tenantName = (Array.isArray(info) ? info[0]?.nombre : info?.nombre) || 'Tu inmobiliaria';
-      } catch { S.tenantName = 'Tu inmobiliaria'; }
+        const info = await sbRpc('get_tenant_public_info', { p_tenant_id: tenantId });
+        tenantInfo = Array.isArray(info) ? info[0] : info;
+      } catch { tenantInfo = null; }
 
-      // 3. Preguntas activas del tenant
+      if (S.mode === 'public' && !tenantInfo) { S.screen = 'error'; S.errorKey = 'notfound'; render(); return; }
+      S.tenantName = tenantInfo?.nombre || 'Tu inmobiliaria';
+
+      // Preguntas activas del tenant
       const tp = await sbGet('tenant_preguntas', {
         select: 'pregunta_id,pregunta_texto_custom,orden',
-        tenant_id: `eq.${c.tenant_id}`,
+        tenant_id: `eq.${tenantId}`,
         activa: 'eq.true',
         order: 'orden.asc',
       });
 
       if (!tp.length) { S.screen = 'error'; S.errorKey = 'generic'; render(); return; }
 
-      // 4. Catálogo de preguntas para esos IDs
+      // Catálogo de preguntas para esos IDs
       const ids      = tp.map(r => r.pregunta_id);
       const catalogo = await sbGet('preguntas_catalogo', {
         select: 'id,clave,campo_clientes,pregunta_texto,tipo_input,opciones',
@@ -503,7 +603,7 @@
       });
       const catMap = Object.fromEntries(catalogo.map(p => [p.id, p]));
 
-      // 5. Construir pasos
+      // Construir pasos
       S.steps = tp.map(row => {
         const cat = catMap[row.pregunta_id];
         if (!cat) return null;
@@ -517,13 +617,21 @@
         };
       }).filter(Boolean);
 
-      // 6. Zonas dinámicas para dynamic_zone_multi_select
+      // Modo público: nombre y teléfono van primero, no vienen del catálogo
+      if (S.mode === 'public') {
+        S.steps.unshift(
+          { pregunta_id: null, clave: 'telefono_publico', campo_clientes: '__telefonoNum', textoMostrar: '¿Cuál es tu número de teléfono?', tipo_input: 'phone_prefix', opciones: [] },
+          { pregunta_id: null, clave: 'nombre_publico',   campo_clientes: '__nombre',       textoMostrar: '¿Cómo te llamas?',                 tipo_input: 'text',         opciones: [] },
+        );
+      }
+
+      // Zonas dinámicas para dynamic_zone_multi_select
       const dynamicos = S.steps.filter(s => s.tipo_input === 'dynamic_zone_multi_select');
       if (dynamicos.length) {
         try {
           const zonaRows = await sbGet('inmuebles_disponibles', {
             select: 'zona',
-            tenant_id: `eq.${c.tenant_id}`,
+            tenant_id: `eq.${tenantId}`,
             estado: 'eq.disponible',
           });
           const uniqueZonas = [...new Set(zonaRows.map(r => r.zona).filter(Boolean))].sort();
