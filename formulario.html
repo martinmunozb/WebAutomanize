@@ -44,6 +44,51 @@
     .screen-center h2 { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 22px; }
     .screen-center p  { font-size: 15px; color: var(--muted); line-height: 1.65; max-width: 280px; }
 
+    /* ── Success screen ── */
+    @keyframes popIn {
+      0%   { opacity: 0; transform: scale(.6); }
+      70%  { opacity: 1; transform: scale(1.08); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes ringPulse {
+      0%   { transform: scale(.9); opacity: .55; }
+      100% { transform: scale(1.55); opacity: 0; }
+    }
+    .success-badge {
+      position: relative; width: 88px; height: 88px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 4px;
+      animation: popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    .success-badge-ring {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: var(--accent-dim); border: 1px solid var(--accent-ring);
+      animation: ringPulse 1.8s ease-out .4s infinite;
+    }
+    .success-badge-icon {
+      position: relative; width: 72px; height: 72px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 34px;
+      background: radial-gradient(circle at 30% 30%, var(--accent-dim), var(--surface2));
+      border: 1px solid var(--border);
+      box-shadow: 0 0 0 4px var(--bg);
+    }
+    .success-title {
+      font-family: 'Inter', sans-serif; font-weight: 800; font-size: 24px;
+      color: var(--text); margin-top: 4px;
+    }
+    .success-text { font-size: 15px; color: var(--muted); }
+    .success-next {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 8px; padding: 12px 18px; max-width: 300px;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 999px;
+      font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.4;
+    }
+    .success-next-dot {
+      flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+
     /* ── Header ── */
     .wizard-head {
       padding: 20px 20px 0;
@@ -291,10 +336,17 @@
 
   function renderSuccess() {
     app.innerHTML = `
-      <div class="screen-center">
-        <div class="screen-icon">🏠</div>
-        <h2>¡Gracias!</h2>
-        <p>Hemos recibido tu solicitud.<br>Te notificaremos por WhatsApp en cuanto tengamos opciones para ti.</p>
+      <div class="screen-center success-screen">
+        <div class="success-badge">
+          <span class="success-badge-ring"></span>
+          <span class="success-badge-icon">🏠</span>
+        </div>
+        <h2 class="success-title">¡Solicitud enviada!</h2>
+        <p class="success-text">Hemos recibido todos tus datos.</p>
+        <div class="success-next">
+          <span class="success-next-dot"></span>
+          Te avisaremos por WhatsApp en cuanto tengamos opciones para ti
+        </div>
       </div>`;
   }
 
