@@ -536,11 +536,12 @@
   async function init() {
     render(); // loading
 
-    const params    = new URLSearchParams(window.location.search);
-    const token     = params.get('token');
-    const tenantUrl = params.get('tenant');
+    const params = new URLSearchParams(window.location.search);
+    const token  = params.get('token');
+    const slug   = params.get('t');
 
     let tenantId;
+    let tenantInfo = null;
 
     try {
       if (token) {
@@ -563,26 +564,27 @@
 
         tenantId   = c.tenant_id;
         S.telefono = c.telefono;
-      } else if (tenantUrl) {
-        // Modo público (link compartido, ej. Idealista): no hay cliente todavía,
-        // el propio formulario pide nombre y teléfono al principio.
+
+        try {
+          const info = await sbRpc('get_tenant_public_info', { p_tenant_id: tenantId });
+          tenantInfo = Array.isArray(info) ? info[0] : info;
+        } catch { tenantInfo = null; }
+      } else if (slug) {
+        // Modo público (link corto compartido, ej. Idealista): no hay cliente
+        // todavía, el propio formulario pide nombre y teléfono al principio.
         S.mode = 'public';
-        tenantId = tenantUrl;
+
+        const info = await sbRpc('get_tenant_by_slug', { p_slug: slug });
+        const row  = Array.isArray(info) ? info[0] : info;
+        if (!row) { S.screen = 'error'; S.errorKey = 'notfound'; render(); return; }
+
+        tenantId   = row.id;
+        tenantInfo = row;
       } else {
         S.screen = 'error'; S.errorKey = 'notfound'; render(); return;
       }
 
-      S.tenantId = tenantId;
-
-      // Nombre del tenant (vía función segura — no expone tokens ni config privada).
-      // También sirve para validar que el tenant existe y está activo en modo público.
-      let tenantInfo;
-      try {
-        const info = await sbRpc('get_tenant_public_info', { p_tenant_id: tenantId });
-        tenantInfo = Array.isArray(info) ? info[0] : info;
-      } catch { tenantInfo = null; }
-
-      if (S.mode === 'public' && !tenantInfo) { S.screen = 'error'; S.errorKey = 'notfound'; render(); return; }
+      S.tenantId   = tenantId;
       S.tenantName = tenantInfo?.nombre || 'Tu inmobiliaria';
 
       // Preguntas activas del tenant
