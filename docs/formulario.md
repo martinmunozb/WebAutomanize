@@ -18,7 +18,14 @@ Formulario wizard paso a paso que recibe un lead (persona interesada en alquilar
    UPDATE tenants SET slug = 'nombretenant' WHERE id = '<tenant_id>';
    ```
 2. Su enlace público es directamente: `https://automanize.com/f/<slug>`.
-3. Requisitos para que el formulario muestre contenido: el tenant debe tener `activo = true`, y al menos una fila en `tenant_preguntas` con `activa = true` para ese `tenant_id`.
+3. El tenant debe tener `activo = true` (si no, `get_tenant_by_slug` no lo encuentra → error "Enlace no válido").
+4. **Necesita preguntas activas en `tenant_preguntas`** — crear un tenant nuevo NO las copia automáticamente, hay que poblarlas a mano (si no, error genérico "No hemos podido cargar el formulario"):
+   ```sql
+   insert into tenant_preguntas (tenant_id, pregunta_id, activa, orden)
+   select '<tenant_id>', id, activa_por_defecto, orden_defecto
+   from preguntas_catalogo;
+   ```
+   Esto copia el set de preguntas por defecto (`activa_por_defecto`/`orden_defecto` de `preguntas_catalogo`); luego se pueden desactivar/reordenar individualmente por tenant como con InvictaRent.
 
 La reescritura de `/f/<slug>` → `formulario.html?t=<slug>` vive en el **Caddyfile del servidor** (`/root/caddy-main/Caddyfile`, bloque `automanize.com`), no en `_redirects` (ese archivo es de Netlify y no lo lee nada en producción — el hosting real es Caddy + nginx sobre un VPS, no Netlify, pese a lo que sugiera `netlify.toml`). Dado que Caddy reescribe la petición solo de cara al servidor, el navegador nunca ve el `?t=<slug>` resultante — por eso el JS lee el slug directamente de `location.pathname` (`/f/<slug>`), no del query string.
 
