@@ -669,60 +669,16 @@
 
   fileInput.accept = 'image/*,.pdf,.png,.jpg,.jpeg,.webp,.gif,.bmp,.tif,.tiff,.heic,.heif,.avif,.jfif,application/pdf';
 
-  function sbFetch(path) {
-    return fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+  function sbRpc(name, body) {
+    return fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
     }).then(r => r.json());
-  }
-
-  function eq(value) {
-    return encodeURIComponent(String(value ?? '').trim());
-  }
-
-  function normalizeBase64(value) {
-    const normalized = String(value || '').trim().replace(/-/g, '+').replace(/_/g, '/');
-    const padding = normalized.length % 4;
-    return padding ? normalized + '='.repeat(4 - padding) : normalized;
-  }
-
-  function decodeAccessToken(rawToken) {
-    if (!rawToken) return { telefono: '', tenantId: '' };
-
-    try {
-      const decoded = atob(normalizeBase64(rawToken));
-
-      if (decoded.includes('|')) {
-        const [tenantId, telefono] = decoded.split('|');
-        return {
-          tenantId: String(tenantId || '').trim(),
-          telefono: String(telefono || '').trim()
-        };
-      }
-
-      // Compatibilidad con el formato antiguo: solo telefono en base64.
-      return { tenantId: '', telefono: String(decoded || '').trim() };
-    } catch (error) {
-      console.warn('No se pudo decodificar el token de acceso.', error);
-      return { telefono: '', tenantId: '' };
-    }
-  }
-
-  function buildTenantClause(rawTenant) {
-    const value = String(rawTenant || '').trim();
-    if (!value) return '';
-
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
-    const isNumeric = /^\d+$/.test(value);
-
-    if (isUuid) {
-      return `&tenant_id=eq.${eq(value)}`;
-    }
-
-    if (isNumeric) {
-      return `&cliente_id=eq.${eq(value)}`;
-    }
-
-    return '';
   }
 
   function normalizeMoney(value) {
@@ -797,60 +753,22 @@
 
   async function cargarDatos() {
     try {
-      // 1. Resolver token a inquilino: primero por columna token, luego base64 legacy.
-      let inq = null;
+      // Resolver token + datos del portal en una sola llamada RPC (bypassa RLS de forma controlada).
+      const data = await sbRpc('get_pago_portal_data', { p_token: token, p_tenant_hint: tenantParam || null });
 
-      const byToken = await sbFetch(`inquilinos?token=eq.${eq(token)}&select=id,cliente_id,tenant_id,habitacion_id,telefono`);
-      if (byToken.length) {
-        inq = byToken[0];
-      } else {
-        const accessData = decodeAccessToken(token);
-        const resolvedTenant = accessData.tenantId || tenantParam;
-        const resolvedPhone = accessData.telefono;
-
-        if (!resolvedPhone) {
-          console.warn('El token recibido no contiene un telefono valido.', { token });
-          throw new Error('invalid-token');
-        }
-
-        const tenantClause = buildTenantClause(resolvedTenant);
-        const inquilinos = await sbFetch(`inquilinos?telefono=eq.${eq(resolvedPhone)}&activo=eq.true${tenantClause}&select=id,cliente_id,tenant_id,habitacion_id,telefono`);
-        if (!inquilinos.length) {
-          console.warn('No se encontro ningun inquilino activo para el token.', { token });
-          throw new Error('invalid');
-        }
-        if (!resolvedTenant && inquilinos.length > 1) {
-          console.warn('El token legado coincide con varios tenants y no se puede resolver de forma univoca.', {
-            token,
-            telefono: resolvedPhone,
-            tenantIds: inquilinos.map(i => i.cliente_id)
-          });
-          throw new Error('ambiguous-tenant');
-        }
-        inq = inquilinos[0];
+      if (!data || !data.inquilino_id) {
+        console.warn('No se pudo resolver el token de acceso.', { token });
+        throw new Error('invalid-token');
       }
 
-      inquilinoId = inq.id;
-      const tenantId = inq.cliente_id;
+      inquilinoId = data.inquilino_id;
 
-      // 2. Datos en paralelo: cliente, habitación y pagos pendientes
-      const now = new Date();
-      const limiteMes = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString().split('T')[0];
+      document.getElementById('inquilinoNombre').textContent     = data.nombre || 'Inquilino';
+      document.getElementById('inquilinoHabitacion').textContent = data.habitacion || '';
 
-      const [clientes, habitaciones, pagos] = await Promise.all([
-        sbFetch(`clientes?id=eq.${eq(tenantId)}&select=nombre`),
-        sbFetch(`habitaciones?id_inmueble=eq.${eq(inq.habitacion_id)}&select=nombre,direccion_completa`),
-        sbFetch(`pagos?inquilino_id=eq.${eq(inq.id)}&mes=lt.${eq(limiteMes)}&select=id,mes,importe,importe_inicial,supuestoImporte,recibido,estado,tipo_pago,fecha_vencimiento,estado_justificante&order=mes.asc`)
-      ]);
+      const pagos = Array.isArray(data.pagos) ? data.pagos : [];
 
-      const nombre     = clientes[0]?.nombre || 'Inquilino';
-      const hab        = habitaciones[0];
-      const habitacion = hab?.nombre ? `${hab.nombre}${hab.direccion_completa ? ' — ' + hab.direccion_completa : ''}` : '';
-
-      document.getElementById('inquilinoNombre').textContent     = nombre;
-      document.getElementById('inquilinoHabitacion').textContent = habitacion;
-
-      const pagosPendientes = (Array.isArray(pagos) ? pagos : []).filter(p => {
+      const pagosPendientes = pagos.filter(p => {
         return !isFuturePayment(p) && hasPendingBalance(p);
       });
 

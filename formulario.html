@@ -26,8 +26,16 @@
     }
 
     html, body {
-      min-height: 100vh; background: var(--bg); color: var(--text);
+      min-height: 100vh; color: var(--text);
       font-family: 'Inter', -apple-system, sans-serif; font-size: 16px;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(560px circle at 12% -8%, rgba(240,192,0,0.12), transparent 60%),
+        radial-gradient(480px circle at 110% 20%, rgba(240,192,0,0.07), transparent 60%),
+        radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: auto, auto, 26px 26px;
+      background-repeat: no-repeat, no-repeat, repeat;
+      background-attachment: fixed, fixed, fixed;
     }
     #app { min-height: 100vh; display: flex; flex-direction: column; }
 
@@ -103,9 +111,6 @@
       color: var(--muted); margin-bottom: 14px;
     }
     .wizard-brand span { color: var(--accent); }
-    .prog-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 8px; }
-    .prog-fill  { height: 100%; background: var(--accent); border-radius: 2px; transition: width .4s cubic-bezier(.4,0,.2,1); }
-    .prog-label { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 
     /* ── Wizard layout ── */
     .wizard { flex: 1; display: flex; flex-direction: column; max-width: 540px; width: 100%; margin: 0 auto; }
@@ -240,6 +245,8 @@
     .btn-next:hover:not(:disabled) { background: var(--accent-h); }
     .btn-next:disabled { opacity: .45; cursor: not-allowed; }
     .btn-next.loading { color: transparent; }
+    /* Dentro de .step-card (columna) el botón no debe crecer para llenar el alto */
+    .btn-next-inline { flex: 0 0 auto; }
     .btn-next.loading::after {
       content: ''; position: absolute; width: 18px; height: 18px;
       top: 50%; left: 50%; transform: translate(-50%,-50%);
@@ -373,22 +380,29 @@
     });
   }
 
+  // Pasos con teclado: el botón va pegado al campo para no tener que
+  // cerrar el teclado y bajar hasta el final de la pantalla.
+  const KEYBOARD_STEP_TYPES = ['text', 'number', 'phone_prefix'];
+
   function renderWizard() {
-    const steps  = visibleSteps();
-    const step   = steps[S.step];
+    const steps    = visibleSteps();
+    const step     = steps[S.step];
     if (!step) return;
 
-    const total  = steps.length;
-    const cur    = S.step + 1;
-    const pct    = Math.round((cur / total) * 100);
-    const isLast = S.step === total - 1;
+    const total    = steps.length;
+    const isLast   = S.step === total - 1;
+    const inlineBtn = KEYBOARD_STEP_TYPES.includes(step.tipo_input);
+    const showNav   = S.step > 0 || !inlineBtn;
+
+    const nextBtn = (extraClass = '') => `
+      <button class="btn-next${extraClass}${S.submitting ? ' loading' : ''}" id="bNext" ${S.submitting ? 'disabled' : ''}>
+        ${isLast ? 'Enviar' : 'Continuar →'}
+      </button>`;
 
     app.innerHTML = `
       <div class="wizard">
         <div class="wizard-head">
           <div class="wizard-brand">${esc(S.tenantName)} <span>·</span> Solicitud</div>
-          <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
-          <div class="prog-label">${cur} / ${total}</div>
         </div>
 
         <div class="wizard-body">
@@ -396,22 +410,23 @@
             <div class="step-q">${esc(step.textoMostrar)}</div>
             <div class="input-area" id="ia">${renderField(step)}</div>
             ${S.fieldErr ? `<div class="field-err">${esc(S.fieldErr)}</div>` : ''}
+            ${inlineBtn ? nextBtn(' btn-next-inline') : ''}
           </div>
         </div>
 
+        ${showNav ? `
         <div class="wizard-nav">
           ${S.step > 0 ? `<button class="btn-back" id="bBack">← Atrás</button>` : ''}
-          <button class="btn-next${S.submitting ? ' loading' : ''}" id="bNext" ${S.submitting ? 'disabled' : ''}>
-            ${isLast ? 'Enviar' : 'Continuar →'}
-          </button>
-        </div>
+          ${inlineBtn ? '' : nextBtn()}
+        </div>` : ''}
       </div>`;
 
     bindField(step);
     document.getElementById('bNext')?.addEventListener('click', () => onNext(step, isLast));
     document.getElementById('bBack')?.addEventListener('click', onBack);
-    // Autofocus text/number inputs
+    // Autofocus el campo de teclado del paso actual
     document.getElementById('field')?.focus();
+    document.getElementById('telefonoNum')?.focus();
   }
 
   function renderField(step) {
