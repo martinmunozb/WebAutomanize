@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#0c0c0d" />
+<title>Onboarding Cliente · Automanize</title>
+<link rel="icon" type="image/x-icon" href="assets/images/favicon.ico" />
+<link href="https://fonts.googleapis.com" rel="preconnect" />
+<link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#111315; --bg:#f2f1ee; --panel:#ffffff; --line:#e4e1da;
+    --muted:#726f6a; --orange:#f5a300; --orange-dark:#d98e00;
+    --label-bg:#fdf3dc; --dark:#0c0c0d; --dark-2:#17181b;
+    --good:#1f8a3b; --good-bg:#e3f4e5; --bad:#b3271f; --bad-bg:#f8e5e3;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',-apple-system,Segoe UI,sans-serif; background:var(--bg); color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  .container{ width:min(920px, calc(100% - 2.5rem)); margin-inline:auto; }
+  a{color:inherit;}
+
+  /* ── Top bar ─────────────────────────────────────── */
+  .topbar{
+    position:sticky; top:0; z-index:20; background:rgba(12,12,13,0.92); backdrop-filter:blur(6px);
+    border-bottom:1px solid #232326;
+  }
+  .topbar-inner{ display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:0.85rem 0; }
+  .brand-link{ color:#fff; font-weight:800; font-size:0.95rem; letter-spacing:0.01em; text-decoration:none; display:flex; align-items:center; gap:0.5rem;}
+  .topbar-actions{ display:flex; gap:0.5rem; flex-wrap:wrap; }
+
+  .btn{
+    font-family:inherit; font-size:0.82rem; font-weight:700; border-radius:8px; border:1px solid transparent;
+    padding:0.55rem 0.95rem; cursor:pointer; transition:transform .1s, background .15s, border-color .15s;
+    display:inline-flex; align-items:center; gap:0.4rem;
+  }
+  .btn:active{ transform:scale(0.97); }
+  .btn-primary{ background:var(--orange); color:#181300; }
+  .btn-primary:hover{ background:var(--orange-dark); }
+  .btn-ghost{ background:transparent; border-color:#3a3a3d; color:#e9e8e5; }
+  .btn-ghost:hover{ border-color:var(--orange); color:var(--orange); }
+  .btn-del{ background:transparent; border:none; color:#b0aca4; font-size:1.05rem; cursor:pointer; line-height:1; padding:0.3rem 0.5rem; }
+  .btn-del:hover{ color:var(--bad); }
+
+  /* ── Cover (pág. 1) ──────────────────────────────── */
+  .cover{ background:var(--dark); color:#fff; position:relative; border-left:14px solid var(--orange); }
+  .cover-inner{ padding:3.2rem 0 2.6rem; }
+  .cover-logo{
+    display:inline-flex; align-items:center; gap:0.6rem; background:#fff; color:#111; border-radius:14px;
+    padding:0.55rem 1.1rem 0.55rem 0.7rem; font-weight:800; font-size:1.05rem; margin-bottom:1.8rem;
+  }
+  .cover-logo .mark{ width:26px; height:26px; display:grid; place-items:center; }
+  .cover-logo .mark svg{ width:100%; height:100%; }
+  .eyebrow{ color:var(--orange); font-weight:800; font-size:0.78rem; letter-spacing:0.14em; text-transform:uppercase; }
+  .cover hr{ border:none; border-top:2px solid var(--orange); width:100%; margin:0.9rem 0 1.6rem; }
+  .cover h1{ margin:0; font-size:clamp(2.4rem,6vw,3.6rem); line-height:1.05; font-weight:800; letter-spacing:-0.01em; }
+  .cover h1 .accent{ color:var(--orange); display:block; }
+  .cover p.lead{ color:#b7b5b0; font-size:1.05rem; line-height:1.6; max-width:520px; margin-top:1.3rem; }
+  .cover-note{ background:var(--orange); color:#181300; padding:1.6rem 0; }
+  .cover-note h3{ margin:0 0 0.5rem; font-size:1.15rem; font-weight:800; }
+  .cover-note p{ margin:0.15rem 0; font-size:0.95rem; line-height:1.5; }
+
+  /* ── Doc body ────────────────────────────────────── */
+  .doc-topline{
+    display:flex; justify-content:space-between; gap:1rem; font-size:0.78rem; color:var(--muted);
+    padding:1.1rem 0 0.6rem; flex-wrap:wrap;
+  }
+  .doc-body{ padding-bottom:2rem; }
+
+  .doc-section{ background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:2rem; margin-bottom:1.5rem; }
+  .sec-head{ display:flex; gap:1rem; align-items:flex-start; padding-bottom:1.1rem; border-bottom:2px solid var(--orange); margin-bottom:1.5rem; }
+  .sec-num{
+    flex:0 0 auto; width:34px; height:34px; border-radius:8px; background:var(--orange); color:#181300;
+    display:grid; place-items:center; font-weight:800; font-size:1rem;
+  }
+  .sec-head h2{ margin:0 0 0.2rem; font-size:1.5rem; letter-spacing:-0.01em; }
+  .sec-desc{ margin:0; color:var(--muted); font-size:0.92rem; }
+  .sec-intro{ color:#4c4a46; font-size:0.95rem; line-height:1.55; margin:0 0 1.2rem; }
+
+  .group-title{ font-size:0.98rem; font-weight:800; margin:1.6rem 0 0.7rem; }
+  .group-title:first-of-type{ margin-top:0; }
+  .group-desc{ margin:-0.4rem 0 0.8rem; color:var(--muted); font-size:0.86rem; font-style:italic; }
+
+  /* two-column field table (info principal) */
+  .field-table{ border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .field-row{ display:grid; grid-template-columns:230px 1fr; border-top:1px solid var(--line); }
+  .field-row:first-child{ border-top:none; }
+  .field-row label{
+    background:var(--label-bg); font-weight:700; font-size:0.9rem; padding:0.85rem 1rem;
+    border-right:3px solid var(--orange); display:flex; align-items:center;
+  }
+  .field-row input{
+    border:none; background:transparent; padding:0.85rem 1rem; font-size:0.92rem; font-family:inherit;
+    color:var(--ink); width:100%;
+  }
+  .field-row input:focus{ outline:2px solid var(--orange); outline-offset:-2px; background:#fffdf6; }
+  .field-row input::placeholder{ color:#a19d95; }
+  .field-row input.mono{ font-family:'Courier New', Courier, monospace; letter-spacing:0.03em; }
+
+  .field-row .phone-group{ display:flex; align-items:stretch; }
+  .field-row .phone-group select{
+    flex:0 0 auto; border:none; border-right:1px solid var(--line); background:transparent;
+    padding:0.85rem 0.7rem 0.85rem 1rem; font-family:inherit; font-size:0.9rem; color:var(--ink); cursor:pointer;
+  }
+  .field-row .phone-group select:focus{ outline:2px solid var(--orange); outline-offset:-2px; }
+  .field-row .phone-group input{ flex:1 1 auto; min-width:0; }
+
+  .field-row--textarea{ align-items:stretch; }
+  .field-row--textarea label{ align-items:flex-start; padding-top:0.9rem; }
+  .field-row textarea{
+    border:none; background:transparent; padding:0.85rem 1rem; font-size:0.92rem; font-family:inherit;
+    color:var(--ink); width:100%; resize:vertical; min-height:90px;
+  }
+  .field-row textarea:focus{ outline:2px solid var(--orange); outline-offset:-2px; background:#fffdf6; }
+  .field-row textarea::placeholder{ color:#a19d95; }
+
+  .callout{
+    border:1px solid var(--orange); background:#fff9ec; border-radius:10px; padding:1.1rem 1.2rem;
+  }
+  .callout p{ margin:0 0 0.9rem; font-size:0.9rem; line-height:1.5; color:#3d3a35; }
+  .file-drop{
+    display:inline-flex; align-items:center; gap:0.5rem; cursor:pointer; font-size:0.86rem; font-weight:700;
+    background:#fff; border:1px dashed #c9a34c; border-radius:8px; padding:0.6rem 0.9rem; color:#7a5a08;
+  }
+  .file-drop:hover{ border-color:var(--orange-dark); }
+
+  /* tables */
+  .table-wrap{ overflow-x:auto; border:1px solid var(--line); border-radius:10px; }
+  table{ width:100%; border-collapse:collapse; min-width:700px; }
+  thead th{
+    background:var(--orange); color:#fff; text-align:left; font-size:0.82rem; font-weight:800;
+    padding:0.75rem 0.9rem; white-space:nowrap;
+  }
+  .q-table thead th:nth-child(2){ min-width:130px; }
+  .col-active{ text-align:center !important; min-width:150px; }
+  .col-del{ width:40px; }
+  .col-order{ width:56px; }
+  tbody tr{ border-top:1px solid var(--line); cursor:grab; }
+  tbody tr:nth-child(even){ background:#faf9f7; }
+  tbody tr:hover{ background:#fff6e6; }
+  tbody tr.dragging{ opacity:0.45; background:#fff3d6; cursor:grabbing; }
+  td{ padding:0.6rem 0.7rem; font-size:0.88rem; vertical-align:middle; }
+  td.field-name{ font-weight:700; white-space:nowrap; }
+  .drag-hint{ font-size:0.78rem; color:var(--muted); font-style:italic; margin:0 0 0.6rem; }
+  .order-cell{ display:flex; align-items:center; gap:0.45rem; touch-action:none; }
+  .q-num{ font-weight:800; color:var(--muted); font-size:0.78rem; min-width:14px; text-align:right; }
+  .drag-handle{ color:#b0aca4; font-size:1.05rem; line-height:1; user-select:none; }
+  tbody tr:hover .drag-handle{ color:var(--orange-dark); }
+  td input[type="text"]{
+    width:100%; border:1px solid transparent; background:transparent; font-family:inherit; font-size:0.87rem;
+    padding:0.45rem 0.5rem; border-radius:6px; color:var(--ink);
+  }
+  td input[type="text"]:hover{ border-color:var(--line); }
+  td input[type="text"]:focus{ outline:none; border-color:var(--orange); background:#fffdf6; }
+  .ex-input{ color:var(--muted); font-style:italic; }
+  .ex-input:focus{ color:var(--ink); font-style:normal; }
+
+  /* Sí/No segmented toggle */
+  .toggle-group{ display:inline-flex; border:1px solid var(--line); border-radius:999px; overflow:hidden; }
+  .toggle-group input{ position:absolute; opacity:0; pointer-events:none; }
+  .toggle-group label{
+    padding:0.35rem 0.85rem; font-size:0.8rem; font-weight:700; cursor:pointer; color:var(--muted);
+    background:#fff; transition:background .15s, color .15s;
+  }
+  .toggle-group input:checked + label.opt-si{ background:var(--good-bg); color:var(--good); }
+  .toggle-group input:checked + label.opt-no{ background:var(--bad-bg); color:var(--bad); }
+  .toggle-group label.opt-si{ border-right:1px solid var(--line); }
+
+  /* steps table (informativo) */
+  .steps-table td:first-child{ font-weight:800; color:var(--orange-dark); width:40px; }
+  .steps-table td:last-child{ color:var(--muted); font-weight:600; }
+
+  .cta-banner{ background:var(--dark); color:#fff; border-radius:14px; padding:1.3rem 1.5rem; margin-top:1.4rem; }
+  .cta-banner p{ margin:0; font-size:0.95rem; line-height:1.5; }
+  .cta-banner strong{ color:var(--orange); }
+
+  .submit-section{ text-align:center; }
+  .save-status{ font-size:0.85rem; color:var(--muted); margin-bottom:1rem; }
+  .save-status.saved{ color:var(--good); }
+  .submit-actions{ display:flex; justify-content:center; gap:0.7rem; flex-wrap:wrap; }
+  .btn-lg{ padding:0.95rem 2.3rem; font-size:0.95rem; border-radius:999px; }
+  .submit-hint{ margin:1rem 0 0; font-size:0.86rem; color:var(--muted); }
+
+  .doc-footer{ padding:1.4rem 0 2.4rem; }
+  .footer-inner{ display:flex; justify-content:space-between; gap:1rem; font-size:0.78rem; color:var(--muted); flex-wrap:wrap; border-top:1px solid var(--line); padding-top:1rem; }
+
+  .toast{
+    position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
+    background:var(--dark); color:#fff; padding:0.7rem 1.2rem; border-radius:999px; font-size:0.85rem;
+    font-weight:700; box-shadow:0 10px 24px rgba(0,0,0,0.25); transition:opacity .2s, transform .2s; z-index:50;
+    pointer-events:none;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ── Intro de bienvenida ─────────────────────────── */
+  .intro-overlay{
+    position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
+    background:var(--dark); overflow:hidden; padding:2rem;
+    transition:opacity .55s cubic-bezier(.4,0,.2,1), visibility .55s;
+  }
+  .intro-overlay.intro-hide{ opacity:0; visibility:hidden; pointer-events:none; }
+  .intro-glow{
+    position:absolute; width:60vmax; height:60vmax; border-radius:50%; pointer-events:none;
+    background:radial-gradient(circle, rgba(245,163,0,0.28) 0%, rgba(245,163,0,0) 68%);
+    top:50%; left:50%; transform:translate(-50%,-50%);
+    animation:introPulse 6s ease-in-out infinite;
+  }
+  @keyframes introPulse{
+    0%,100%{ transform:translate(-50%,-50%) scale(1); opacity:0.9; }
+    50%{ transform:translate(-50%,-50%) scale(1.15); opacity:1; }
+  }
+  .intro-card{ position:relative; max-width:560px; text-align:center; color:#fff; }
+  .intro-logo{
+    display:inline-flex; align-items:center; justify-content:center; gap:0.6rem; background:#fff; color:#111;
+    border-radius:14px; padding:0.55rem 1.1rem 0.55rem 0.7rem; font-weight:800; font-size:1.05rem;
+    margin-bottom:1.6rem; opacity:0; animation:introFadeUp .6s ease forwards;
+  }
+  .intro-logo .mark{ width:24px; height:24px; display:grid; place-items:center; }
+  .intro-logo .mark svg{ width:100%; height:100%; }
+  .intro-eyebrow{
+    color:var(--orange); font-weight:800; font-size:0.78rem; letter-spacing:0.14em; text-transform:uppercase;
+    opacity:0; animation:introFadeUp .6s ease forwards; animation-delay:.12s;
+  }
+  .intro-title{
+    margin:0.7rem 0 0; font-size:clamp(1.9rem,4.6vw,2.7rem); font-weight:800; line-height:1.15; letter-spacing:-0.01em;
+    opacity:0; animation:introFadeUp .6s ease forwards; animation-delay:.22s;
+  }
+  .intro-title .accent{ color:var(--orange); }
+  .intro-sub{
+    margin:1.1rem auto 0; max-width:460px; color:#c3c1bc; font-size:1.02rem; line-height:1.6;
+    opacity:0; animation:introFadeUp .6s ease forwards; animation-delay:.34s;
+  }
+  .intro-note{
+    display:inline-flex; align-items:center; gap:0.5rem; margin-top:1.3rem; padding:0.6rem 1rem;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:999px;
+    font-size:0.82rem; color:#b7b5b0;
+    opacity:0; animation:introFadeUp .6s ease forwards; animation-delay:.46s;
+  }
+  .intro-cta{
+    margin-top:1.8rem; opacity:0; animation:introFadeUp .6s ease forwards; animation-delay:.58s;
+  }
+  .intro-cta button{
+    font-family:inherit; font-size:1rem; font-weight:800; background:var(--orange); color:#181300;
+    border:none; border-radius:999px; padding:0.9rem 2.1rem; cursor:pointer;
+    transition:transform .15s ease, background .15s ease, box-shadow .15s ease;
+    box-shadow:0 10px 26px rgba(245,163,0,0.25);
+  }
+  .intro-cta button:hover{ background:var(--orange-dark); transform:translateY(-2px); }
+  .intro-cta button:active{ transform:translateY(0) scale(0.98); }
+  @keyframes introFadeUp{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:translateY(0); } }
+
+  @media (prefers-reduced-motion: reduce){
+    .intro-glow{ animation:none; }
+    .intro-logo, .intro-eyebrow, .intro-title, .intro-sub, .intro-note, .intro-cta{ animation:none; opacity:1; }
+  }
+
+  /* ── Modal post-descarga (enviar por WhatsApp) ─────── */
+  .pdf-modal{
+    position:fixed; inset:0; z-index:110; display:flex; align-items:center; justify-content:center;
+    background:rgba(12,12,13,0.6); backdrop-filter:blur(3px); padding:1.5rem;
+    opacity:0; visibility:hidden; transition:opacity .3s ease, visibility .3s ease;
+  }
+  .pdf-modal.show{ opacity:1; visibility:visible; }
+  .pdf-modal-card{
+    background:var(--dark); color:#fff; border-radius:20px; padding:2.2rem 2rem; max-width:400px; text-align:center;
+    box-shadow:0 24px 60px rgba(0,0,0,0.35); transform:translateY(14px) scale(0.98);
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .pdf-modal.show .pdf-modal-card{ transform:translateY(0) scale(1); }
+  .pdf-modal-icon{ font-size:2.4rem; margin-bottom:0.6rem; }
+  .pdf-modal-card h3{ margin:0 0 0.6rem; font-size:1.3rem; }
+  .pdf-modal-card p{ margin:0; color:#c3c1bc; font-size:0.95rem; line-height:1.5; }
+  .pdf-modal-actions{ display:flex; flex-direction:column; gap:0.6rem; margin-top:1.5rem; }
+  .btn-ghost-light{ background:transparent; border:1px solid rgba(255,255,255,0.2); color:#e9e8e5; }
+  .btn-ghost-light:hover{ border-color:#fff; }
+
+  @media (max-width:720px){
+    .field-row{ grid-template-columns:1fr; }
+    .field-row label{ border-right:none; border-left:3px solid var(--orange); }
+    .topbar-actions{ width:100%; justify-content:flex-end; }
+    .doc-section{ padding:1.3rem; border-radius:12px; }
+  }
+
+  @media print{
+    @page{ size:auto; margin:12mm; }
+
+    /* Los navegadores no imprimen colores de fondo por defecto (para
+       ahorrar tinta): sin esto, el texto claro sobre fondos oscuros u
+       naranjas de la portada, las cabeceras y las píldoras Sí/No
+       desaparece al no imprimirse su fondo. */
+    *{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+
+    html, body{ overflow:visible !important; height:auto !important; background:#fff; }
+    .topbar, .submit-section, .file-drop, .btn-del, .col-del, .col-order,
+    .drag-hint, .save-status, .toast, .intro-overlay, .pdf-modal{ display:none !important; }
+
+    .container{ width:100% !important; }
+    .cover{ break-inside:avoid; }
+    .doc-section{ break-inside:avoid; border-color:#ddd; padding:1.4rem; box-shadow:none; }
+
+    /* Sin min-width: la tabla se ajusta al ancho de la página en vez de
+       recortarse por el lateral. table-layout:fixed + wrap evita que el
+       texto largo (preguntas, ejemplos) desborde las celdas. */
+    .table-wrap{ overflow:visible; }
+    table{ min-width:0 !important; width:100% !important; table-layout:fixed; }
+    td, th{ overflow-wrap:break-word; word-break:break-word; white-space:normal !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="intro-overlay" id="introOverlay" role="dialog" aria-modal="true" aria-labelledby="introTitle">
+  <div class="intro-glow"></div>
+  <div class="intro-card">
+    <div class="intro-logo">
+      <span class="mark">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 34L20 10C21.5 7 26.5 7 28 10L40 34" stroke="#f5a300" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M15 30h18" stroke="#f5a300" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+      </span>
+      Automanize
+    </div>
+    <div class="intro-eyebrow">Onboarding · Documento de configuración</div>
+    <h1 class="intro-title" id="introTitle">Gracias por confiar<br /><span class="accent">en nosotros.</span></h1>
+    <p class="intro-sub">Estás a punto de empezar a configurar tu asistente de WhatsApp. Antes de arrancar necesitamos que nos cuentes algunos datos clave de tu negocio — no te llevará más de unos minutos.</p>
+    <div class="intro-note">💾 Tus respuestas se guardan solas, puedes continuar cuando quieras</div>
+    <div class="intro-cta">
+      <button type="button" id="introCta">Estoy listo →</button>
+    </div>
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand-link" href="index.html">← Automanize</a>
+    <div class="topbar-actions">
+      <button type="button" class="btn btn-ghost" id="btnReset">Reiniciar</button>
+      <button type="button" class="btn btn-primary" id="btnPrint">Descargar PDF</button>
+    </div>
+  </div>
+</header>
+
+<section class="cover">
+  <div class="container cover-inner">
+    <div class="cover-logo">
+      <span class="mark">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 34L20 10C21.5 7 26.5 7 28 10L40 34" stroke="#f5a300" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M15 30h18" stroke="#f5a300" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+      </span>
+      Automanize
+    </div>
+    <div class="eyebrow">Onboarding · Documento de configuración</div>
+    <hr />
+    <h1>Bienvenido<span class="accent">a bordo.</span></h1>
+    <p class="lead">Tu asistente de WhatsApp para gestión inmobiliaria está listo para configurarse. Solo necesitamos que rellenes este documento.</p>
+  </div>
+  <div class="cover-note">
+    <div class="container">
+      <h3>Para completar por el cliente</h3>
+      <p>Rellena las secciones de este documento y envíanoslo.</p>
+      <p>El equipo de Automanize se encargará del resto.</p>
+    </div>
+  </div>
+</section>
+
+<main class="container doc-body">
+  <div class="doc-topline">
+    <span>Automanize — Onboarding Cliente</span>
+    <span>Documento confidencial · automanize.com</span>
+  </div>
+
+  <!-- SECCIÓN 1 -->
+  <section class="doc-section" id="sec1">
+    <div class="sec-head">
+      <span class="sec-num">1</span>
+      <div>
+        <h2>Datos de tu empresa</h2>
+        <p class="sec-desc">Información básica para configurar tu cuenta en Automanize</p>
+      </div>
+    </div>
+
+    <h4 class="group-title">Información principal</h4>
+    <div class="field-table">
+      <div class="field-row">
+        <label for="f-nombreComercial">Nombre comercial</label>
+        <input id="f-nombreComercial" type="text" placeholder="Nombre que aparecerá en el asistente de WhatsApp" data-field="nombreComercial" />
+      </div>
+      <div class="field-row">
+        <label for="f-personaContacto">Persona de contacto</label>
+        <input id="f-personaContacto" type="text" placeholder="Nombre y apellidos" data-field="personaContacto" />
+      </div>
+      <div class="field-row">
+        <label for="f-telefonoPrincipal">Teléfono principal</label>
+        <div class="phone-group">
+          <select id="f-telefonoPrincipalPrefijo" data-field="telefonoPrincipalPrefijo"></select>
+          <input id="f-telefonoPrincipal" type="tel" inputmode="numeric" placeholder="6XX XXX XXX" data-field="telefonoPrincipalNumero" />
+        </div>
+      </div>
+      <div class="field-row">
+        <label for="f-email">Email</label>
+        <input id="f-email" type="email" placeholder="contacto@tuempresa.com" data-field="email" />
+      </div>
+      <div class="field-row">
+        <label for="f-direccionFiscal">Dirección fiscal</label>
+        <input id="f-direccionFiscal" type="text" placeholder="Calle, número, código postal, ciudad" data-field="direccionFiscal" />
+      </div>
+      <div class="field-row">
+        <label for="f-iban">IBAN</label>
+        <input id="f-iban" type="text" class="mono" placeholder="ES00 0000 0000 0000 0000 0000" data-field="iban" />
+      </div>
+    </div>
+
+    <h4 class="group-title">Número de notificaciones</h4>
+    <p class="group-desc">WhatsApp que recibirá avisos de incidencias, confirmaciones de visita y alertas de pago.</p>
+    <div class="field-table">
+      <div class="field-row">
+        <label for="f-whatsappNotif">Nº WhatsApp notificaciones</label>
+        <div class="phone-group">
+          <select id="f-whatsappNotifPrefijo" data-field="whatsappNotifPrefijo"></select>
+          <input id="f-whatsappNotif" type="tel" inputmode="numeric" placeholder="6XX XXX XXX" data-field="whatsappNotifNumero" />
+        </div>
+      </div>
+    </div>
+
+    <h4 class="group-title">Logo y marca</h4>
+    <div class="callout">
+      <p><strong>Envía tu logo por separado</strong> — mándalo directamente por WhatsApp a tu gestor de Automanize en un mensaje aparte. Preferiblemente PNG o JPG con fondo blanco y alta resolución.</p>
+      <label class="file-drop">
+        <input type="file" id="logoFile" accept="image/png,image/jpeg" hidden />
+        <span id="logoFileLabel">📎 Adjuntar aquí también (opcional)</span>
+      </label>
+    </div>
+
+    <h4 class="group-title">Información adicional</h4>
+    <p class="group-desc">Cualquier otro dato, contexto o petición especial que quieras contarnos.</p>
+    <div class="field-table">
+      <div class="field-row field-row--textarea">
+        <label for="f-infoAdicional">Notas</label>
+        <textarea id="f-infoAdicional" rows="4" placeholder="Escribe aquí cualquier información adicional…" data-field="infoAdicional"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 2 -->
+  <section class="doc-section" id="sec2">
+    <div class="sec-head">
+      <span class="sec-num">2</span>
+      <div>
+        <h2>Calificación del interesado</h2>
+        <p class="sec-desc">Preguntas automáticas cuando alguien contacte interesado en un piso</p>
+      </div>
+    </div>
+    <p class="sec-intro">Cuando un interesado contacte por WhatsApp, el asistente iniciará una conversación guiada para recopilar su perfil. Edita, borra o reordena las preguntas como necesites.</p>
+    <p class="drag-hint">⠿ Arrastra cualquier parte de la fila para reordenar las preguntas</p>
+
+    <div class="table-wrap">
+      <table class="q-table">
+        <thead>
+          <tr>
+            <th class="col-order"></th>
+            <th>Campo</th>
+            <th>Pregunta que hace el asistente</th>
+            <th class="col-active">¿Activo?</th>
+            <th>Ejemplo</th>
+            <th class="col-del"></th>
+          </tr>
+        </thead>
+        <tbody id="qTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 3 -->
+  <section class="doc-section" id="sec3">
+    <div class="sec-head">
+      <span class="sec-num">3</span>
+      <div>
+        <h2>Siguientes pasos</h2>
+        <p class="sec-desc">Qué ocurre una vez que nos envíes este documento</p>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="steps-table">
+        <thead><tr><th>#</th><th>Acción</th><th>Responsable</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Rellenas este documento</td><td>Cliente</td></tr>
+          <tr><td>2</td><td>Nos lo envías junto con el logo</td><td>Cliente</td></tr>
+          <tr><td>3</td><td>Configuramos tu cuenta y flujos de WhatsApp</td><td>Automanize</td></tr>
+          <tr><td>4</td><td>Revisión y validación contigo</td><td>Ambos</td></tr>
+          <tr><td>5</td><td>Lanzamiento en producción</td><td>Automanize</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cta-banner">
+      <p><strong>¿Tienes alguna duda?</strong> Contacta con nosotros y te ayudamos en lo que necesites.</p>
+    </div>
+  </section>
+
+  <section class="doc-section submit-section">
+    <div class="save-status" id="saveStatus">Guardado automático activado — tus respuestas se guardan en este navegador.</div>
+    <div class="submit-actions">
+      <button type="button" class="btn btn-primary btn-lg" id="btnPrint2">Descargar PDF</button>
+    </div>
+    <p class="submit-hint">Al descargarlo, envíanos el PDF por WhatsApp para completar tu onboarding.</p>
+  </section>
+</main>
+
+<footer class="doc-footer">
+  <div class="container footer-inner">
+    <span>Automanize — Onboarding Cliente</span>
+    <span>Documento confidencial · automanize.com</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<div class="pdf-modal" id="pdfModal" role="dialog" aria-modal="true" aria-labelledby="pdfModalTitle">
+  <div class="pdf-modal-card">
+    <div class="pdf-modal-icon">📄</div>
+    <h3 id="pdfModalTitle">¡Tu PDF está listo!</h3>
+    <p>Búscalo en tus descargas y envíanoslo por WhatsApp para completar tu onboarding.</p>
+    <div class="pdf-modal-actions">
+      <a class="btn btn-primary" id="pdfModalWhatsapp" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+      <button type="button" class="btn btn-ghost-light" id="pdfModalClose">Entendido</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const STORAGE_KEY = 'automanize_onboarding_v1';
+
+const DEFAULT_QUESTIONS = [
+  { id:'q1',  label:'Nombre',         question:'¿Cuál es tu nombre?',                                            example:'Carlos Martínez' },
+  { id:'q2',  label:'Edad',           question:'¿Qué edad tienes?',                                              example:'26 años' },
+  { id:'q3',  label:'Profesión',      question:'¿A qué te dedicas profesionalmente?',                            example:'Enfermero' },
+  { id:'q4',  label:'Tipo contrato',  question:'¿Tienes contrato indefinido, temporal o eres autónomo?',         example:'Indefinido' },
+  { id:'q5',  label:'Motivo',         question:'¿Cuál es el motivo principal por el que buscas piso?',           example:'Traslado / Emancipación…' },
+  { id:'q6',  label:'Zona preferida', question:'¿Tienes alguna zona o barrio preferido?',                        example:'Sin preferencia' },
+  { id:'q7',  label:'Tipo de piso',   question:'¿Qué tipo de piso buscas (estudio, 1 hab., 2 hab.…)?',           example:'Sin preferencia' },
+  { id:'q8',  label:'Mascotas',       question:'¿Tienes mascotas?',                                              example:'No' },
+  { id:'q9',  label:'Nº ocupantes',   question:'¿Cuántas personas vivirán en el piso?',                          example:'1' },
+  { id:'q10', label:'Duración',       question:'¿Cuánto tiempo prevés quedarte?',                                example:'6 meses – 1 año' },
+  { id:'q11', label:'Salario',        question:'¿Cuáles son tus ingresos mensuales aproximados?',                example:'1.200 EUR/mes' },
+  { id:'q12', label:'Aval',           question:'¿Dispones de aval o garantía adicional?',                        example:'No indicado' },
+];
+
+const PREFIJOS = [
+  { value:'34',  label:'🇪🇸 +34' },
+  { value:'52',  label:'🇲🇽 +52' },
+  { value:'54',  label:'🇦🇷 +54' },
+  { value:'57',  label:'🇨🇴 +57' },
+  { value:'56',  label:'🇨🇱 +56' },
+  { value:'51',  label:'🇵🇪 +51' },
+  { value:'598', label:'🇺🇾 +598' },
+  { value:'595', label:'🇵🇾 +595' },
+  { value:'591', label:'🇧🇴 +591' },
+  { value:'1',   label:'🇺🇸 +1' },
+  { value:'44',  label:'🇬🇧 +44' },
+  { value:'33',  label:'🇫🇷 +33' },
+  { value:'49',  label:'🇩🇪 +49' },
+  { value:'39',  label:'🇮🇹 +39' },
+  { value:'351', label:'🇵🇹 +351' },
+];
+
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function defaultState(){
+  return {
+    empresa: {
+      nombreComercial:'', personaContacto:'', email:'', direccionFiscal:'', iban:'',
+      telefonoPrincipalPrefijo:'34', telefonoPrincipalNumero:'',
+      whatsappNotifPrefijo:'34', whatsappNotifNumero:'',
+      infoAdicional:'',
+    },
+    logoFileName: '',
+    preguntas: DEFAULT_QUESTIONS.map(q => ({ ...q, active:true })),
+  };
+}
+
+let state = loadState();
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return defaultState();
+    const parsed = JSON.parse(raw);
+    const base = defaultState();
+    return {
+      empresa: { ...base.empresa, ...(parsed.empresa || {}) },
+      logoFileName: parsed.logoFileName || '',
+      preguntas: (Array.isArray(parsed.preguntas) && parsed.preguntas.length) ? parsed.preguntas : base.preguntas,
+    };
+  }catch(e){ return defaultState(); }
+}
+
+let saveTimer = null;
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  const el = document.getElementById('saveStatus');
+  el.textContent = 'Guardado ✓ ' + new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  el.classList.add('saved');
+}
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveState, 400);
+}
+
+// ── Render: sección 1 ──────────────────────────────────────
+const prefixOptionsHTML = PREFIJOS.map(p => `<option value="${esc(p.value)}">${esc(p.label)}</option>`).join('');
+document.querySelectorAll('select[data-field]').forEach(select => { select.innerHTML = prefixOptionsHTML; });
+
+function renderEmpresa(){
+  document.querySelectorAll('[data-field]').forEach(input => {
+    input.value = state.empresa[input.dataset.field] || '';
+  });
+  const logoLabel = document.getElementById('logoFileLabel');
+  logoLabel.textContent = state.logoFileName
+    ? '✅ ' + state.logoFileName
+    : '📎 Adjuntar aquí también (opcional)';
+}
+
+document.querySelectorAll('[data-field]').forEach(input => {
+  const evtName = input.tagName === 'SELECT' ? 'change' : 'input';
+  input.addEventListener(evtName, () => {
+    state.empresa[input.dataset.field] = input.value;
+    scheduleSave();
+  });
+});
+
+document.getElementById('logoFile').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  state.logoFileName = file.name;
+  document.getElementById('logoFileLabel').textContent = '✅ ' + file.name;
+  showToast('Logo listo — recuerda enviarlo también por WhatsApp a tu gestor.');
+  scheduleSave();
+});
+
+// ── Render: tabla de preguntas (sección 2) ─────────────────
+// Preguntas predeterminadas y añadidas conviven en la misma lista: todas son
+// editables, borrables y reordenables — no hay distinción especial para las
+// que trae el documento por defecto.
+const qBody = document.getElementById('qTableBody');
+
+function renderQuestions(){
+  qBody.innerHTML = state.preguntas.map((q, i) => `
+    <tr data-id="${esc(q.id)}">
+      <td class="col-order">
+        <div class="order-cell">
+          <span class="q-num">${i + 1}</span>
+          <span class="drag-handle" title="Arrastra para reordenar">⠿</span>
+        </div>
+      </td>
+      <td><input type="text" class="q-label" value="${esc(q.label)}" placeholder="Ej. Idioma" /></td>
+      <td><input type="text" class="q-question" value="${esc(q.question)}" placeholder="Pregunta que hará el asistente" /></td>
+      <td class="col-active">
+        <div class="toggle-group">
+          <input type="radio" name="active-${esc(q.id)}" id="si-${esc(q.id)}" ${q.active ? 'checked' : ''} />
+          <label class="opt-si" for="si-${esc(q.id)}">Sí</label>
+          <input type="radio" name="active-${esc(q.id)}" id="no-${esc(q.id)}" ${!q.active ? 'checked' : ''} />
+          <label class="opt-no" for="no-${esc(q.id)}">No</label>
+        </div>
+      </td>
+      <td><input type="text" class="q-example ex-input" value="${esc(q.example)}" placeholder="Ejemplo de respuesta" /></td>
+      <td class="col-del"><button type="button" class="btn-del" title="Eliminar pregunta">×</button></td>
+    </tr>
+  `).join('');
+
+  qBody.querySelectorAll('tr').forEach(tr => {
+    const id = tr.dataset.id;
+    const q = state.preguntas.find(p => p.id === id);
+    tr.querySelector('.q-label').addEventListener('input', e => { q.label = e.target.value; scheduleSave(); });
+    tr.querySelector('.q-question').addEventListener('input', e => { q.question = e.target.value; scheduleSave(); });
+    tr.querySelector('.q-example').addEventListener('input', e => { q.example = e.target.value; scheduleSave(); });
+    tr.querySelectorAll('input[type="radio"]').forEach(r => {
+      r.addEventListener('change', () => {
+        q.active = tr.querySelector(`#si-${CSS.escape(id)}`).checked;
+        scheduleSave();
+      });
+    });
+    tr.querySelector('.btn-del').addEventListener('click', () => {
+      state.preguntas = state.preguntas.filter(p => p.id !== id);
+      renderQuestions();
+      scheduleSave();
+    });
+
+    // Se puede arrastrar pulsando en cualquier parte de la fila que no sea
+    // un control interactivo (texto, toggle Sí/No, botón de borrar), así es
+    // más fácil de agarrar y no solo desde el icono ⠿. Usa Pointer Events
+    // (no la API nativa de HTML5 drag-and-drop, poco fiable arrastrando
+    // filas de <table> en Chrome/Edge) para que funcione igual con ratón,
+    // trackpad y dedo.
+    tr.addEventListener('pointerdown', e => {
+      if(e.target.closest('input, button, label, select, textarea')) return;
+      startRowDrag(e, tr);
+    });
+  });
+}
+
+let dragTr = null;
+
+function startRowDrag(e, tr){
+  e.preventDefault();
+  dragTr = tr;
+  tr.classList.add('dragging');
+  document.body.style.userSelect = 'none';
+  document.addEventListener('pointermove', onRowDragMove);
+  document.addEventListener('pointerup', endRowDrag, { once:true });
+  document.addEventListener('pointercancel', endRowDrag, { once:true });
+}
+
+function onRowDragMove(e){
+  if(!dragTr) return;
+  const afterRow = rowAfterPoint(e.clientY);
+  if(afterRow === dragTr) return;
+  if(afterRow == null) qBody.appendChild(dragTr);
+  else qBody.insertBefore(dragTr, afterRow);
+}
+
+function endRowDrag(){
+  if(!dragTr) return;
+  dragTr.classList.remove('dragging');
+  dragTr = null;
+  document.body.style.userSelect = '';
+  document.removeEventListener('pointermove', onRowDragMove);
+  syncOrderFromDOM();
+}
+
+function rowAfterPoint(y){
+  const rows = [...qBody.querySelectorAll('tr:not(.dragging)')];
+  return rows.reduce((closest, row) => {
+    const box = row.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if(offset < 0 && offset > closest.offset) return { offset, element: row };
+    return closest;
+  }, { offset: -Infinity, element: null }).element;
+}
+
+function syncOrderFromDOM(){
+  const orderedIds = [...qBody.querySelectorAll('tr')].map(tr => tr.dataset.id);
+  state.preguntas.sort((a, b) => orderedIds.indexOf(a.id) - orderedIds.indexOf(b.id));
+  renderQuestions();
+  scheduleSave();
+}
+
+// ── Reset ───────────────────────────────────────────────────
+document.getElementById('btnReset').addEventListener('click', () => {
+  if(!confirm('¿Seguro que quieres borrar todas las respuestas y volver a empezar?')) return;
+  state = defaultState();
+  localStorage.removeItem(STORAGE_KEY);
+  renderAll();
+  showToast('Documento reiniciado.');
+});
+
+// ── Descargar PDF (imprimir) y aviso para enviarlo por WhatsApp ─
+const AUTOMANIZE_WHATSAPP = '34617153252';
+
+function whatsappLink(){
+  const nombre = state.empresa.nombreComercial;
+  const msg = nombre
+    ? `Hola, soy de ${nombre}. Os envío el documento de onboarding de Automanize completado (adjunto el PDF).`
+    : 'Hola, os envío el documento de onboarding de Automanize completado (adjunto el PDF).';
+  return `https://wa.me/${AUTOMANIZE_WHATSAPP}?text=${encodeURIComponent(msg)}`;
+}
+
+function showPdfModal(){
+  const modal = document.getElementById('pdfModal');
+  document.getElementById('pdfModalWhatsapp').href = whatsappLink();
+  modal.classList.add('show');
+}
+function hidePdfModal(){
+  document.getElementById('pdfModal').classList.remove('show');
+}
+document.getElementById('pdfModalClose').addEventListener('click', hidePdfModal);
+document.getElementById('pdfModalWhatsapp').addEventListener('click', hidePdfModal);
+
+// El evento 'afterprint' se dispara al cerrarse el diálogo de impresión,
+// tanto si el usuario ha guardado el PDF como si lo ha cancelado; es la
+// única señal disponible desde JS para saber que el flujo ha terminado.
+window.addEventListener('afterprint', showPdfModal);
+
+function printDoc(){ window.print(); }
+document.getElementById('btnPrint').addEventListener('click', printDoc);
+document.getElementById('btnPrint2').addEventListener('click', printDoc);
+
+// ── Toast ────────────────────────────────────────────────────
+let toastTimer = null;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ── Intro de bienvenida ───────────────────────────────────────
+function initIntro(){
+  const overlay = document.getElementById('introOverlay');
+  const cta = document.getElementById('introCta');
+  document.body.style.overflow = 'hidden';
+  cta.focus();
+
+  const dismiss = () => {
+    overlay.classList.add('intro-hide');
+    document.body.style.overflow = '';
+    overlay.addEventListener('transitionend', () => overlay.remove(), { once:true });
+  };
+  cta.addEventListener('click', dismiss);
+}
+initIntro();
+
+function renderAll(){
+  renderEmpresa();
+  renderQuestions();
+}
+renderAll();
+</script>
+</body>
+</html>
