@@ -2,9 +2,25 @@
 
 ## Para qué sirve
 
-Formulario wizard paso a paso que recibe un lead (persona interesada en alquilar) enviado desde WhatsApp vía n8n. Reemplaza la larga conversación de preguntas por WhatsApp — el lead responde todo de una vez en el móvil.
+Formulario wizard paso a paso que recibe un lead (persona interesada en alquilar). Reemplaza la larga conversación de preguntas por WhatsApp — el lead responde todo de una vez en el móvil. Tiene dos modos de entrada:
 
-**URL de acceso**: `https://automanize.com/formulario.html?token=<uuid>`
+| Modo | URL | Cuándo se usa |
+|---|---|---|
+| **Token** (lead ya identificado) | `https://automanize.com/formulario.html?token=<uuid>` | n8n ya creó la fila en `clientes` (lead que escribió por WhatsApp) y envía este enlace de un solo uso. |
+| **Público** (link reutilizable por tenant) | `https://automanize.com/f/<slug>` | Enlace fijo por inmobiliaria para compartir donde sea (Idealista, redes, etc.). No hay cliente todavía — el propio formulario pide nombre y teléfono al principio y crea el lead al enviar. |
+
+---
+
+## Cómo generar el enlace público de un tenant nuevo
+
+1. El tenant necesita una columna `slug` en `tenants` (texto corto, único, sin espacios — ej. `invictarent`). Si es un tenant nuevo, hay que rellenarla:
+   ```sql
+   UPDATE tenants SET slug = 'nombretenant' WHERE id = '<tenant_id>';
+   ```
+2. Su enlace público es directamente: `https://automanize.com/f/<slug>`.
+3. Requisitos para que el formulario muestre contenido: el tenant debe tener `activo = true`, y al menos una fila en `tenant_preguntas` con `activa = true` para ese `tenant_id`.
+
+La reescritura de `/f/<slug>` → `formulario.html?t=<slug>` vive en el **Caddyfile del servidor** (`/root/caddy-main/Caddyfile`, bloque `automanize.com`), no en `_redirects` (ese archivo es de Netlify y no lo lee nada en producción — el hosting real es Caddy + nginx sobre un VPS, no Netlify, pese a lo que sugiera `netlify.toml`). Dado que Caddy reescribe la petición solo de cara al servidor, el navegador nunca ve el `?t=<slug>` resultante — por eso el JS lee el slug directamente de `location.pathname` (`/f/<slug>`), no del query string.
 
 ---
 
@@ -87,10 +103,10 @@ La función `submit_formulario` castea automáticamente:
 
 ---
 
-## Constantes a configurar
+## Constantes configuradas
 
 ```js
-const N8N_WEBHOOK_URL = ''; // URL del webhook de n8n — rellenar antes de producción
+const N8N_WEBHOOK_URL = 'https://n8n.automanize.com/webhook/formulario-completado';
 ```
 
 ---

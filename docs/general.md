@@ -13,12 +13,14 @@ Web de marketing y utilidades de **Automanize** / **Nize**. Hospedada en `automa
 
 | Capa | Tecnología |
 |---|---|
-| Hosting | Netlify (estático) |
+| Hosting | **VPS propio**: Caddy (reverse proxy, Docker, `/root/caddy-main/`) → contenedor `webAutomanize` (nginx:alpine sirviendo `/var/www/automanize` directo) |
 | Backend / DB | Supabase — proyecto `edjugpekcntzvqaskbmc` (región eu-central-1) |
-| Funciones serverless | Netlify Functions (Node.js) |
+| Funciones serverless | Netlify Functions (Node.js) — ⚠️ pendiente de confirmar si siguen desplegadas en Netlify real o hay que migrarlas |
 | Pagos | Stripe |
-| Automatización | n8n (externo, webhooks) |
+| Automatización | n8n (`n8n.automanize.com`, mismo Caddy) |
 | Fuentes | Inter (Google Fonts) |
+
+**Importante**: `netlify.toml`, `_headers` y `_redirects` están en el repo pero **no los lee nada en producción** — el sitio no lo sirve Netlify, lo sirve el Caddy del VPS. Cualquier redirect, rewrite o header nuevo tiene que ir en `/root/caddy-main/Caddyfile` (ese Caddy también sirve `n8n.automanize.com`, `controldeplagastmm.com` y `captador.automanize.com` — reiniciarlo afecta a los cuatro).
 
 ---
 
