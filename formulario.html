@@ -221,6 +221,17 @@
       padding: 10px 14px; border: 1px solid rgba(248,113,113,0.15);
     }
 
+    /* ── Consentimiento RGPD ── */
+    .privacy-consent { display: flex; flex-direction: column; gap: 10px; }
+    .privacy-text {
+      font-size: 12.5px; line-height: 1.6; color: var(--muted);
+    }
+    .privacy-text a, .privacy-chk a {
+      color: var(--accent); text-decoration: underline; text-underline-offset: 2px;
+    }
+    .privacy-chk { min-height: 0; padding: 12px 14px; font-size: 13px; line-height: 1.5; }
+    .privacy-chk .chk-box { margin-top: 2px; }
+
     /* ── Nav ── */
     .wizard-nav {
       padding: 14px 20px max(24px, env(safe-area-inset-bottom));
@@ -315,6 +326,7 @@
     errorKey:   '',        // notfound | expired | used | generic
     mode:       'token',   // token (lead ya identificado por WhatsApp) | public (link compartido, ej. Idealista)
     tenantName: '',
+    tenantEmail: '',
     tenantId:   null,
     telefono:   null,
     token:      null,
@@ -323,6 +335,7 @@
     answers:    {},        // { campo_clientes → value }
     submitting: false,
     fieldErr:   '',
+    privacyAccepted: false,
   };
 
   // ─── Render ──────────────────────────────────────────────────────────────────
@@ -409,6 +422,7 @@
           <div class="step-card">
             <div class="step-q">${esc(step.textoMostrar)}</div>
             <div class="input-area" id="ia">${renderField(step)}</div>
+            ${isLast ? renderPrivacyConsent() : ''}
             ${S.fieldErr ? `<div class="field-err">${esc(S.fieldErr)}</div>` : ''}
             ${inlineBtn ? nextBtn(' btn-next-inline') : ''}
           </div>
@@ -427,6 +441,38 @@
     // Autofocus el campo de teclado del paso actual
     document.getElementById('field')?.focus();
     document.getElementById('telefonoNum')?.focus();
+
+    if (isLast) {
+      const chk = document.getElementById('privacyCheckbox');
+      chk?.addEventListener('click', () => {
+        S.privacyAccepted = !S.privacyAccepted;
+        if (S.privacyAccepted) S.fieldErr = '';
+        render();
+      });
+      chk?.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); chk.click(); }
+      });
+    }
+  }
+
+  function renderPrivacyConsent() {
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(S.tenantEmail || '');
+    const emailHtml = isEmail
+      ? `<a href="mailto:${esc(S.tenantEmail)}">${esc(S.tenantEmail)}</a>`
+      : (S.tenantEmail ? esc(S.tenantEmail) : 'la inmobiliaria');
+    return `
+      <div class="privacy-consent">
+        <p class="privacy-text">
+          Tus datos serán tratados por <strong>${esc(S.tenantName)}</strong> con la finalidad de gestionar
+          tu solicitud de alquiler y contactarte por WhatsApp, email o teléfono. Puedes ejercer tus derechos
+          de acceso, rectificación y supresión escribiendo a ${emailHtml}. Más información en nuestra
+          <a href="https://automanize.com/nize-privacy.html#captacion-leads" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.
+        </p>
+        <div class="chk privacy-chk${S.privacyAccepted ? ' sel' : ''}" id="privacyCheckbox" role="checkbox" aria-checked="${S.privacyAccepted}" tabindex="0">
+          <span class="chk-box"></span>
+          <span>He leído y acepto la <a href="https://automanize.com/nize-privacy.html#captacion-leads" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Política de Privacidad</a>.</span>
+        </div>
+      </div>`;
   }
 
   function renderField(step) {
@@ -545,6 +591,12 @@
     }
     if (empty) { S.fieldErr = 'Por favor, responde esta pregunta antes de continuar.'; render(); return; }
 
+    if (isLast && !S.privacyAccepted) {
+      S.fieldErr = 'Debes aceptar la Política de Privacidad para continuar.';
+      render();
+      return;
+    }
+
     S.fieldErr = '';
     if (isLast) { await submit(); }
     else        { S.step++; render(); }
@@ -575,9 +627,14 @@
           p_prefijo:    S.answers.__prefijo,
           p_telefono:   S.telefono,
           p_respuestas: respuestas,
+          p_privacidad_aceptada: S.privacyAccepted,
         });
       } else {
-        await sbRpc('submit_formulario', { p_token: S.token, p_respuestas: respuestas });
+        await sbRpc('submit_formulario', {
+          p_token: S.token,
+          p_respuestas: respuestas,
+          p_privacidad_aceptada: S.privacyAccepted,
+        });
       }
 
       // n8n webhook — best-effort, no bloquea si falla
@@ -657,8 +714,9 @@
         S.screen = 'error'; S.errorKey = 'notfound'; render(); return;
       }
 
-      S.tenantId   = tenantId;
-      S.tenantName = tenantInfo?.nombre || 'Tu inmobiliaria';
+      S.tenantId    = tenantId;
+      S.tenantName  = tenantInfo?.nombre || 'Tu inmobiliaria';
+      S.tenantEmail = tenantInfo?.email_contacto || '';
 
       // Preguntas activas del tenant
       const tp = await sbGet('tenant_preguntas', {
@@ -704,13 +762,8 @@
       const dynamicos = S.steps.filter(s => s.tipo_input === 'dynamic_zone_multi_select');
       if (dynamicos.length) {
         try {
-          const zonaRows = await sbGet('inmuebles_disponibles', {
-            select: 'zona',
-            tenant_id: `eq.${tenantId}`,
-            estado: 'eq.disponible',
-          });
-          const uniqueZonas = [...new Set(zonaRows.map(r => r.zona).filter(Boolean))].sort();
-          const opts = uniqueZonas.map(z => ({ value: z, label: z }));
+          const zonas = await sbRpc('get_zonas_disponibles', { p_tenant_id: tenantId });
+          const opts = (Array.isArray(zonas) ? zonas : []).map(z => ({ value: z, label: z }));
           dynamicos.forEach(s => { s.opciones = opts; });
         } catch { /* si falla, se queda con opciones vacías */ }
       }
