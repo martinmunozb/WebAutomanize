@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow">
+<title>Ficha de alta — Automanize</title>
+<link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-1:    #F8EFDC;
+    --bg-2:    #F1E2C4;
+    --card:    #FFFDF8;
+    --border:  #ECE0C4;
+    --accent:  #DE9F26;
+    --acc-h:   #C4841B;
+    --ink:     #211C15;
+    --text:    #3A3226;
+    --muted:   #96876A;
+    --light:   #C9BC9C;
+    --red:     #C0392B;
+    --green:   #2E8B57;
+  }
+
+  html, body {
+    min-height: 100vh;
+    background-color: var(--bg-1);
+    background-image:
+      radial-gradient(1000px circle at 12% -10%, rgba(222,159,38,0.20), transparent 60%),
+      radial-gradient(800px circle at 110% 25%, rgba(222,159,38,0.14), transparent 60%),
+      linear-gradient(160deg, var(--bg-1), var(--bg-2));
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+  }
+
+  .page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 48px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+    width: 100%;
+    max-width: 560px;
+  }
+  .logo-mark {
+    width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--accent), var(--acc-h));
+    color: #fff; font-weight: 800; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(196,132,27,0.35);
+  }
+  .logo-text {
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .card {
+    width: 100%;
+    max-width: 560px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px 36px;
+    box-shadow: 0 40px 90px rgba(60,42,10,0.16), 0 10px 28px rgba(60,42,10,0.08);
+  }
+
+  .state { display: none; }
+  .state.active { display: block; }
+
+  .card h1 {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .card .sub {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block; font-size: 11px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;
+  }
+  .field label .opt { text-transform: none; font-weight: 500; color: var(--light); letter-spacing: 0; }
+  .field input, .field textarea {
+    width: 100%; padding: 13px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 14.5px; font-family: inherit; color: var(--ink); background: #FFFEFB;
+    outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field input::placeholder, .field textarea::placeholder { color: var(--light); }
+  .field input:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(222,159,38,0.18); }
+  .field textarea { resize: vertical; min-height: 70px; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 480px) { .row-2 { grid-template-columns: 1fr; } }
+
+  .field-err-msg { font-size: 12.5px; color: var(--red); margin-top: 5px; }
+
+  .pick-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 30px 20px;
+    background: #F8EEDA;
+    border: 1.5px dashed rgba(222,159,38,0.4);
+    border-radius: 18px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+    margin-bottom: 18px;
+    text-align: center;
+  }
+  .pick-btn:hover { border-color: var(--accent); background: #F5E9CE; }
+  .pick-btn input {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer;
+    width: 100%; height: 100%;
+  }
+  .pick-icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--accent), var(--acc-h));
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 18px rgba(196,132,27,0.3);
+  }
+  .pick-icon svg { width: 22px; height: 22px; fill: #fff; }
+  .pick-btn strong { font-size: 15px; color: var(--ink); }
+  .pick-btn span   { font-size: 12.5px; color: var(--muted); }
+
+  .file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .file-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: #FBF5E8;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+  }
+  .file-row .emoji { font-size: 18px; flex-shrink: 0; }
+  .file-row .name  { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; color: var(--ink); }
+  .file-row .size  { font-size: 11px; color: var(--light); flex-shrink: 0; }
+  .file-row .del   { background: none; border: none; color: var(--light); cursor: pointer; font-size: 16px; padding: 0 2px; flex-shrink: 0; line-height: 1; }
+  .file-row .del:hover { color: var(--red); }
+  .file-row.too-big { border-color: var(--red); background: rgba(192,57,43,0.05); }
+  .file-row.too-big .size { color: var(--red); }
+
+  .btn-send {
+    width: 100%;
+    padding: 17px;
+    background: linear-gradient(135deg, var(--accent), var(--acc-h));
+    color: #241a06;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 14.5px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: filter 0.2s, transform 0.05s;
+    box-shadow: 0 12px 26px rgba(196,132,27,0.32);
+  }
+  .btn-send:hover:not(:disabled) { filter: brightness(1.05); }
+  .btn-send:active:not(:disabled) { transform: scale(0.99); }
+  .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .trust-note {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12.5px;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .spinner { width: 36px; height: 36px; border: 2.5px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .center-note { text-align: center; color: var(--muted); font-size: 14px; margin-top: 16px; }
+
+  .result-icon { font-size: 46px; text-align: center; margin-bottom: 14px; }
+  .result-title {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 700; font-size: 24px;
+    color: var(--ink); margin-bottom: 10px; text-align: center;
+  }
+  .result-msg { font-size: 14.5px; color: var(--muted); line-height: 1.6; text-align: center; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="logo">
+    <div class="logo-mark">A</div>
+    <span class="logo-text">Automanize · Nize</span>
+  </div>
+
+  <div class="card">
+
+    <!-- ESTADO: cargando -->
+    <div class="state active" id="stateLoading">
+      <div class="spinner"></div>
+      <p class="center-note">Cargando tu ficha…</p>
+    </div>
+
+    <!-- ESTADO: token inválido -->
+    <div class="state" id="stateInvalid">
+      <div class="result-icon">🔒</div>
+      <div class="result-title">Este enlace no es válido</div>
+      <p class="result-msg">Comprueba que lo has copiado entero, o pide a tu contacto en Automanize que te envíe uno nuevo.</p>
+    </div>
+
+    <!-- ESTADO: ya enviado -->
+    <div class="state" id="stateUsed">
+      <div class="result-icon">✅</div>
+      <div class="result-title">Ya habías enviado esta ficha</div>
+      <p class="result-msg">Ya tenemos tus datos. Si necesitas corregir algo, escríbenos y te lo actualizamos.</p>
+    </div>
+
+    <!-- ESTADO: formulario -->
+    <div class="state" id="stateForm">
+      <h1>Ficha de alta de tu agencia</h1>
+      <p class="sub">
+        Rellena estos datos básicos y sube tus Excels, contratos en PDF o cualquier documento con el resto de la información
+        (propietarios, inmuebles, inquilinos, gastos, equipo). Nosotros nos encargamos de organizarlo todo.
+      </p>
+
+      <div id="formAlertErr" class="field-err-msg" style="display:none;margin-bottom:14px"></div>
+
+      <div class="field">
+        <label>Nombre de la agencia</label>
+        <input type="text" id="fNombreAgencia" placeholder="Ej. InvictaRent" />
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label>Razón social <span class="opt">(opcional)</span></label>
+          <input type="text" id="fRazonSocial" placeholder="Ej. InvictaRent S.L." />
+        </div>
+        <div class="field">
+          <label>NIF / CIF <span class="opt">(opcional)</span></label>
+          <input type="text" id="fNif" placeholder="B12345678" />
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label>Email de contacto <span class="opt">(opcional)</span></label>
+          <input type="email" id="fEmail" placeholder="contacto@agencia.com" />
+        </div>
+        <div class="field">
+          <label>Tel. de administración <span class="opt">(opcional)</span></label>
+          <input type="tel" id="fTelAdmin" placeholder="600 000 000" />
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label>Tel. notificaciones WhatsApp <span class="opt">(opcional, puede ser el mismo)</span></label>
+          <input type="tel" id="fTelWhatsapp" placeholder="600 000 000" />
+        </div>
+        <div class="field">
+          <label>Persona que rellena</label>
+          <input type="text" id="fPersona" placeholder="Tu nombre" />
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label>IBAN de cobro <span class="opt">(opcional)</span></label>
+          <input type="text" id="fIban" placeholder="ES00 0000 0000 0000 0000 0000" />
+        </div>
+        <div class="field">
+          <label>Fecha</label>
+          <input type="date" id="fFecha" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Logo de la empresa <span class="opt">(opcional)</span></label>
+        <label class="pick-btn" id="pickLogoBtn" style="padding:16px 20px;margin-bottom:0">
+          <input type="file" id="logoInput" accept="image/png,image/jpeg,image/svg+xml,image/webp" />
+          <div class="pick-icon" style="width:36px;height:36px">
+            <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+          </div>
+          <strong id="logoLabel">Subir logo (PNG, JPG o SVG)</strong>
+        </label>
+      </div>
+
+      <label class="pick-btn" id="pickBtn">
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.pdf,.doc,.docx,application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple />
+        <div class="pick-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+        </div>
+        <strong>Subir Excel, PDF o Word</strong>
+        <span>Contratos, hojas de cálculo, listados… · Máx. 25 MB por archivo</span>
+      </label>
+
+      <div class="file-list" id="fileList"></div>
+
+      <div class="field">
+        <label>Notas adicionales <span class="opt">(opcional)</span></label>
+        <textarea id="fNotas" placeholder="Cualquier cosa que nos quieras contar..."></textarea>
+      </div>
+
+      <button class="btn-send" id="btnSend">Enviar ficha</button>
+    </div>
+
+    <!-- ESTADO: enviando -->
+    <div class="state" id="stateSubmitting">
+      <div class="spinner"></div>
+      <p class="center-note" id="submittingNote">Enviando tu ficha…</p>
+    </div>
+
+    <!-- ESTADO: éxito -->
+    <div class="state" id="stateSuccess">
+      <div class="result-icon">🎉</div>
+      <div class="result-title">¡Ficha recibida!</div>
+      <p class="result-msg">Gracias. Revisaremos todo y nos pondremos en contacto contigo en cuanto tengamos tu cartera lista en la aplicación.</p>
+    </div>
+
+  </div>
+
+  <p class="trust-note">Tus datos están seguros y encriptados</p>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://edjugpekcntzvqaskbmc.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA';
+  const N8N_WEBHOOK_URL = 'https://n8n.automanize.com/webhook/onboarding-completado';
+  const MAX_MB = 25;
+
+  const { createClient } = window.supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { db: { schema: 'onboarding' } });
+
+  const token = new URLSearchParams(window.location.search).get('token') || '';
+
+  const states = {};
+  ['Loading', 'Invalid', 'Used', 'Form', 'Submitting', 'Success'].forEach(k => {
+    states[k] = document.getElementById('state' + k);
+  });
+  function show(key) {
+    Object.values(states).forEach(el => el.classList.remove('active'));
+    states[key].classList.add('active');
+  }
+
+  const fileInput = document.getElementById('fileInput');
+  const fileList  = document.getElementById('fileList');
+  const btnSend   = document.getElementById('btnSend');
+  const logoInput = document.getElementById('logoInput');
+  const logoLabel = document.getElementById('logoLabel');
+
+  let files = [];
+  let selectedLogo = null;
+
+  logoInput.addEventListener('change', () => {
+    const f = logoInput.files[0];
+    if (!f) return;
+    selectedLogo = f;
+    logoLabel.textContent = '🖼️ ' + f.name;
+  });
+
+  const ICONS = { xlsx: '📊', xls: '📊', pdf: '📄', doc: '📝', docx: '📝' };
+  function iconFor(name) {
+    const ext = name.split('.').pop().toLowerCase();
+    return ICONS[ext] || '📎';
+  }
+  function extAllowed(name) {
+    const ext = name.split('.').pop().toLowerCase();
+    return ['xlsx', 'xls', 'pdf', 'doc', 'docx'].includes(ext);
+  }
+
+  fileInput.addEventListener('change', () => {
+    Array.from(fileInput.files).forEach(f => {
+      if (!extAllowed(f.name)) return;
+      const dup = files.find(x => x.name === f.name && x.size === f.size);
+      if (!dup) files.push(f);
+    });
+    fileInput.value = '';
+    renderFileList();
+  });
+
+  function renderFileList() {
+    fileList.innerHTML = '';
+    const MAX = MAX_MB * 1024 * 1024;
+    files.forEach((f, i) => {
+      const tooBig = f.size > MAX;
+      const sizeTxt = f.size > 1024 * 1024 ? (f.size / 1024 / 1024).toFixed(1) + ' MB' : Math.round(f.size / 1024) + ' KB';
+      const row = document.createElement('div');
+      row.className = 'file-row' + (tooBig ? ' too-big' : '');
+      row.innerHTML = `
+        <span class="emoji">${iconFor(f.name)}</span>
+        <span class="name">${escHtml(f.name)}</span>
+        <span class="size">${tooBig ? '⚠ ' : ''}${sizeTxt}</span>
+        <button class="del" data-i="${i}" title="Quitar">✕</button>`;
+      fileList.appendChild(row);
+    });
+    fileList.querySelectorAll('.del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        files.splice(parseInt(btn.dataset.i, 10), 1);
+        renderFileList();
+      });
+    });
+  }
+
+  function escHtml(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function showFieldErr(msg) {
+    const el = document.getElementById('formAlertErr');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+  function hideFieldErr() {
+    document.getElementById('formAlertErr').style.display = 'none';
+  }
+
+  btnSend.addEventListener('click', submitForm);
+
+  async function submitForm() {
+    hideFieldErr();
+
+    const nombreAgencia = document.getElementById('fNombreAgencia').value.trim();
+    const razonSocial   = document.getElementById('fRazonSocial').value.trim();
+    const nif           = document.getElementById('fNif').value.trim();
+    const email         = document.getElementById('fEmail').value.trim();
+    const telAdmin      = document.getElementById('fTelAdmin').value.trim();
+    const telWhatsapp   = document.getElementById('fTelWhatsapp').value.trim();
+    const iban          = document.getElementById('fIban').value.trim();
+    const persona       = document.getElementById('fPersona').value.trim();
+    const fecha         = document.getElementById('fFecha').value;
+    const notas         = document.getElementById('fNotas').value.trim();
+
+    if (!nombreAgencia || !persona || !fecha) {
+      showFieldErr('Completa al menos el nombre de la agencia, la persona que rellena y la fecha.');
+      return;
+    }
+
+    const MAX = MAX_MB * 1024 * 1024;
+    const tooBig = files.some(f => f.size > MAX);
+    if (tooBig) {
+      showFieldErr('Hay algún archivo que supera los 25 MB. Quítalo o comprímelo antes de continuar.');
+      return;
+    }
+
+    btnSend.disabled = true;
+    show('Submitting');
+    const note = document.getElementById('submittingNote');
+
+    try {
+      let logoPath = null;
+      if (selectedLogo) {
+        note.textContent = 'Subiendo logo…';
+        const path = `${token}/logo-${crypto.randomUUID()}-${selectedLogo.name}`;
+        const { error: logoErr } = await db.storage.from('onboarding-archivos').upload(path, selectedLogo);
+        if (logoErr) throw new Error('No se pudo subir el logo: ' + logoErr.message);
+        logoPath = path;
+      }
+
+      const archivosSubidos = [];
+      for (let i = 0; i < files.length; i++) {
+        const f = files[i];
+        note.textContent = files.length > 1 ? `Subiendo archivo ${i + 1} de ${files.length}…` : 'Subiendo archivo…';
+        const path = `${token}/${crypto.randomUUID()}-${f.name}`;
+        const { error: upErr } = await db.storage.from('onboarding-archivos').upload(path, f);
+        if (upErr) throw new Error('No se pudo subir "' + f.name + '": ' + upErr.message);
+        archivosSubidos.push({ nombre: f.name, path });
+      }
+
+      note.textContent = 'Guardando tu ficha…';
+
+      const { error } = await db.rpc('submit', {
+        p_token: token,
+        p_nombre_agencia: nombreAgencia,
+        p_razon_social: razonSocial || null,
+        p_nif: nif || null,
+        p_email_contacto: email || null,
+        p_telefono_admin: telAdmin || null,
+        p_telefono_whatsapp: telWhatsapp || null,
+        p_iban: iban || null,
+        p_persona_rellena: persona,
+        p_fecha: fecha,
+        p_notas: notas || null,
+        p_logo_path: logoPath,
+        p_archivos: archivosSubidos,
+      });
+      if (error) throw error;
+
+      if (N8N_WEBHOOK_URL) {
+        note.textContent = 'Enviando el aviso por email…';
+        try {
+          const archivosParaEmail = [];
+          for (const f of files) {
+            archivosParaEmail.push({ nombre: f.name, content: await fileToBase64(f) });
+          }
+          const logoParaEmail = selectedLogo ? { nombre: selectedLogo.name, content: await fileToBase64(selectedLogo) } : null;
+
+          await fetch(N8N_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              nombre_agencia: nombreAgencia,
+              razon_social: razonSocial || null,
+              nif: nif || null,
+              persona_rellena: persona,
+              email_contacto: email || null,
+              telefono_admin: telAdmin || null,
+              fecha,
+              num_archivos: archivosSubidos.length,
+              archivos: archivosParaEmail,
+              logo: logoParaEmail,
+            }),
+          });
+        } catch { /* el aviso por email es best-effort, no bloquea el envío de la ficha */ }
+      }
+
+      show('Success');
+    } catch (err) {
+      show('Form');
+      showFieldErr(err.message || 'No se pudo enviar la ficha. Inténtalo de nuevo.');
+      btnSend.disabled = false;
+    }
+  }
+
+  async function init() {
+    if (!token) { show('Invalid'); return; }
+    try {
+      const { data, error } = await db.rpc('validar_token', { p_token: token });
+      const row = Array.isArray(data) ? data[0] : data;
+      if (error || !row || !row.valido) { show('Invalid'); return; }
+      if (row.usado) { show('Used'); return; }
+      document.getElementById('fFecha').value = new Date().toISOString().slice(0, 10);
+      show('Form');
+    } catch {
+      show('Invalid');
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>

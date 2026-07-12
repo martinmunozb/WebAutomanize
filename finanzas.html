@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Finanzas — Automanize</title>
+<link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #f7f7f8; color: #111; }
+  a { color: inherit; }
+
+  /* ── LOGIN ── */
+  #loginScreen {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: #111; padding: 24px;
+  }
+  .login-card {
+    width: 100%; max-width: 380px; background: white; border-radius: 16px;
+    padding: 36px 30px; box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+  }
+  .login-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+  .login-logo-mark { width: 34px; height: 34px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+  .login-logo-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .login-logo-text { font-size: 17px; font-weight: 800; }
+  .login-title { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  .login-sub { font-size: 13px; color: #888; margin-bottom: 24px; }
+
+  label.field-label {
+    display: block; font-size: 11px; font-weight: 700; color: #888;
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 7px;
+  }
+  input, select, textarea {
+    width: 100%; padding: 11px 13px; border: 1.5px solid #e8e8e8; border-radius: 9px;
+    font-size: 14px; font-family: inherit; color: #111; background: white;
+    outline: none; transition: border-color 0.15s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: #EAB308; box-shadow: 0 0 0 3px rgba(234,179,8,0.12); }
+  .field { margin-bottom: 16px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 11px 18px; border-radius: 9px; font-size: 14px; font-weight: 700;
+    font-family: inherit; cursor: pointer; border: none; transition: all 0.15s;
+  }
+  .btn-primary { background: #111; color: white; width: 100%; padding: 13px; }
+  .btn-primary:hover:not(:disabled) { background: #333; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-accent { background: #EAB308; color: #111; }
+  .btn-accent:hover { background: #d4a107; }
+  .btn-ghost { background: transparent; color: #666; border: 1.5px solid #e8e8e8; }
+  .btn-ghost:hover { border-color: #ccc; color: #111; }
+  .btn-danger { background: #fff1f2; color: #b91c1c; }
+  .btn-danger:hover { background: #fee2e2; }
+  .btn-sm { padding: 7px 12px; font-size: 12.5px; border-radius: 7px; }
+
+  .alert { padding: 11px 13px; border-radius: 9px; font-size: 13px; margin-bottom: 16px; display: none; }
+  .alert-ok  { background: #f0fdf4; border: 1.5px solid #bbf7d0; color: #166534; }
+  .alert-err { background: #fff1f2; border: 1.5px solid #fecaca; color: #991b1b; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+
+  /* ── APP SHELL ── */
+  #app { display: none; min-height: 100vh; }
+  header.topbar {
+    position: sticky; top: 0; z-index: 20; background: white; border-bottom: 1px solid #eee;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; height: 60px;
+  }
+  .topbar-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .topbar-logo-mark { width: 28px; height: 28px; border-radius: 7px; overflow: hidden; flex-shrink: 0; }
+  .topbar-logo-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .topbar-logo-text { font-size: 15px; font-weight: 800; }
+  .topbar-tag { font-size: 11px; font-weight: 700; color: #EAB308; text-transform: uppercase; letter-spacing: 0.08em; margin-left: 6px; padding-left: 10px; border-left: 1px solid #eee; }
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
+  .user-chip { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .user-avatar {
+    width: 30px; height: 30px; border-radius: 50%; background: #111; color: white;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0;
+  }
+  .user-name { font-weight: 700; }
+  .user-email { color: #999; font-size: 11.5px; }
+
+  main.content { max-width: 1080px; margin: 0 auto; padding: 28px 20px 80px; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+  .stat-card { background: white; border: 1px solid #eee; border-radius: 14px; padding: 18px 20px; }
+  .stat-label { font-size: 11.5px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .stat-value { font-size: 26px; font-weight: 800; }
+  .stat-value.ok { color: #15803d; }
+  .stat-value.bad { color: #b91c1c; }
+
+  .toolbar-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .period-pills, .tab-pills { display: flex; gap: 6px; background: #eee; padding: 4px; border-radius: 10px; }
+  .pill-btn {
+    padding: 7px 14px; border-radius: 7px; border: none; background: transparent;
+    font-size: 12.5px; font-weight: 700; color: #666; cursor: pointer; font-family: inherit; transition: all 0.15s;
+  }
+  .pill-btn.active { background: white; color: #111; box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .panel-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .search-input { max-width: 260px; }
+
+  table.data-table { width: 100%; border-collapse: collapse; background: white; border: 1px solid #eee; border-radius: 12px; overflow: hidden; }
+  table.data-table th {
+    text-align: left; font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase;
+    letter-spacing: 0.04em; padding: 12px 14px; background: #fafafa; border-bottom: 1px solid #eee;
+  }
+  table.data-table td { padding: 12px 14px; font-size: 13.5px; border-bottom: 1px solid #f3f3f3; vertical-align: middle; }
+  table.data-table tr:last-child td { border-bottom: none; }
+  table.data-table tr:hover td { background: #fafafa; }
+  .type-tag {
+    display: inline-block; padding: 3px 9px; border-radius: 6px; font-size: 11.5px; font-weight: 700;
+    background: #f3f4f6; color: #444;
+  }
+  .amount-gasto { color: #b91c1c; font-weight: 700; }
+  .amount-ingreso { color: #15803d; font-weight: 700; }
+  .row-actions { display: flex; gap: 6px; }
+  .icon-btn {
+    width: 28px; height: 28px; border-radius: 7px; border: 1.5px solid #e8e8e8; background: white;
+    cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  .icon-btn:hover { border-color: #ccc; background: #fafafa; }
+  .factura-link { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 700; color: #92400e; text-decoration: none; }
+  .factura-link:hover { text-decoration: underline; }
+  .no-factura { color: #ccc; font-size: 12px; }
+
+  .empty-state { text-align: center; padding: 48px 16px; color: #aaa; font-size: 13px; }
+  .empty-state .icon { font-size: 30px; margin-bottom: 10px; }
+
+  /* ── ACTIVIDAD ── */
+  .activity-item { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid #f0f0f0; }
+  .activity-item:last-child { border-bottom: none; }
+  .activity-avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: #111; color: white;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0;
+  }
+  .activity-text { font-size: 13.5px; line-height: 1.5; }
+  .activity-text b { font-weight: 700; }
+  .activity-time { font-size: 11.5px; color: #999; margin-top: 2px; }
+  .activity-card { background: white; border: 1px solid #eee; border-radius: 12px; padding: 6px 18px; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-box { width: 100%; max-width: 440px; background: white; border-radius: 16px; box-shadow: 0 24px 64px rgba(0,0,0,0.3); max-height: 90vh; display: flex; flex-direction: column; }
+  .modal-head { padding: 20px 22px 14px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+  .modal-title { font-size: 17px; font-weight: 800; }
+  .modal-close { width: 28px; height: 28px; border-radius: 50%; border: none; background: #f3f4f6; cursor: pointer; font-size: 15px; color: #666; }
+  .modal-body { padding: 20px 22px; overflow-y: auto; }
+  .modal-foot { padding: 16px 22px 22px; display: flex; gap: 10px; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .file-drop {
+    border: 1.5px dashed #ddd; border-radius: 10px; padding: 14px; text-align: center;
+    cursor: pointer; font-size: 12.5px; color: #888; transition: all 0.15s;
+  }
+  .file-drop:hover { border-color: #EAB308; background: #fffbeb; }
+  .file-drop.has-file { border-style: solid; border-color: #EAB308; background: #fffbeb; color: #92400e; font-weight: 600; }
+
+  .loading-block { text-align: center; padding: 60px 20px; color: #aaa; font-size: 13px; }
+  .spin-lg { width: 26px; height: 26px; border: 3px solid #f0f0f0; border-top-color: #EAB308; border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
+
+  @media (max-width: 640px) {
+    .stats-row { grid-template-columns: 1fr; }
+    table.data-table thead { display: none; }
+    table.data-table, table.data-table tbody, table.data-table tr, table.data-table td { display: block; width: 100%; }
+    table.data-table tr { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; }
+    table.data-table td { padding: 3px 0; border: none; }
+    table.data-table td[data-label]::before { content: attr(data-label); font-weight: 700; color: #999; font-size: 10.5px; text-transform: uppercase; display: block; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark"><img src="/assets/images/Automanize%20(4).png" alt="Automanize" /></div>
+      <span class="login-logo-text">Automanize</span>
+    </div>
+    <div class="login-title">Finanzas internas</div>
+    <div class="login-sub">Inicia sesión para gestionar los gastos e ingresos de la empresa.</div>
+    <div id="loginAlertErr" class="alert alert-err"></div>
+    <form id="loginForm" onsubmit="return false;">
+      <div class="field">
+        <label class="field-label">Email</label>
+        <input type="email" id="loginEmail" autocomplete="username" required />
+      </div>
+      <div class="field">
+        <label class="field-label">Contraseña</label>
+        <input type="password" id="loginPassword" autocomplete="current-password" required />
+      </div>
+      <button type="submit" class="btn btn-primary" id="loginBtn" onclick="doLogin()">Iniciar sesión</button>
+    </form>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header class="topbar">
+    <a href="https://automanize.com" class="topbar-logo">
+      <div class="topbar-logo-mark"><img src="/assets/images/Automanize%20(4).png" alt="Automanize" /></div>
+      <span class="topbar-logo-text">Automanize</span>
+    </a>
+    <span class="topbar-tag" style="margin-right:auto">Finanzas</span>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <div>
+          <div class="user-name" id="userName">—</div>
+          <div class="user-email" id="userEmail">—</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Salir</button>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Ingresos totales</div>
+        <div class="stat-value ok" id="statIngresos">0,00 €</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Gastos totales</div>
+        <div class="stat-value bad" id="statGastos">0,00 €</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Dinero total (balance)</div>
+        <div class="stat-value" id="statBalance">0,00 €</div>
+      </div>
+    </div>
+
+    <div class="toolbar-row">
+      <div class="tab-pills">
+        <button class="pill-btn active" data-tab="gastos" onclick="switchTab('gastos')">Gastos</button>
+        <button class="pill-btn" data-tab="ingresos" onclick="switchTab('ingresos')">Ingresos</button>
+        <button class="pill-btn" data-tab="actividad" onclick="switchTab('actividad')">Actividad</button>
+      </div>
+      <div class="period-pills">
+        <button class="pill-btn active" data-period="todo" onclick="switchPeriod('todo')">Todo</button>
+        <button class="pill-btn" data-period="mes" onclick="switchPeriod('mes')">Este mes</button>
+        <button class="pill-btn" data-period="anio" onclick="switchPeriod('anio')">Este año</button>
+      </div>
+    </div>
+
+    <!-- GASTOS -->
+    <div class="panel active" id="panel-gastos">
+      <div class="panel-toolbar">
+        <input type="text" class="search-input" id="searchGastos" placeholder="Buscar gasto..." oninput="renderGastos()" />
+        <button class="btn btn-accent" onclick="openForm('gasto')">+ Nuevo gasto</button>
+      </div>
+      <div id="gastosWrap"></div>
+    </div>
+
+    <!-- INGRESOS -->
+    <div class="panel" id="panel-ingresos">
+      <div class="panel-toolbar">
+        <input type="text" class="search-input" id="searchIngresos" placeholder="Buscar ingreso..." oninput="renderIngresos()" />
+        <button class="btn btn-accent" onclick="openForm('ingreso')">+ Nuevo ingreso</button>
+      </div>
+      <div id="ingresosWrap"></div>
+    </div>
+
+    <!-- ACTIVIDAD -->
+    <div class="panel" id="panel-actividad">
+      <div class="activity-card">
+        <div id="actividadWrap"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL: nombre (primer login) -->
+<div class="modal-overlay" id="nameModal">
+  <div class="modal-box" style="max-width:360px">
+    <div class="modal-head">
+      <div class="modal-title">¿Cómo te llamas?</div>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:#888;margin-bottom:14px">Tu nombre aparecerá en el registro de actividad cada vez que añadas un gasto o ingreso.</p>
+      <div id="nameAlertErr" class="alert alert-err"></div>
+      <div class="field">
+        <label class="field-label">Nombre</label>
+        <input type="text" id="nameInput" placeholder="Ej. Gabriel" />
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-primary" id="nameSaveBtn" onclick="saveDisplayName()">Guardar y continuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: gasto/ingreso -->
+<div class="modal-overlay" id="formModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title" id="formModalTitle">Nuevo gasto</div>
+      <button class="modal-close" onclick="closeForm()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="formAlertErr" class="alert alert-err"></div>
+      <div class="field">
+        <label class="field-label" id="formNombreLabel">Nombre del gasto</label>
+        <input type="text" id="formNombre" placeholder="Ej. Suscripción n8n" />
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label class="field-label" id="formTipoLabel">Tipo de gasto</label>
+          <input type="text" id="formTipo" list="tipoSuggestions" placeholder="Ej. Software" />
+          <datalist id="tipoSuggestions"></datalist>
+        </div>
+        <div class="field">
+          <label class="field-label">Importe (€)</label>
+          <input type="text" inputmode="decimal" id="formImporte" placeholder="0,00 o ej. 150+50*2" onblur="evalImporteField()" />
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Fecha</label>
+        <input type="date" id="formFecha" />
+      </div>
+      <div class="field" id="recurrenteWrap" style="display:none">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:0">
+          <input type="checkbox" id="formRecurrente" style="width:auto" onchange="toggleRecurrenteOpts()" />
+          Ingreso recurrente
+        </label>
+        <div class="row-2" id="recurrenteOpts" style="display:none;margin-top:10px">
+          <div class="field" style="margin-bottom:0">
+            <label class="field-label">Frecuencia</label>
+            <select id="formFrecuencia">
+              <option value="semanal">Semanal</option>
+              <option value="quincenal">Quincenal</option>
+              <option value="mensual" selected>Mensual</option>
+              <option value="anual">Anual</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label class="field-label">Repeticiones</label>
+            <input type="number" id="formRepeticiones" min="2" max="60" value="12" />
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Factura (PDF) — opcional</label>
+        <div class="file-drop" id="fileDrop" onclick="document.getElementById('formFile').click()">📎 Adjuntar PDF</div>
+        <input type="file" id="formFile" accept="application/pdf" style="display:none" onchange="onFileSelected()" />
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label class="field-label">Notas — opcional</label>
+        <textarea id="formNotas" rows="2" placeholder="Detalle adicional..."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeForm()">Cancelar</button>
+      <button class="btn btn-primary" style="flex:2" id="formSaveBtn" onclick="saveForm()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://edjugpekcntzvqaskbmc.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA';
+  const { createClient } = window.supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const TIPOS_SUGERIDOS = ['Software', 'Marketing', 'Nóminas', 'Oficina', 'Servicios', 'Infraestructura', 'Formación', 'Viajes', 'Cliente', 'Otros'];
+  document.getElementById('tipoSuggestions').innerHTML = TIPOS_SUGERIDOS.map(t => `<option value="${t}">`).join('');
+
+  let currentUser = null;
+  let gastos = [];
+  let ingresos = [];
+  let activeTab = 'gastos';
+  let activePeriod = 'todo';
+  let formTipo = 'gasto'; // 'gasto' | 'ingreso'
+  let editingId = null;
+  let editingFacturaActual = null; // {path, nombre} de la factura ya guardada al editar
+  let selectedFile = null;
+
+  // ────────── AUTH ──────────
+  async function doLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    if (!email || !password) return;
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span> Entrando...';
+    hideEl('loginAlertErr');
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    btn.disabled = false;
+    btn.textContent = 'Iniciar sesión';
+    if (error) { showErr('loginAlertErr', 'Email o contraseña incorrectos.'); return; }
+    await onAuthenticated(data.user);
+  }
+
+  async function doLogout() {
+    await db.auth.signOut();
+    location.reload();
+  }
+
+  async function onAuthenticated(user) {
+    currentUser = user;
+    const nombre = user.user_metadata?.nombre;
+    if (!nombre) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('nameModal').classList.add('show');
+      return;
+    }
+    showApp();
+  }
+
+  async function saveDisplayName() {
+    const nombre = document.getElementById('nameInput').value.trim();
+    if (!nombre) { showErr('nameAlertErr', 'Escribe tu nombre.'); return; }
+    const btn = document.getElementById('nameSaveBtn');
+    btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Guardando...';
+    const { data, error } = await db.auth.updateUser({ data: { nombre } });
+    btn.disabled = false; btn.textContent = 'Guardar y continuar';
+    if (error) { showErr('nameAlertErr', 'No se pudo guardar. Inténtalo de nuevo.'); return; }
+    currentUser = data.user;
+    document.getElementById('nameModal').classList.remove('show');
+    showApp();
+  }
+
+  function showApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    const nombre = currentUser.user_metadata?.nombre || currentUser.email;
+    document.getElementById('userName').textContent = nombre;
+    document.getElementById('userEmail').textContent = currentUser.email;
+    document.getElementById('userAvatar').textContent = nombre.trim().charAt(0).toUpperCase();
+    loadData();
+  }
+
+  // ────────── DATA ──────────
+  async function loadData() {
+    document.getElementById('gastosWrap').innerHTML = loadingBlock();
+    document.getElementById('ingresosWrap').innerHTML = loadingBlock();
+    document.getElementById('actividadWrap').innerHTML = loadingBlock();
+
+    const [gRes, iRes] = await Promise.all([
+      db.rpc('finanzas_list_gastos'),
+      db.rpc('finanzas_list_ingresos'),
+    ]);
+
+    if (gRes.error || iRes.error) {
+      document.getElementById('gastosWrap').innerHTML = emptyState('⚠️', 'Error al cargar los datos.');
+      document.getElementById('ingresosWrap').innerHTML = '';
+      return;
+    }
+
+    gastos = gRes.data || [];
+    ingresos = iRes.data || [];
+    renderAll();
+  }
+
+  function periodFilter(list) {
+    if (activePeriod === 'todo') return list;
+    const now = new Date();
+    return list.filter(r => {
+      const d = new Date(r.fecha + 'T00:00:00');
+      if (activePeriod === 'mes') return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+      if (activePeriod === 'anio') return d.getFullYear() === now.getFullYear();
+      return true;
+    });
+  }
+
+  function renderAll() {
+    renderStats();
+    renderGastos();
+    renderIngresos();
+    renderActividad();
+  }
+
+  function renderStats() {
+    const g = periodFilter(gastos).reduce((s, r) => s + Number(r.importe), 0);
+    const i = periodFilter(ingresos).reduce((s, r) => s + Number(r.importe), 0);
+    const balance = i - g;
+    document.getElementById('statIngresos').textContent = fmtMoney(i);
+    document.getElementById('statGastos').textContent = fmtMoney(g);
+    const balEl = document.getElementById('statBalance');
+    balEl.textContent = fmtMoney(balance);
+    balEl.className = 'stat-value ' + (balance >= 0 ? 'ok' : 'bad');
+  }
+
+  function renderGastos() {
+    const q = document.getElementById('searchGastos').value.trim().toLowerCase();
+    let list = periodFilter(gastos);
+    if (q) list = list.filter(r => r.nombre.toLowerCase().includes(q) || r.tipo.toLowerCase().includes(q));
+    const wrap = document.getElementById('gastosWrap');
+    if (!list.length) { wrap.innerHTML = emptyState('💸', 'No hay gastos registrados todavía.'); return; }
+    wrap.innerHTML = renderTable(list, 'gasto');
+  }
+
+  function renderIngresos() {
+    const q = document.getElementById('searchIngresos').value.trim().toLowerCase();
+    let list = periodFilter(ingresos);
+    if (q) list = list.filter(r => r.nombre.toLowerCase().includes(q) || r.tipo.toLowerCase().includes(q));
+    const wrap = document.getElementById('ingresosWrap');
+    if (!list.length) { wrap.innerHTML = emptyState('💰', 'No hay ingresos registrados todavía.'); return; }
+    wrap.innerHTML = renderTable(list, 'ingreso');
+  }
+
+  function renderTable(list, tipo) {
+    const amountClass = tipo === 'gasto' ? 'amount-gasto' : 'amount-ingreso';
+    const sign = tipo === 'gasto' ? '-' : '+';
+    return `<table class="data-table">
+      <thead><tr>
+        <th>Nombre</th><th>Tipo</th><th>Fecha</th><th>Importe</th><th>Factura</th><th>Añadido por</th><th></th>
+      </tr></thead>
+      <tbody>
+        ${list.map(r => `
+          <tr>
+            <td data-label="Nombre"><strong>${escHtml(r.nombre)}</strong>${r.notas ? `<div style="font-size:11.5px;color:#999;margin-top:2px">${escHtml(r.notas)}</div>` : ''}</td>
+            <td data-label="Tipo"><span class="type-tag">${escHtml(r.tipo)}</span></td>
+            <td data-label="Fecha">${fmtDate(r.fecha)}</td>
+            <td data-label="Importe" class="${amountClass}">${sign}${fmtMoney(r.importe)}</td>
+            <td data-label="Factura">${r.factura_url
+              ? `<a class="factura-link" href="#" onclick="viewFactura('${escJs(r.factura_url)}');return false;">📄 Ver PDF</a>`
+              : `<span class="no-factura">Sin factura</span>`}</td>
+            <td data-label="Añadido por">${escHtml(r.creado_por_nombre || r.creado_por_email || '—')}</td>
+            <td data-label="">
+              <div class="row-actions">
+                <button class="icon-btn" title="Editar" onclick='openForm("${tipo}", ${JSON.stringify(r).replace(/'/g, "&#39;")})'>✏️</button>
+                <button class="icon-btn" title="Duplicar" onclick='duplicateRecord("${tipo}", ${JSON.stringify(r).replace(/'/g, "&#39;")})'>📋</button>
+                <button class="icon-btn" title="Eliminar" onclick="deleteRecord('${tipo}', '${r.id}', ${r.factura_url ? `'${escJs(r.factura_url)}'` : 'null'})">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+  }
+
+  function renderActividad() {
+    const items = [
+      ...gastos.map(r => ({ ...r, _tipo: 'gasto' })),
+      ...ingresos.map(r => ({ ...r, _tipo: 'ingreso' })),
+    ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    const wrap = document.getElementById('actividadWrap');
+    if (!items.length) { wrap.innerHTML = emptyState('📋', 'Todavía no hay actividad registrada.'); return; }
+
+    wrap.innerHTML = items.map(r => {
+      const quien = r.creado_por_nombre || r.creado_por_email || 'Alguien';
+      const accion = r._tipo === 'gasto' ? 'añadió un gasto de' : 'registró un ingreso de';
+      const signClass = r._tipo === 'gasto' ? 'amount-gasto' : 'amount-ingreso';
+      return `<div class="activity-item">
+        <div class="activity-avatar">${quien.trim().charAt(0).toUpperCase()}</div>
+        <div>
+          <div class="activity-text">
+            <b>${escHtml(quien)}</b> ${accion} <span class="${signClass}">${fmtMoney(r.importe)}</span>
+            — ${escHtml(r.nombre)} <span class="type-tag">${escHtml(r.tipo)}</span>
+          </div>
+          <div class="activity-time">${fmtDateTime(r.created_at)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ────────── TABS / PERIODO ──────────
+  function switchTab(tab) {
+    activeTab = tab;
+    document.querySelectorAll('.tab-pills .pill-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + tab).classList.add('active');
+  }
+
+  function switchPeriod(period) {
+    activePeriod = period;
+    document.querySelectorAll('.period-pills .pill-btn').forEach(b => b.classList.toggle('active', b.dataset.period === period));
+    renderAll();
+  }
+
+  // ────────── FORM MODAL ──────────
+  function openForm(tipo, record) {
+    formTipo = tipo;
+    editingId = record ? record.id : null;
+    editingFacturaActual = record && record.factura_url ? { path: record.factura_url, nombre: record.factura_nombre } : null;
+    selectedFile = null;
+
+    document.getElementById('formModalTitle').textContent = (editingId ? 'Editar ' : 'Nuevo ') + (tipo === 'gasto' ? 'gasto' : 'ingreso');
+    document.getElementById('formNombreLabel').textContent = 'Nombre del ' + tipo;
+    document.getElementById('formTipoLabel').textContent = 'Tipo de ' + tipo;
+    document.getElementById('formNombre').value = record ? record.nombre : '';
+    document.getElementById('formTipo').value = record ? record.tipo : '';
+    document.getElementById('formImporte').value = record ? record.importe : '';
+    document.getElementById('formFecha').value = record ? record.fecha : new Date().toISOString().slice(0, 10);
+    document.getElementById('formNotas').value = record ? (record.notas || '') : '';
+    document.getElementById('formFile').value = '';
+    const drop = document.getElementById('fileDrop');
+    if (editingFacturaActual) {
+      drop.textContent = '📄 ' + editingFacturaActual.nombre + ' (haz clic para cambiar)';
+      drop.classList.add('has-file');
+    } else {
+      drop.textContent = '📎 Adjuntar PDF';
+      drop.classList.remove('has-file');
+    }
+    document.getElementById('recurrenteWrap').style.display = (tipo === 'ingreso' && !editingId) ? 'block' : 'none';
+    document.getElementById('formRecurrente').checked = false;
+    document.getElementById('formFrecuencia').value = 'mensual';
+    document.getElementById('formRepeticiones').value = 12;
+    document.getElementById('recurrenteOpts').style.display = 'none';
+
+    hideEl('formAlertErr');
+    document.getElementById('formModal').classList.add('show');
+  }
+
+  function toggleRecurrenteOpts() {
+    document.getElementById('recurrenteOpts').style.display = document.getElementById('formRecurrente').checked ? 'grid' : 'none';
+  }
+
+  function duplicateRecord(tipo, record) {
+    openForm(tipo, record);
+    editingId = null;
+    editingFacturaActual = null;
+    selectedFile = null;
+    document.getElementById('formModalTitle').textContent = 'Duplicar ' + (tipo === 'gasto' ? 'gasto' : 'ingreso');
+    document.getElementById('formFecha').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('formFile').value = '';
+    const drop = document.getElementById('fileDrop');
+    drop.textContent = '📎 Adjuntar PDF';
+    drop.classList.remove('has-file');
+    document.getElementById('recurrenteWrap').style.display = tipo === 'ingreso' ? 'block' : 'none';
+  }
+
+  function closeForm() {
+    document.getElementById('formModal').classList.remove('show');
+  }
+
+  function onFileSelected() {
+    const input = document.getElementById('formFile');
+    const file = input.files[0];
+    const drop = document.getElementById('fileDrop');
+    if (!file) return;
+    if (file.type !== 'application/pdf') { showErr('formAlertErr', 'Solo se admiten archivos PDF.'); input.value = ''; return; }
+    selectedFile = file;
+    drop.textContent = '📄 ' + file.name;
+    drop.classList.add('has-file');
+  }
+
+  async function saveForm() {
+    const nombre = document.getElementById('formNombre').value.trim();
+    const tipo = document.getElementById('formTipo').value.trim();
+    const importe = evalMathExpression(document.getElementById('formImporte').value);
+    const fecha = document.getElementById('formFecha').value;
+    const notas = document.getElementById('formNotas').value.trim();
+
+    if (!nombre || !tipo || isNaN(importe) || importe < 0 || !fecha) {
+      showErr('formAlertErr', 'Completa nombre, tipo, fecha e importe (admite operaciones como 150+50*2).');
+      return;
+    }
+
+    const esRecurrente = formTipo === 'ingreso' && !editingId && document.getElementById('formRecurrente').checked;
+    const frecuencia = document.getElementById('formFrecuencia').value;
+    const repeticiones = esRecurrente
+      ? Math.max(2, Math.min(60, parseInt(document.getElementById('formRepeticiones').value, 10) || 2))
+      : 1;
+
+    const btn = document.getElementById('formSaveBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span> Guardando...';
+    hideEl('formAlertErr');
+
+    try {
+      let facturaPath = editingFacturaActual ? editingFacturaActual.path : null;
+      let facturaNombre = editingFacturaActual ? editingFacturaActual.nombre : null;
+
+      if (selectedFile) {
+        if (editingFacturaActual) {
+          await db.storage.from('finanzas-facturas').remove([editingFacturaActual.path]);
+        }
+        const path = `${formTipo}s/${crypto.randomUUID()}-${selectedFile.name}`;
+        const { error: upErr } = await db.storage.from('finanzas-facturas').upload(path, selectedFile);
+        if (upErr) throw new Error('No se pudo subir el PDF: ' + upErr.message);
+        facturaPath = path;
+        facturaNombre = selectedFile.name;
+      }
+
+      const fnName = formTipo === 'gasto' ? 'finanzas_upsert_gasto' : 'finanzas_upsert_ingreso';
+
+      for (let i = 0; i < repeticiones; i++) {
+        const fechaOcurrencia = i === 0 ? fecha : addFrequency(fecha, frecuencia, i);
+        const { error } = await db.rpc(fnName, {
+          p_id: i === 0 ? editingId : null,
+          p_nombre: nombre,
+          p_tipo: tipo,
+          p_importe: importe,
+          p_fecha: fechaOcurrencia,
+          p_notas: notas || null,
+          p_factura_url: i === 0 ? facturaPath : null,
+          p_factura_nombre: i === 0 ? facturaNombre : null,
+        });
+        if (error) throw error;
+      }
+
+      closeForm();
+      await loadData();
+    } catch (err) {
+      showErr('formAlertErr', err.message || 'Error al guardar.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Guardar';
+    }
+  }
+
+  async function deleteRecord(tipo, id, facturaPath) {
+    if (!confirm('¿Seguro que quieres eliminar este ' + tipo + '? Esta acción no se puede deshacer.')) return;
+    const fnName = tipo === 'gasto' ? 'finanzas_delete_gasto' : 'finanzas_delete_ingreso';
+    if (facturaPath) await db.storage.from('finanzas-facturas').remove([facturaPath]);
+    const { error } = await db.rpc(fnName, { p_id: id });
+    if (error) { alert('No se pudo eliminar: ' + error.message); return; }
+    await loadData();
+  }
+
+  async function viewFactura(path) {
+    const { data, error } = await db.storage.from('finanzas-facturas').createSignedUrl(path, 3600);
+    if (error || !data?.signedUrl) { alert('No se pudo abrir la factura.'); return; }
+    window.open(data.signedUrl, '_blank');
+  }
+
+  // ────────── HELPERS ──────────
+  function evalMathExpression(expr) {
+    const clean = String(expr || '').trim();
+    if (!clean) return NaN;
+    if (!/^[0-9+\-*/().\s]+$/.test(clean)) return NaN;
+    try {
+      const result = Function('"use strict"; return (' + clean + ')')();
+      return typeof result === 'number' && isFinite(result) ? Math.round(result * 100) / 100 : NaN;
+    } catch {
+      return NaN;
+    }
+  }
+
+  function evalImporteField() {
+    const el = document.getElementById('formImporte');
+    const val = el.value.trim();
+    if (!val) return;
+    const result = evalMathExpression(val);
+    if (!isNaN(result)) el.value = result;
+  }
+
+  function addFrequency(fechaBase, frecuencia, i) {
+    const d = new Date(fechaBase + 'T00:00:00');
+    if (frecuencia === 'semanal') d.setDate(d.getDate() + 7 * i);
+    else if (frecuencia === 'quincenal') d.setDate(d.getDate() + 14 * i);
+    else if (frecuencia === 'anual') d.setFullYear(d.getFullYear() + i);
+    else d.setMonth(d.getMonth() + i); // mensual
+    return d.toISOString().slice(0, 10);
+  }
+
+  function fmtMoney(n) { return Number(n || 0).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }); }
+  function fmtDate(d) { return new Date(d + 'T00:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }); }
+  function fmtDateTime(d) { return new Date(d).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+  function escHtml(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function escJs(s) { return String(s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
+  function loadingBlock() { return `<div class="loading-block"><div class="spin-lg"></div>Cargando...</div>`; }
+  function emptyState(icon, msg) { return `<div class="empty-state"><div class="icon">${icon}</div>${msg}</div>`; }
+  function showErr(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.style.display = 'block'; }
+  function hideEl(id) { document.getElementById(id).style.display = 'none'; }
+
+  // ────────── INIT ──────────
+  (async function init() {
+    const { data } = await db.auth.getSession();
+    if (data.session?.user) await onAuthenticated(data.session.user);
+  })();
+
+  document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') saveDisplayName(); });
+</script>
+</body>
+</html>

@@ -78,3 +78,9 @@ CREATE POLICY "anon_select_clientes_form_token" ON clientes
 
 **No crear** política `anon_select_tenants` directa — expone `whatsapp_token` y `factura_config`.
 **No crear** política `anon_update_clientes` directa — usar `submit_formulario` RPC.
+
+---
+
+## Schema `onboarding` (ficha de alta de agencias)
+
+Aislado del schema `public` a propósito — ver `docs/alta-agencia.md` para el detalle completo (tablas, RPCs, RLS y el paso manual pendiente de "Exposed schemas" en el dashboard de Supabase, sin el cual nada de esto funciona desde el HTML).

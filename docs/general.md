@@ -31,6 +31,8 @@ Web de marketing y utilidades de **Automanize** / **Nize**. Hospedada en `automa
 ├── index.html              — Landing principal Automanize
 ├── prueba-nize.html        — Landing trial gratuito Nize (Meta Ads / tráfico directo)
 ├── formulario.html         — Formulario dinámico de leads por token (WhatsApp / n8n)
+├── alta-agencia.html       — Ficha de alta para agencias ya contratadas, por token
+├── alta-agencia-admin.html — Panel interno: ver fichas recibidas y generar tokens
 ├── pago-nize.html          — Página de pago/confirmación Nize
 ├── captador-nize.html      — Landing captador de inmuebles
 ├── crm.html                — Landing CRM
@@ -60,6 +62,7 @@ Web de marketing y utilidades de **Automanize** / **Nize**. Hospedada en `automa
 
 - `docs/supabase.md` — tablas, RLS y funciones RPC
 - `docs/formulario.md` — formulario dinámico de leads
+- `docs/alta-agencia.md` — ficha de alta de agencias ya contratadas + panel admin
 - `docs/nize-trial.md` — landing de prueba gratis
 - `docs/netlify-functions.md` — funciones de Netlify / Stripe
 - `docs/telefono.md` — lógica del prefijo telefónico
