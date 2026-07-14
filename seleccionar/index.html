@@ -671,9 +671,11 @@
       };
     }
 
-    async function supabaseGet(path) {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-        headers: supabaseHeaders()
+    async function supabaseRpc(fn, params) {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+        method: 'POST',
+        headers: { ...supabaseHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(params)
       });
 
       if (!response.ok) {
@@ -737,14 +739,6 @@
       }
 
       return [];
-    }
-
-    function escapeInValue(value) {
-      return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-    }
-
-    function buildInFilter(ids) {
-      return ids.map(id => `"${escapeInValue(id)}"`).join(',');
     }
 
     function formatPrice(value) {
@@ -867,19 +861,12 @@
     }
 
     async function loadPendingSelection() {
-      const encodedToken = encodeURIComponent(token);
-      const rows = await supabaseGet(`selecciones_pendientes?token=eq.${encodedToken}&select=*`);
+      const rows = await supabaseRpc('rpc_seleccion_pendiente', { p_token: token });
       return rows[0] || null;
     }
 
-    async function loadRecommendedHomes(ids) {
-      if (!ids.length) return [];
-      const inFilter = buildInFilter(ids);
-      return supabaseGet(`inmuebles_disponibles?id_inmueble=in.(${inFilter})&select=*`);
-    }
-
-    async function loadAvailableHomes() {
-      return supabaseGet('inmuebles_disponibles?select=*&estado=eq.disponible');
+    async function loadTenantHomes() {
+      return supabaseRpc('rpc_viviendas_disponibles', { p_token: token });
     }
 
     async function initialize() {
@@ -913,17 +900,15 @@
           return;
         }
 
-        recommendedIds = normalizeIds(pendingSelection.viviendas_ids);
+        recommendedIds = normalizeIds(pendingSelection.favoritos_ids);
         selectedIds = new Set(recommendedIds);
         clientName.textContent = getClientLabel(pendingSelection);
 
-        const [recommendedHomes, availableHomes] = await Promise.all([
-          loadRecommendedHomes(recommendedIds),
-          loadAvailableHomes()
-        ]);
+        const tenantHomes = await loadTenantHomes();
 
         const recommendedSet = new Set(recommendedIds);
-        const otherHomes = availableHomes.filter(home => !recommendedSet.has(getHomeId(home)));
+        const recommendedHomes = tenantHomes.filter(home => recommendedSet.has(getHomeId(home)));
+        const otherHomes = tenantHomes.filter(home => !recommendedSet.has(getHomeId(home)));
 
         renderHomes(recommendedHomes, otherHomes);
         showApp();
