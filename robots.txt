@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /crm.html
+Disallow: /finanzas.html
+Disallow: /alta-agencia-admin.html
 
 Sitemap: https://automanize.com/sitemap.xml

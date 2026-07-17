@@ -357,12 +357,29 @@
 
       const row = document.createElement('div');
       row.className = 'photo-row' + (tooBig ? ' too-big' : '');
-      row.innerHTML = `
-        <span class="emoji">🖼️</span>
-        <span class="name">${f.name}</span>
-        <span class="size">${tooBig ? '⚠ ' : ''}${sizeTxt}</span>
-        <button class="del" data-i="${i}" title="Quitar">✕</button>
-      `;
+
+      const emojiEl = document.createElement('span');
+      emojiEl.className = 'emoji';
+      emojiEl.textContent = '🖼️';
+
+      const nameEl = document.createElement('span');
+      nameEl.className = 'name';
+      nameEl.textContent = f.name;
+
+      const sizeEl = document.createElement('span');
+      sizeEl.className = 'size';
+      sizeEl.textContent = (tooBig ? '⚠ ' : '') + sizeTxt;
+
+      const delEl = document.createElement('button');
+      delEl.className = 'del';
+      delEl.dataset.i = i;
+      delEl.title = 'Quitar';
+      delEl.textContent = '✕';
+
+      row.appendChild(emojiEl);
+      row.appendChild(nameEl);
+      row.appendChild(sizeEl);
+      row.appendChild(delEl);
       photoList.appendChild(row);
     });
 
@@ -512,12 +529,15 @@
       titleEl.textContent = `${ok} de ${valid.length} fotos enviadas`;
       msgEl.textContent   = 'Algunas fotos no se han podido enviar. Puedes volver a intentarlo más tarde con las que han fallado.';
       detailEl.style.display = 'block';
-      detailEl.innerHTML  = results.map((r, i) => {
+      detailEl.innerHTML = '';
+      results.forEach((r, i) => {
+        if (r !== 'ok' && r !== 'fail') return;
         const name = valid[i]?.name || '';
-        if (r === 'ok')   return `<div class="ok-line">✓ ${name}</div>`;
-        if (r === 'fail') return `<div class="fail-line">✗ ${name} — no se pudo enviar</div>`;
-        return '';
-      }).join('');
+        const line = document.createElement('div');
+        line.className = r === 'ok' ? 'ok-line' : 'fail-line';
+        line.textContent = (r === 'ok' ? '✓ ' : '✗ ') + name + (r === 'fail' ? ' — no se pudo enviar' : '');
+        detailEl.appendChild(line);
+      });
     }
   }
 </script>

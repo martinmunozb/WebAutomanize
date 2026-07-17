@@ -14,8 +14,8 @@
   force = true
 
 [[headers]]
-  for = "/netlify/functions/*"
+  for = "/.netlify/functions/*"
   [headers.values]
-    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Origin = "https://automanize.com"
     Access-Control-Allow-Headers = "Content-Type"
     Access-Control-Allow-Methods = "POST, GET, OPTIONS"

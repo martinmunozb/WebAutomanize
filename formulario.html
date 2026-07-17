@@ -679,11 +679,7 @@
         S.mode  = 'token';
         S.token = token;
 
-        const rows = await sbGet('clientes', {
-          select: 'id,tenant_id,telefono,form_token_expira,formulario_enviado',
-          form_token: `eq.${token}`,
-          limit: '1',
-        });
+        const rows = await sbRpc('get_cliente_by_token', { p_token: token });
 
         if (!rows.length)           { S.screen = 'error'; S.errorKey = 'notfound'; render(); return; }
 

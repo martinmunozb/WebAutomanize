@@ -37,6 +37,12 @@ exports.handler = async (event) => {
       return { statusCode: 403, body: JSON.stringify({ error: 'Pago no completado' }) };
     }
 
+    const DIAS_VALIDEZ = 90;
+    const antiguedadDias = (Date.now() / 1000 - session.created) / 86400;
+    if (antiguedadDias > DIAS_VALIDEZ) {
+      return { statusCode: 403, body: JSON.stringify({ error: 'Enlace de descarga caducado. Contacta con soporte.' }) };
+    }
+
     const download_url = await getSignedUrl();
 
     return {
