@@ -307,21 +307,84 @@
     .mes-check {
       width: 18px; height: 18px; border-radius: 50%;
       border: 1.5px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
+      appearance: none; -webkit-appearance: none;
+      background: #fff;
+      position: relative;
+      cursor: pointer; padding: 0; margin: 0;
       transition: all 0.2s; flex-shrink: 0;
     }
     .mes-option.selected .mes-check { background: var(--accent); border-color: var(--accent); }
     .mes-check::after {
       content: '';
+      position: absolute;
       width: 5px;
       height: 9px;
+      top: 50%; left: 50%;
       border: solid #101010;
       border-width: 0 2px 2px 0;
-      transform: rotate(45deg) translate(-1px, -1px);
+      transform: translate(-50%, -60%) rotate(45deg);
       opacity: 0;
       transition: opacity 0.2s;
     }
     .mes-option.selected .mes-check::after { opacity: 1; }
+
+    /* ── RESUMEN SELECCIÓN ── */
+    .seleccion-resumen {
+      display: none;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .seleccion-resumen strong {
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+    }
+
+    /* ── MODAL CONFIRMACIÓN ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(9,11,15,0.62);
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-box {
+      width: 100%; max-width: 420px;
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 30px 30px 26px;
+      box-shadow: var(--shadow);
+    }
+    .modal-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 19px; margin-bottom: 10px; }
+    .modal-sub { font-size: 13.5px; color: var(--text-muted); line-height: 1.55; margin-bottom: 16px; }
+    .modal-list {
+      list-style: none;
+      display: grid; gap: 6px;
+      margin-bottom: 22px;
+      max-height: 180px; overflow-y: auto;
+    }
+    .modal-list li {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 12px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    .modal-list li span:last-child {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+    }
+    .modal-actions { display: grid; gap: 10px; }
+    .btn-secondary {
+      width: 100%; padding: 13px; margin-top: 0;
+      background: transparent; color: var(--text-muted);
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+      border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--text-muted); color: var(--text); }
 
     /* ── FILE DROP ── */
     .file-drop {
@@ -554,10 +617,11 @@
       </div>
 
       <div class="field">
-        <label>¿De qué mes es el pago?</label>
+        <label>¿Qué pagos cubre este justificante?</label>
         <div class="meses-grid" id="mesesGrid">
           <!-- Se rellena dinámicamente -->
         </div>
+        <div class="seleccion-resumen" id="seleccionResumen"></div>
       </div>
 
       <div class="field">
@@ -590,11 +654,23 @@
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
       </div>
       <h2>¡Justificante enviado!</h2>
-      <p>Lo revisaremos y recibirás confirmación por WhatsApp en breve. ¡Gracias!</p>
+      <p>Lo revisaremos y recibirás confirmación por WhatsApp en breve. ¡Gracias! Te hemos escrito por WhatsApp para confirmar el importe.</p>
     </div>
 
     </div>
   </section>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <p class="modal-title">¿Vas a hacer un pago conjunto?</p>
+      <p class="modal-sub" id="modalSub"></p>
+      <ul class="modal-list" id="modalLista"></ul>
+      <div class="modal-actions">
+        <button class="btn-submit" id="btnModalConfirm" type="button">Sí, es un pago conjunto</button>
+        <button class="btn-secondary" id="btnModalCancel" type="button">Volver a elegir</button>
+      </div>
+    </div>
+  </div>
 
   <div class="badges">
     <div class="badge">
@@ -620,7 +696,7 @@
 <script>
   const SUPABASE_URL = 'https://edjugpekcntzvqaskbmc.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkanVncGVrY250enZxYXNrYm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTc0NjksImV4cCI6MjA4NzY5MzQ2OX0.JOyutVcE_OB5Bszuz12_aTBK4RRzD-a79QQ3uLS7IyA';
-  const WEBHOOK_POST = 'https://n8n.automanize.com/webhook/pago-submit';
+  const WEBHOOK_POST = 'https://backend.automanize.com/webhook/pago-submit';
 
   const params = new URLSearchParams(window.location.search);
   const token  = params.get('token');
@@ -642,7 +718,14 @@
   const fileName     = document.getElementById('fileName');
   const fileRemove   = document.getElementById('fileRemove');
   const btnSubmit    = document.getElementById('btnSubmit');
+  const seleccionResumen = document.getElementById('seleccionResumen');
+  const modalOverlay      = document.getElementById('modalOverlay');
+  const modalSub          = document.getElementById('modalSub');
+  const modalLista        = document.getElementById('modalLista');
+  const btnModalConfirm   = document.getElementById('btnModalConfirm');
+  const btnModalCancel    = document.getElementById('btnModalCancel');
   const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+  const MAX_PAGOS_SELECCIONADOS = 10;
   const ACCEPTED_EXTENSIONS = new Set(['pdf', 'png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp', 'tif', 'tiff', 'heic', 'heif', 'avif', 'jfif']);
   const ACCEPTED_MIME_TYPES = new Set([
     'application/pdf',
@@ -663,7 +746,7 @@
   ]);
   const SUPPORTED_FILE_TYPES_TEXT = 'JPG, JPEG, PNG, WEBP, GIF, BMP, TIFF, HEIC, HEIF, AVIF, JFIF y PDF';
 
-  let selectedMes    = null;
+  let selectedPagos  = new Map();
   let selectedFile   = null;
   let inquilinoId    = null;
 
@@ -777,15 +860,15 @@
       if (!pagosPendientes.length) {
         mesesGrid.innerHTML = '<p style="color:var(--text-muted);font-size:14px">No tienes pagos pendientes en este momento.</p>';
       } else {
-        let firstAvailableOption = null;
-        let firstAvailableMonth = null;
-
         pagosPendientes.forEach(p => {
           const dateKey = getDateKey(p.mes) || getDateKey(p.fecha_vencimiento);
           const fecha = dateKey ? new Date(`${dateKey}T12:00:00`) : null;
-          const etiqueta = fecha && !Number.isNaN(fecha.getTime())
-            ? fecha.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
-            : 'Pago pendiente';
+          const conceptoLimpio = String(p.concepto || '').trim();
+          const etiqueta = conceptoLimpio
+            ? conceptoLimpio
+            : (fecha && !Number.isNaN(fecha.getTime())
+                ? fecha.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
+                : 'Pago pendiente');
           const bloqueado = isBlockedByManager(p);
           const importeFormateado = formatMoney(p.importe);
           const m = { id: p.id, etiqueta, importe: normalizeMoney(p.importe) };
@@ -809,28 +892,20 @@
               </span>`;
             // Sin ningún addEventListener: no hay nada que manipular en el DOM
           } else {
-            el = document.createElement('div');
+            el = document.createElement('label');
             el.className = 'mes-option';
             el.innerHTML = `
               <span class="mes-nombre">${etiqueta}</span>
               <span class="mes-right">
                 <span class="mes-importe">${importeFormateado}€</span>
-                <span class="mes-check"></span>
+                <input type="checkbox" class="mes-check" aria-label="Seleccionar ${etiqueta}" />
               </span>`;
-            el.addEventListener('click', () => seleccionarMes(el, m));
-
-            if (!firstAvailableOption) {
-              firstAvailableOption = el;
-              firstAvailableMonth = m;
-            }
+            const checkbox = el.querySelector('.mes-check');
+            checkbox.addEventListener('change', () => alternarMes(el, checkbox, m));
           }
 
           mesesGrid.appendChild(el);
         });
-
-        if (firstAvailableOption && firstAvailableMonth) {
-          seleccionarMes(firstAvailableOption, firstAvailableMonth);
-        }
       }
 
       loadingState.style.display = 'none';
@@ -843,11 +918,35 @@
     }
   }
 
-  function seleccionarMes(el, mes) {
-    document.querySelectorAll('.mes-option').forEach(o => o.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedMes = mes;
+  function alternarMes(el, checkbox, mes) {
+    if (checkbox.checked) {
+      if (selectedPagos.size >= MAX_PAGOS_SELECCIONADOS) {
+        checkbox.checked = false;
+        alert(`Solo puedes seleccionar hasta ${MAX_PAGOS_SELECCIONADOS} pagos en un mismo justificante.`);
+        return;
+      }
+      selectedPagos.set(mes.id, mes);
+      el.classList.add('selected');
+    } else {
+      selectedPagos.delete(mes.id);
+      el.classList.remove('selected');
+    }
+    actualizarResumenSeleccion();
     validarFormulario();
+  }
+
+  function actualizarResumenSeleccion() {
+    const n = selectedPagos.size;
+
+    if (!n) {
+      seleccionResumen.style.display = 'none';
+      seleccionResumen.innerHTML = '';
+      return;
+    }
+
+    const total = Array.from(selectedPagos.values()).reduce((acc, m) => acc + m.importe, 0);
+    seleccionResumen.style.display = 'block';
+    seleccionResumen.innerHTML = `${n} ${n === 1 ? 'cobro seleccionado' : 'cobros seleccionados'} · Total: <strong>${formatMoney(total)} €</strong>`;
   }
 
   function getFileExtension(fileName) {
@@ -934,19 +1033,51 @@
   });
 
   function validarFormulario() {
-    btnSubmit.disabled = !(selectedMes && selectedFile);
+    btnSubmit.disabled = !(selectedPagos.size > 0 && selectedFile);
   }
 
-  btnSubmit.addEventListener('click', async () => {
-    if (!selectedMes || !selectedFile) return;
+  btnSubmit.addEventListener('click', () => {
+    if (!selectedPagos.size || !selectedFile) return;
+
+    if (selectedPagos.size > 1) {
+      abrirModalConfirmacion();
+    } else {
+      enviarJustificante();
+    }
+  });
+
+  function abrirModalConfirmacion() {
+    const seleccionados = Array.from(selectedPagos.values());
+    const total = seleccionados.reduce((acc, m) => acc + m.importe, 0);
+
+    modalSub.textContent = `Has marcado ${seleccionados.length} cobros por un total de ${formatMoney(total)} €. Sube un único justificante que cubra ese importe.`;
+    modalLista.innerHTML = seleccionados
+      .map(m => `<li><span>${m.etiqueta}</span><span>${formatMoney(m.importe)} €</span></li>`)
+      .join('');
+
+    modalOverlay.classList.add('show');
+  }
+
+  btnModalCancel.addEventListener('click', () => {
+    modalOverlay.classList.remove('show');
+  });
+
+  btnModalConfirm.addEventListener('click', () => {
+    modalOverlay.classList.remove('show');
+    enviarJustificante();
+  });
+
+  async function enviarJustificante() {
     btnSubmit.classList.add('loading'); btnSubmit.disabled = true;
 
+    const seleccionados = Array.from(selectedPagos.values());
+    const totalSeleccionado = seleccionados.reduce((acc, m) => acc + m.importe, 0);
+
     const form = new FormData();
-    form.append('token',   token);
+    form.append('token', token);
     if (tenantParam) form.append('tenant', tenantParam);
-    form.append('pago_id', selectedMes.id);
-    form.append('mes',     selectedMes.etiqueta);
-    form.append('importe', selectedMes.importe);
+    form.append('pago_ids', JSON.stringify(seleccionados.map(m => m.id)));
+    form.append('importe', totalSeleccionado);
     form.append('archivo', selectedFile, selectedFile.name);
 
     try {
@@ -959,7 +1090,7 @@
       btnSubmit.classList.remove('loading'); btnSubmit.disabled = false;
       alert('Hubo un error al enviar. Inténtalo de nuevo o escríbenos por WhatsApp.');
     }
-  });
+  }
 </script>
 </body>
 </html>
